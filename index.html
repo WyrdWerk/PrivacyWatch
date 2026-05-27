@@ -315,17 +315,29 @@ function zdrCell(zdr) {
   return `<span class="zdr-no">${zdr.label}</span>`;
 }
 
-// Brand-colored logo badges — fully self-contained, no external requests
-const PROVIDER_BADGES = {
+// Logo mapping — brand SVGs + generated initials as fallback
+const LOGO_MAP = {
+  'OpenAI': 'openai', 'Anthropic': 'anthropic', 'Google Gemini': 'google',
+  'xAI / Grok': 'xai', 'Alibaba / Qwen': 'alibaba', 'Moonshot AI / Kimi': 'moonshot',
+  'Zhipu AI / GLM': 'zhipu', 'MiniMax': 'minimax', 'DeepSeek': 'deepseek',
+  'Xiaomi MiMo': 'xiaomi', 'Fireworks AI': 'fireworks', 'Together AI': 'together',
+  'DeepInfra': 'deepinfra', 'Nebius AI': 'nebius', 'SiliconFlow': 'siliconflow',
+  'Cursor': 'cursor', 'OpenCode': 'opencode', 'HyperAgent': 'hyperagent',
+  'Crof AI': 'crof', 'Wafer AI': 'wafer', 'Neuralwatt': 'neuralwatt',
+  'CommandCode': 'commandcode'
+};
+
+// Fallback badge colors (used only when logo img fails to load)
+const FALLBACK_BADGES = {
   'OpenAI':           { abbr:'OAI',  bg:'#10a37f', fg:'#fff' },
-  'Anthropic':        { abbr:'ANT',  bg:'#c96442', fg:'#fff' },
+  'Anthropic':        { abbr:'ANT',  bg:'#d97757', fg:'#fff' },
   'Google Gemini':    { abbr:'GGL',  bg:'#4285f4', fg:'#fff' },
   'xAI / Grok':       { abbr:'XAI',  bg:'#0f172a', fg:'#fff' },
   'Alibaba / Qwen':   { abbr:'ALI',  bg:'#ff6a00', fg:'#fff' },
   'Moonshot AI / Kimi':{ abbr:'KIM', bg:'#7c3aed', fg:'#fff' },
   'Zhipu AI / GLM':   { abbr:'ZP',   bg:'#1677ff', fg:'#fff' },
-  'MiniMax':          { abbr:'MM',   bg:'#6366f1', fg:'#fff' },
-  'DeepSeek':         { abbr:'DS',   bg:'#4d6bfe', fg:'#fff' },
+  'MiniMax':          { abbr:'MM',   bg:'#e73562', fg:'#fff' },
+  'DeepSeek':         { abbr:'DS',   bg:'#5786fe', fg:'#fff' },
   'Xiaomi MiMo':      { abbr:'XM',   bg:'#ff6900', fg:'#fff' },
   'Fireworks AI':     { abbr:'FW',   bg:'#dc2626', fg:'#fff' },
   'Together AI':      { abbr:'TAI',  bg:'#0066cc', fg:'#fff' },
@@ -342,7 +354,14 @@ const PROVIDER_BADGES = {
 };
 
 function providerLogo(name) {
-  const b = PROVIDER_BADGES[name] || { abbr: name.slice(0,2).toUpperCase(), bg:'#6b7280', fg:'#fff' };
+  const slug = LOGO_MAP[name];
+  if (slug) {
+    const img = `<img src="assets/logos/${slug}.svg" alt="${name} logo" width="32" height="32" style="border-radius:7px;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">`;
+    const b = FALLBACK_BADGES[name] || { abbr: name.slice(0,2).toUpperCase(), bg:'#6b7280', fg:'#fff' };
+    const fallback = `<div class="logo-badge" style="background:${b.bg};color:${b.fg};display:none;">${b.abbr}</div>`;
+    return `<div style="display:inline-block;position:relative;width:32px;height:32px;">${img}${fallback}</div>`;
+  }
+  const b = FALLBACK_BADGES[name] || { abbr: name.slice(0,2).toUpperCase(), bg:'#6b7280', fg:'#fff' };
   return `<div class="logo-badge" style="background:${b.bg};color:${b.fg};">${b.abbr}</div>`;
 }
 

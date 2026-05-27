@@ -353,10 +353,19 @@ const FALLBACK_BADGES = {
   'CommandCode':      { abbr:'CMD',  bg:'#0f172a', fg:'#fff' }
 };
 
+// Extension map: which logos are PNG vs SVG
+const LOGO_EXT = {
+  'anthropic': 'png', 'fireworks': 'png', 'hyperagent': 'png',
+  'moonshot': 'png', 'neuralwatt': 'png', 'opencode': 'png',
+  'wafer': 'png', 'xai': 'png',
+  // everything else defaults to svg
+};
+
 function providerLogo(name) {
   const slug = LOGO_MAP[name];
   if (slug) {
-    const img = `<img src="assets/logos/${slug}.svg" alt="${name} logo" width="32" height="32" style="border-radius:7px;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">`;
+    const ext = LOGO_EXT[slug] || 'svg';
+    const img = `<img src="assets/logos/${slug}.${ext}" alt="${name} logo" width="32" height="32" style="border-radius:7px;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">`;
     const b = FALLBACK_BADGES[name] || { abbr: name.slice(0,2).toUpperCase(), bg:'#6b7280', fg:'#fff' };
     const fallback = `<div class="logo-badge" style="background:${b.bg};color:${b.fg};display:none;">${b.abbr}</div>`;
     return `<div style="display:inline-block;position:relative;width:32px;height:32px;">${img}${fallback}</div>`;

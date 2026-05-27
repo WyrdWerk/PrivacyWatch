@@ -1,7 +1,7 @@
 {
   "meta": {
     "lastUpdated": "2026-05-27",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "ModelWatch — LLM data retention and model training policy tracker",
     "maintainer": "WyrdWerk (github.com/WyrdWerk/modelwatch)"
   },
@@ -152,12 +152,12 @@
       "rating": "guarded",
       "incident": false,
       "training": { "label": "Off — explicit", "detail": "'Qwen Cloud does not use your API inputs or outputs to train or improve models.' Training data sourced from public data, partners, synthetic data only." },
-      "retention": { "label": "ZDR baseline; 7-day (Responses API)", "detail": "Standard inference: memory-only, not persisted post-response. Responses API: 7-day conversation storage. Metadata (billing): duration unspecified." },
+      "retention": { "label": "ZDR baseline; 7-day (Responses API)", "detail": "Standard inference: memory-only, not persisted post-response. Responses API: 7-day conversation storage. Metadata (billing): duration unspecified. CRITICAL: Model Studio assistant API retains conversation history with NO expiration date — materially different product." },
       "zdr": { "label": "Yes — built-in baseline", "detail": "ZDR documented as baseline on Qwen Cloud. Separate regional endpoints: CN/SG/US/EU. Responses API 7-day retention is an exception." },
-      "location": { "label": "Multi-region", "flag": "🌐", "detail": "Separate endpoints: China (Beijing), Singapore, US (Virginia), EU (Frankfurt), Hong Kong. Data stays in selected region." },
+      "location": { "label": "Multi-region (Frankfurt = genuine EU)", "flag": "🌐", "detail": "Separate endpoints: China (Beijing), Singapore, US (Virginia), EU (Frankfurt), Hong Kong. Frankfurt endpoint uses ONLY Frankfurt computing resources — genuine EU data residency with German BSI C5 + AIC4 certifications. Data stays in selected region." },
       "sourceUrl": "https://docs.qwencloud.com/developer-guides/security-compliance/zero-data-retention",
       "sourceDate": "2026-05-27",
-      "notes": "Strongest Chinese provider on data governance. PIPL cross-border compliance mechanism not explicitly documented."
+      "notes": "Strongest Chinese provider on data governance. Frankfurt is genuine EU residency (not just routing). GDPR compliance via EU Standard Contractual Clauses (Implementing Decision 2021/914/EU) + UK Addendum. China-based subprocessors in transfer chain: iSoftStone, Beyondsoft, Hangzhou Xutian Technology, Accenture Enterprise Cloud Hangzhou. Model Studio assistant has indefinite retention — avoid for sensitive data."
     },
     {
       "id": "moonshot-kimi-api",
@@ -168,13 +168,13 @@
       "categoryLabel": "Chinese",
       "rating": "caution",
       "incident": false,
-      "training": { "label": "Claimed off (unverified)", "detail": "API claims training OFF but policy language lacks explicit guarantee. ZDR available via Vercel AI Gateway (3rd-party) — not directly from Moonshot." },
-      "retention": { "label": "Vague — 'as necessary'", "detail": "No specific duration. 'As long as necessary to provide services and legitimate business purposes.'" },
-      "zdr": { "label": "Via 3rd party only", "detail": "ZDR referenced in Vercel AI Gateway for Kimi K2.6. Not available directly from Moonshot platform." },
+      "training": { "label": "On by default — CRITICAL", "detail": "Privacy Policy Section 2 (April 30, 2025): 'We process this information to provide and improve the Services, including training and optimizing our models.' NO legally operative document (Privacy Policy, ToS, DPA, Model Use Agreement) explicitly carves out API data from this training clause. FAQ claim of 'no training' is NOT referenced in any legal document and has no contractual force." },
+      "retention": { "label": "Vague — 'as necessary'", "detail": "No specific duration. 'As long as necessary to provide services and legitimate business purposes.' Post-account-deletion: transaction/billing records may be retained indefinitely for tax/fraud/legal." },
+      "zdr": { "label": "Via 3rd party only (limited models)", "detail": "ZDR via Vercel AI Gateway for K2.6 and Thinking Turbo ONLY — NOT for K2 Instruct. Not available directly from Moonshot platform." },
       "location": { "label": "Singapore entity; Beijing parent", "flag": "🇸🇬", "detail": "Corporate entity: Moonshot AI PTE. LTD. (Singapore). Parent: Beijing (北京月之暗面). Chinese-language policy states data stored within PRC for domestic users." },
       "sourceUrl": "https://platform.kimi.ai/docs/agreement/userprivacy",
       "sourceDate": "2026-05-27",
-      "notes": "English policy omits PIPL; Chinese policy includes cross-border consent requirements. National Intelligence Law exposure not acknowledged."
+      "notes": "CRITICAL: Privacy Policy governs. API data CAN be used for training under current legal documentation. FAQ claim is not legally operative. English policy omits PIPL; Chinese policy includes cross-border consent requirements. OpenRouter lists Moonshot as 'zero retention, does not train' — reflects routing contract, contradicts Privacy Policy."
     },
     {
       "id": "moonshot-kimi-consumer",
@@ -219,13 +219,13 @@
       "categoryLabel": "Chinese",
       "rating": "guarded",
       "incident": false,
-      "training": { "label": "Off by default", "detail": "Z.ai API (Singapore entity): 'We will not use your User Content for developing or improving Services unless you explicitly agree.'" },
-      "retention": { "label": "Minimum necessary", "detail": "Data retained for minimum necessary period. Singapore-based processing." },
-      "zdr": { "label": "None documented", "detail": "No ZDR option found for Z.ai API." },
-      "location": { "label": "Singapore", "flag": "🇸🇬", "detail": "Z.ai: JINGSHENG HENGXING TECHNOLOGY PTE. LTD., Singapore. Processes generally from Singapore." },
-      "sourceUrl": "https://docs.z.ai/legal-agreement/terms-of-use",
+      "training": { "label": "Off by default", "detail": "Z.ai API (Singapore entity): 'We will not use your User Content for developing or improving Services unless you explicitly agree.' Privacy Policy (Sept 29, 2025) explicitly states: 'The Company do not store any of the content the Customer or its End Users provide or generate while using our Services...processed in real-time...not saved on our servers.' API users governed by DPA, not consumer policy." },
+      "retention": { "label": "Real-time only (no storage)", "detail": "DPA embedded in Privacy Policy: no storage of API content. Processed in real-time, not saved on servers. Functionally equivalent to ZDR with legal backing. Consumer policy: 'minimum necessary period' — different (and weaker) commitment." },
+      "zdr": { "label": "Yes — legally operative", "detail": "DPA explicitly confirms real-time processing with no storage. This is a legally operative commitment (embedded in Privacy Policy, Additional Terms for API Services prevail in conflict). Not marketed as 'ZDR' but functionally and legally equivalent." },
+      "location": { "label": "Singapore", "flag": "🇸🇬", "detail": "Z.ai: JINGSHENG HENGXING TECHNOLOGY PTE. LTD., Singapore. Data processed in Singapore. Separate from BigModel China entity." },
+      "sourceUrl": "https://docs.z.ai/legal-agreement/privacy-policy",
       "sourceDate": "2026-05-27",
-      "notes": "Z.ai and BigModel are separate legal entities with different defaults. Confirm which entity you're contracting with."
+      "notes": "STRONG UPDATE: DPA in Privacy Policy explicitly states 'no storage of API content' — legally operative. API and consumer explicitly separated. Consumer policy is weaker. BigModel China has perpetual licence clause — different entity, same underlying models."
     },
     {
       "id": "minimax-api",
@@ -236,13 +236,13 @@
       "categoryLabel": "Chinese",
       "rating": "caution",
       "incident": false,
-      "training": { "label": "Ambiguous", "detail": "Policy disclaims profiling/targeting use. Does NOT address whether data is used for general model improvement. This gap is material for enterprise users." },
-      "retention": { "label": "Vague — 'as necessary'", "detail": "No specific numeric retention period." },
-      "zdr": { "label": "Undocumented officially", "detail": "Third-party review (Oct 2025) confirms zero-retention mode for MiniMax M2, but not in official policy docs." },
-      "location": { "label": "US (API)", "flag": "🇺🇸", "detail": "International API: US data center. Certified under EU-US Privacy Framework. China domestic apps: stored in PRC." },
+      "training": { "label": "Ambiguous — profiling only excluded", "detail": "Privacy Policy (March 30, 2026): 'We do not use your input personal data to infer characteristics about an individual, nor use personal data for training to profile or target consumers.' This ONLY prohibits training for PROFILING/TARGETING. Completely SILENT on whether inference data can be used for general model improvement. No other document in 6 retrieved addresses this. Service Rules (governing privacy/security) require platform login to access." },
+      "retention": { "label": "Vague (general); specific for audio/voice", "detail": "General inference data: 'as long as necessary / as soon as reasonable' — still vague. ONLY specific durations found: audio generation URLs expire in 9 hours; temporary voice assets valid for 7 days maximum." },
+      "zdr": { "label": "Undocumented officially", "detail": "No formal ZDR offering documented in any of 6 retrieved documents. Third-party review (Oct 2025) confirms zero-retention mode for MiniMax M2, but not in official policy." },
+      "location": { "label": "Undisclosed (inferred US)", "flag": "🇺🇸", "detail": "Privacy Policy does not specify server locations. EU-US Privacy Framework certification implies US data center for international API, but not explicitly stated. China domestic apps: stored in PRC." },
       "sourceUrl": "https://platform.minimax.io/protocol/privacy-policy",
       "sourceDate": "2026-05-27",
-      "notes": "Nanonoble Pte. Ltd. (Singapore entity) for international API. PIPL in Chinese policies; English uses 'applicable laws'. No SOC 2 or ISO certifications documented."
+      "notes": "Nanonoble Pte. Ltd. (Singapore entity) for international API. Training policy gap confirmed across 6 retrieved documents — only profiling/targeting excluded, general improvement not addressed. Service Rules inaccessible without login. SOC 2 / ISO potentially available under NDA for enterprise."
     },
     {
       "id": "minimax-consumer",
@@ -271,13 +271,13 @@
       "rating": "high-risk",
       "incident": true,
       "incidentDetail": "Jan 2025: ClickHouse DB breach exposing 1M+ records (chat logs, API keys). Korea PIPC (Apr 2025): unauthorized data transfers to ByteDance-affiliated entity. Italy Garante: ongoing GDPR investigation. Gov bans: NASA, DoD, Congress (US), Australia, Italy, Taiwan.",
-      "training": { "label": "On by default; no API opt-out", "detail": "Policy permits training on API data. No documented opt-out for API tier — unlike consumer app which has an opt-out toggle." },
-      "retention": { "label": "~90 days est. (metadata)", "detail": "API stateless (no server-side conversation history). Context caching on disk by default. ~90 days metadata per third-party estimate — not officially confirmed." },
+      "training": { "label": "On by default; API opt-out not documented", "detail": "ToS Section 4.3 (March 27, 2026): 'we may use Inputs and Outputs to provide, maintain, operate, develop or improve the Services.' Consumer product has opt-out toggle ('Improve the model for everyone'). NO equivalent opt-out is documented for API tier." },
+      "retention": { "label": "Indefinite (post-deletion rights reserved)", "detail": "ToS Section 2.5: 'Retain certain data as required by laws and regulations' — indefinite. Shared conversation links may be crawled despite anti-scraping measures — risk 'cannot be entirely eliminated.'" },
       "zdr": { "label": "Not available", "detail": "No ZDR tier or enterprise agreement. Alternatives: self-host open weights (MIT license), or use Google Cloud / Azure hosting (their policies apply)." },
-      "location": { "label": "China — all users", "flag": "🇨🇳", "detail": "Policy (explicit): 'we directly collect, process and store your Personal Data in People's Republic of China.' All global users — no separate international infrastructure." },
-      "sourceUrl": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html",
+      "location": { "label": "China — all users", "flag": "🇨🇳", "detail": "ToS Section 10.1: Governed by People's Republic of China law. Policy (explicit): 'we directly collect, process and store your Personal Data in People's Republic of China.' All global users — no separate international infrastructure." },
+      "sourceUrl": "https://chat.deepseek.com/downloads/DeepSeek%20Terms%20of%20Use.html",
       "sourceDate": "2026-05-27",
-      "notes": "Open-source weights (MIT license) self-hosted removes all these concerns — this rating applies to the hosted API only."
+      "notes": "Updated to official March 27, 2026 ToS. Korea PIPC investigation concluded November 2025 with minor remediations (Korean-language policy added, Volcano/ByteDance transfers blocked, opt-out toggle added). Core China storage and training policy unchanged. Italy Garante ban still in force. No DPA, no SOC 2, no enterprise ZDR as of May 2026. Open-source weights (MIT license) self-hosted removes all these concerns."
     },
     {
       "id": "deepseek-consumer",
@@ -304,15 +304,15 @@
       "surfaceType": "api",
       "category": "chinese",
       "categoryLabel": "Chinese",
-      "rating": "unverified",
+      "rating": "guarded",
       "incident": false,
-      "training": { "label": "Unknown", "detail": "Training use policy not found in accessible English documentation. Not documented." },
-      "retention": { "label": "Vague — 'as necessary'", "detail": "No specific timeline. Account deactivation clears 'platform data' — no post-deletion timeline." },
+      "training": { "label": "Not stated (OpenRouter: no training)", "detail": "Service Agreement does not explicitly address training. OpenRouter lists MiMo as 'Does not train.' Privacy Policy at privacy.mi.com/XiaomiMiMoPlatform/en_GB/ was inaccessible (504 timeout) — needs manual verification." },
+      "retention": { "label": "Reasonable period", "detail": "Service Agreement: 'permanently delete personal information within a reasonable period' upon service expiration or user request. No specific timeframe." },
       "zdr": { "label": "Not available", "detail": "Confirmed absent by Vercel AI Gateway: 'Zero Data Retention is not currently available for this model.'" },
-      "location": { "label": "China primary; clusters unclear", "flag": "🇨🇳", "detail": "Xiaomi policy: data stored within PRC. API offers CN/SG/Amsterdam clusters but data isolation per region is undocumented." },
-      "sourceUrl": "https://platform.xiaomimimo.com/docs/en-US/faq",
+      "location": { "label": "EU + Singapore (international)", "flag": "🇪🇺🇸🇬", "detail": "CRITICAL UPDATE: Service Agreement explicitly states international user data is stored on servers in Europe and Singapore — NOT mainland China. User is Data Controller, Xiaomi is Data Processor. Domestic China users: data in PRC." },
+      "sourceUrl": "https://platform.xiaomimimo.com/docs/terms/user-agreement",
       "sourceDate": "2026-05-27",
-      "notes": "MiMo-specific English privacy policy was inaccessible during research. Open-source weights on HuggingFace (MIT) available for self-hosting."
+      "notes": "Upgraded from Unverified based on Service Agreement (April 26, 2026). Major finding: international data goes to EU/Singapore, not China. Privacy Policy still inaccessible — training policy needs confirmation. Open-source weights on HuggingFace (MIT) available for self-hosting."
     },
     {
       "id": "fireworks-ai",
@@ -389,15 +389,15 @@
       "surfaceType": "api",
       "category": "inference",
       "categoryLabel": "Inference",
-      "rating": "unverified",
+      "rating": "caution",
       "incident": false,
-      "training": { "label": "Unknown", "detail": "Policy does not explicitly permit or prohibit use of API data for model improvement. Marketing claims 'No data stored, ever' but no formal SLA backs this." },
-      "retention": { "label": "Claimed none; policy says 'as necessary'", "detail": "Marketing: 'No data stored, ever.' Official policy: 'as long as necessary.' No contractual commitment or third-party certification to verify." },
-      "zdr": { "label": "Claimed; not documented", "detail": "ZDR referenced in marketing and third-party analysis but absent from official policy documentation." },
-      "location": { "label": "China + Singapore", "flag": "🇨🇳🇸🇬", "detail": "CN entity (Beijing): data in PRC. Global entity (Singapore): global disclosure permitted; no EU-only commitment." },
-      "sourceUrl": "https://docs.siliconflow.com/en/legals/privacy-policy",
+      "training": { "label": "Not explicitly prohibited", "detail": "'No storage' claim confirmed for Interaction Data (API prompts/completions) in Chinese-language policy (Oct 11, 2025): 'we will not conduct any unauthorised use or disclosure of your Interaction Data, and will not store it.' However, NO explicit training prohibition found in any version. Implicit (can't train without storing) but not stated." },
+      "retention": { "label": "No storage (Interaction Data only)", "detail": "Chinese-language Privacy Policy (Oct 11, 2025): Interaction Data is not stored. Account data, billing, and profile data IS retained with no specific durations. 'No data stored, ever' marketing is misleading as a blanket claim — it applies to Interaction Data specifically." },
+      "zdr": { "label": "Not formally documented", "detail": "No formal ZDR offering found. 'No storage' claim for Interaction Data is functionally equivalent but not contractually guaranteed as a ZDR service." },
+      "location": { "label": "Undisclosed", "flag": "🌐", "detail": "Server locations NOT specified in any policy version. Singapore entity governed by PDPA; China entity by Chinese law. International .com product explicitly excludes China users — separate siliconflow.cn product." },
+      "sourceUrl": "https://docs.siliconflow.cn/cn/legals/privacy-policy",
       "sourceDate": "2026-05-27",
-      "notes": "No SOC 2, ISO 27001, DPA, or sub-processor list published. Widest marketing-vs-policy gap of any provider in this research."
+      "notes": "Upgraded from Unverified: Chinese-language policy (Oct 11, 2025) is the most current and contains the strongest language. No SOC 2, ISO 27001, DPA, or sub-processor list. Training prohibition is implicit only. Data location undisclosed."
     },
     {
       "id": "cursor-privacy-on",

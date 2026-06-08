@@ -5,6 +5,12 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 ---
 
+## v1.3.5 — 2026-06-08
+
+**Deploy automation.** GitHub Actions auto-deploy on push to `main`, legacy redirect workflow, bulk redirect setup script, and README secrets/operations guide. Added `package-lock.json` for CI.
+
+---
+
 ## v1.3.4 — 2026-06-08
 
 **GitHub repository rename.** Repository moved to `WyrdWerk/policywatch`. Updated GitHub links in UI and `providers.json` maintainer field; removed remaining legacy product-name references from docs.

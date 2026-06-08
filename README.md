@@ -93,10 +93,56 @@ Provider rows in the UI link to each entry's official `sourceUrl`. Local archive
 npm run build      # build curated dist/ artifact
 npm run validate   # validate providers.json
 npm run dev        # local preview from dist/
-npm run deploy     # build, validate, deploy to Cloudflare Pages
+npm run deploy     # build, validate, deploy to Cloudflare Pages (manual fallback)
 ```
 
 Hosted on Cloudflare Pages. Production deploys only the curated `dist/` output (app shell, data JSON, assets, and public metadata).
+
+### Auto-deploy (GitHub Actions)
+
+Pushes to `main` automatically build, validate, and deploy to the `policywatch` Cloudflare Pages project via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
+
+**Standard workflow:** edit files → `git push origin main` → GitHub Actions deploys to https://policywatch.wyrdwerk.com
+
+#### Required GitHub configuration
+
+Add these under **Repository → Settings → Secrets and variables → Actions**:
+
+| Name | Type | Purpose |
+|------|------|---------|
+| `CLOUDFLARE_API_TOKEN` | Secret | Wrangler deploy + redirect scripts. Needs **Cloudflare Pages Edit** at minimum. |
+| `CLOUDFLARE_ACCOUNT_ID` | Secret | Cloudflare account ID (`npx wrangler whoami`) |
+
+| Name | Type | Default | Purpose |
+|------|------|---------|---------|
+| `LEGACY_PAGES_PROJECT` | Variable | _(required for legacy workflow)_ | Pre-migration Pages project name for redirect-only deploys |
+| `POLICYWATCH_URL` | Variable | `https://policywatch.wyrdwerk.com` | Redirect target for legacy + bulk redirects |
+| `PAGES_DEV_HOST` | Variable | `policywatch-8j7.pages.dev` | Pages fallback hostname for bulk redirect |
+
+**API token permissions for full automation:**
+
+- **Pages deploy:** Account → Cloudflare Pages → Edit
+- **Bulk redirect script:** Account → Bulk URL Redirects → Edit, Account → Account Filter Lists → Edit, Account → Account Rulesets → Edit
+
+Create token: [Cloudflare API Tokens](https://dash.cloudflare.com/profile/api-tokens)
+
+#### Manual workflow runs
+
+In **Actions**, you can re-run:
+
+| Workflow | When to use |
+|----------|-------------|
+| **Deploy production** | Re-deploy `main` without a new commit |
+| **Deploy legacy redirect** | Re-publish the pre-migration Pages hostname 301 |
+| **Setup bulk redirect** | One-time (or re-apply) `policywatch-8j7.pages.dev` → custom domain redirect |
+
+Local equivalents:
+
+```bash
+npm run deploy                  # manual production deploy
+npm run deploy:legacy-redirect  # requires LEGACY_PAGES_PROJECT in .env
+npm run setup:bulk-redirect     # requires CLOUDFLARE_* in .env
+```
 
 ### Custom domain setup (`policywatch.wyrdwerk.com`)
 
@@ -141,16 +187,36 @@ npm run deploy                  # publish app with canonical URLs
 npm run deploy:legacy-redirect  # legacy Pages hostname → policywatch.wyrdwerk.com
 ```
 
-#### Optional — Redirect `*.pages.dev` to custom domain
+#### Bulk redirect — `policywatch-8j7.pages.dev` → custom domain
 
-In Cloudflare **Bulk Redirects** (account-level), you can 301 `policywatch-8j7.pages.dev` → `policywatch.wyrdwerk.com` so only the branded URL is used publicly.
+Redirects the Pages fallback hostname to the branded production URL (301, paths preserved).
+
+**Option A — Script or GitHub Actions (recommended)**
+
+```bash
+# Local (copy .env.example → .env first)
+npm run setup:bulk-redirect
+
+# Or: Actions → Setup bulk redirect → Run workflow
+```
+
+**Option B — Cloudflare dashboard (one-time)**
+
+1. Account → **Bulk Redirects** → **Create redirect list**
+   - Name: `policywatch_pages_dev_redirect`
+2. Add redirect items:
+   - `policywatch-8j7.pages.dev` → `https://policywatch.wyrdwerk.com` (301)
+   - `policywatch-8j7.pages.dev/` → `https://policywatch.wyrdwerk.com/` (301, preserve path + query)
+3. **Create bulk redirect rule** on the list (phase: `http_request_redirect`)
+4. Verify: `curl -sI https://policywatch-8j7.pages.dev/ | grep -i location`
 
 ### Infra notes
 
 - **GitHub:** [WyrdWerk/policywatch](https://github.com/WyrdWerk/policywatch)
+- **Auto-deploy:** push to `main` → GitHub Actions → Cloudflare Pages `policywatch`
 - **Cloudflare Pages project:** `policywatch` → `policywatch-8j7.pages.dev` (bare `policywatch.pages.dev` is unavailable on Pages)
 - **Production canonical:** `policywatch.wyrdwerk.com`
-- **Legacy Pages hostname:** 301 to production via `npm run deploy:legacy-redirect`
+- **Legacy Pages hostname:** 301 to production via `npm run deploy:legacy-redirect` or **Deploy legacy redirect** workflow
 
 ---
 

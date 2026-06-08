@@ -1,0 +1,40 @@
+name: Deploy legacy redirect
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - scripts/legacy-redirect.mjs
+      - .github/workflows/legacy-redirect.yml
+
+concurrency:
+  group: deploy-legacy-redirect
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Deploy legacy Pages redirect
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          LEGACY_PAGES_PROJECT: ${{ vars.LEGACY_PAGES_PROJECT }}
+          POLICYWATCH_URL: ${{ vars.POLICYWATCH_URL }}
+        run: npm run deploy:legacy-redirect

@@ -5,6 +5,12 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 ---
 
+## v1.3.2 — 2026-06-08
+
+**Pages project migration.** Created Cloudflare Pages project `policywatch` and pointed deploy/canonical URLs at `policywatch-8j7.pages.dev`. Bare `policywatch.pages.dev` is unavailable; `modelwatch.pages.dev` now redirects to the new deployment.
+
+---
+
 ## v1.3.1 — 2026-06-08
 
 **PolicyWatch branding rename.** User-facing product name updated from ModelWatch to PolicyWatch across UI, public data metadata, schema title, and internal policy docs. Infra-dependent targets (`modelwatch.pages.dev`, GitHub repo slug, Cloudflare Pages project name) intentionally unchanged until new targets are live.

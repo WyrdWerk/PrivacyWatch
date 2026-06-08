@@ -4,7 +4,7 @@
 
 Who stores your prompts? Who trains on them? Researched from primary sources — privacy policies, ToS, DPAs, and API docs — across 33 tracked provider surfaces.
 
-Live at: **[modelwatch.pages.dev](https://modelwatch.pages.dev)**
+Live at: **[policywatch-8j7.pages.dev](https://policywatch-8j7.pages.dev)** (custom domain `policywatch.wyrdwerk.com` planned)
 
 ---
 
@@ -98,16 +98,11 @@ npm run deploy     # build, validate, deploy to Cloudflare Pages
 
 Hosted on Cloudflare Pages. Production deploys only the curated `dist/` output (app shell, data JSON, assets, and public metadata).
 
-### Rename follow-up (infra-gated)
+### Infra notes
 
-Product branding is **PolicyWatch**. The following still point at live `modelwatch` infrastructure until new targets exist:
-
-- `index.html` canonical / Open Graph / JSON-LD URLs
-- `robots.txt` and `sitemap.xml` sitemap URLs
-- GitHub links (`WyrdWerk/modelwatch`) and `providers.json` maintainer URL
-- `wrangler.jsonc` project name and `npm run deploy` `--project-name`
-
-Update these in one release when `policywatch.pages.dev` (or `policywatch.wyrdwerk.com`), the renamed GitHub repo, and the Cloudflare Pages project are ready.
+- **Cloudflare Pages project:** `policywatch` → `policywatch-8j7.pages.dev` (bare `policywatch.pages.dev` is unavailable on Pages)
+- **Legacy URL:** `modelwatch.pages.dev` redirects to the new deployment
+- **Still on old slug:** GitHub repo (`WyrdWerk/modelwatch`) — rename when ready
 
 ---
 

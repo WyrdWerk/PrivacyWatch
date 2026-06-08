@@ -5,6 +5,12 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 ---
 
+## v1.3.6 — 2026-06-08
+
+**Migrate to Cloudflare Git integration.** Removed GitHub Actions deploy workflows and repo token requirements. Production auto-deploy now via Cloudflare Pages dashboard Git linkage; README documents one-time Direct Upload cutover and dashboard-only redirect setup.
+
+---
+
 ## v1.3.5 — 2026-06-08
 
 **Deploy automation.** GitHub Actions auto-deploy on push to `main`, legacy redirect workflow, bulk redirect setup script, and README secrets/operations guide. Added `package-lock.json` for CI.

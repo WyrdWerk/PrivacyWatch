@@ -5,21 +5,27 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 ---
 
+## v1.3.4 — 2026-06-08
+
+**GitHub repository rename.** Repository moved to `WyrdWerk/policywatch`. Updated GitHub links in UI and `providers.json` maintainer field; removed remaining legacy product-name references from docs.
+
+---
+
 ## v1.3.3 — 2026-06-08
 
-**Custom domain canonical URLs.** Point SEO metadata, sitemap, and robots at `policywatch.wyrdwerk.com`. Added README custom-domain setup guide and `npm run deploy:legacy-redirect` for the old `modelwatch.pages.dev` URL.
+**Custom domain canonical URLs.** Point SEO metadata, sitemap, and robots at `policywatch.wyrdwerk.com`. Added README custom-domain setup guide and `npm run deploy:legacy-redirect` for the pre-migration Pages hostname.
 
 ---
 
 ## v1.3.2 — 2026-06-08
 
-**Pages project migration.** Created Cloudflare Pages project `policywatch` and pointed deploy/canonical URLs at `policywatch-8j7.pages.dev`. Bare `policywatch.pages.dev` is unavailable; `modelwatch.pages.dev` now redirects to the new deployment.
+**Pages project migration.** Created Cloudflare Pages project `policywatch` and pointed deploy/canonical URLs at `policywatch-8j7.pages.dev`. Bare `policywatch.pages.dev` is unavailable; legacy Pages hostname now redirects to the new deployment.
 
 ---
 
 ## v1.3.1 — 2026-06-08
 
-**PolicyWatch branding rename.** User-facing product name updated from ModelWatch to PolicyWatch across UI, public data metadata, schema title, and internal policy docs. Infra-dependent targets (`modelwatch.pages.dev`, GitHub repo slug, Cloudflare Pages project name) intentionally unchanged until new targets are live.
+**PolicyWatch branding.** User-facing product name set to PolicyWatch across UI, public data metadata, schema title, and internal policy docs.
 
 ---
 

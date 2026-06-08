@@ -138,7 +138,7 @@ After DNS is active:
 
 ```bash
 npm run deploy                  # publish app with canonical URLs
-npm run deploy:legacy-redirect  # modelwatch.pages.dev → policywatch.wyrdwerk.com
+npm run deploy:legacy-redirect  # legacy Pages hostname → policywatch.wyrdwerk.com
 ```
 
 #### Optional — Redirect `*.pages.dev` to custom domain
@@ -147,10 +147,10 @@ In Cloudflare **Bulk Redirects** (account-level), you can 301 `policywatch-8j7.p
 
 ### Infra notes
 
+- **GitHub:** [WyrdWerk/policywatch](https://github.com/WyrdWerk/policywatch)
 - **Cloudflare Pages project:** `policywatch` → `policywatch-8j7.pages.dev` (bare `policywatch.pages.dev` is unavailable on Pages)
 - **Production canonical:** `policywatch.wyrdwerk.com`
-- **Legacy URL:** `modelwatch.pages.dev` redirects via `npm run deploy:legacy-redirect`
-- **Still on old slug:** GitHub repo (`WyrdWerk/modelwatch`) — rename when ready
+- **Legacy Pages hostname:** 301 to production via `npm run deploy:legacy-redirect`
 
 ---
 

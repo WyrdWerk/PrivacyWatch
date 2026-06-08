@@ -1,6 +1,6 @@
 {
   "meta": {
-    "lastUpdated": "2026-05-27",
+    "lastUpdated": "2026-06-07",
     "version": "1.1.0",
     "description": "ModelWatch — LLM data retention and model training policy tracker",
     "maintainer": "WyrdWerk (github.com/WyrdWerk/modelwatch)"
@@ -185,9 +185,9 @@
         "flag": "🇺🇸",
         "detail": "No location controls for Gemini App or free AI Studio."
       },
-      "sourceUrl": "https://ai.google.dev/gemini-api/docs/faq",
-      "sourceDate": "2026-05-27",
-      "notes": "Critical: paying for Gemini Advanced does NOT improve privacy. Training is on by default regardless of subscription tier."
+      "sourceUrl": "https://support.google.com/gemini/answer/13594961",
+      "sourceDate": "2026-05-19",
+      "notes": "Critical: paying for Gemini Advanced does NOT improve privacy. Training is on by default regardless of subscription tier. Opt-out via 'Gemini Apps Activity' toggle — but disabling it also removes chat history. Source updated from 404 URL to Gemini Apps Privacy Hub (last updated May 19, 2026)."
     },
     {
       "id": "xai-api",
@@ -207,8 +207,8 @@
         "detail": "API inputs/outputs auto-deleted within 30 days. Exceptions: written agreement or policy violations/legal compliance."
       },
       "zdr": {
-        "label": "Enterprise Vault (functional)",
-        "detail": "Grok Enterprise Vault: dedicated data plane, CMEK encryption, 30-day auto-delete, isolated stack. Not labeled 'ZDR' but functionally equivalent."
+        "label": "Yes — ZDR-Enabled API",
+        "detail": "May 12, 2026 Enterprise ToS formally names this the 'ZDR-Enabled API.' User Content exists transiently only; deleted upon the earlier of: (a) one hour after inference completion, or (b) delivery of the response. No logs, backups, or durable copies retained for any purpose, including safety or legal compliance. Personal Data must be submitted exclusively through the ZDR-Enabled API. Foundation model training explicitly prohibited: 'xAI shall not use any User Content to train any foundation models, large language models, or other artificial intelligence systems.'"
       },
       "location": {
         "label": "US only",
@@ -217,7 +217,7 @@
       },
       "sourceUrl": "https://x.ai/legal/faq-enterprise",
       "sourceDate": "2026-05-27",
-      "notes": "",
+      "notes": "Updated May 12, 2026: xAI Enterprise ToS now formally names the product 'ZDR-Enabled API' — superseding the prior 'Enterprise Vault' label. ZDR deletion: within 1 hour of inference completion or response delivery, whichever is sooner. Training prohibition explicitly stated in ToS.",
       "relatedUrls": [
         "https://x.ai/legal/terms-of-service-enterprise"
       ]
@@ -276,11 +276,11 @@
       "location": {
         "label": "Multi-region (Frankfurt = genuine EU)",
         "flag": "🌐",
-        "detail": "Separate endpoints: China (Beijing), Singapore, US (Virginia), EU (Frankfurt), Hong Kong. Frankfurt endpoint uses ONLY Frankfurt computing resources — genuine EU data residency with German BSI C5 + AIC4 certifications. Data stays in selected region."
+        "detail": "Separate endpoints: China (Beijing), Singapore, US (Virginia), EU (Frankfurt), Hong Kong. Frankfurt endpoint uses ONLY Frankfurt computing resources — genuine EU data residency with German BSI C5 + AIC4 certifications. Data stays in selected region. CAVEAT (May 29, 2026 Product ToS): Alibaba Cloud's overarching Product Terms for Model Studio use generic language — 'transferred to, stored, and processed in the country where Alibaba Cloud, its affiliates, or its sub-contractors maintain facilities' — with no specific regional binding. Specific endpoint guarantees are in Qwen Cloud ZDR docs only."
       },
       "sourceUrl": "https://docs.qwencloud.com/developer-guides/security-compliance/zero-data-retention",
       "sourceDate": "2026-05-27",
-      "notes": "Strongest Chinese provider on data governance. Frankfurt is genuine EU residency (not just routing). GDPR compliance via EU Standard Contractual Clauses (Implementing Decision 2021/914/EU) + UK Addendum. China-based subprocessors in transfer chain: iSoftStone, Beyondsoft, Hangzhou Xutian Technology, Accenture Enterprise Cloud Hangzhou. Model Studio assistant has indefinite retention — avoid for sensitive data.",
+      "notes": "Strongest Chinese provider on data governance. Frankfurt is genuine EU residency (not just routing). GDPR compliance via EU Standard Contractual Clauses (Implementing Decision 2021/914/EU) + UK Addendum. China-based subprocessors in transfer chain: iSoftStone, Beyondsoft, Hangzhou Xutian Technology, Accenture Enterprise Cloud Hangzhou. Model Studio assistant has indefinite retention — avoid for sensitive data. NOTE (May 29, 2026 Product ToS): Overarching Alibaba Cloud Product Terms for Model Studio use generic location language with no specific regional binding; specific endpoint guarantees are in Qwen Cloud ZDR documentation.",
       "relatedUrls": [
         "https://www.alibabacloud.com/help/en/legal/latest/alibaba-cloud-international-website-product-terms-of-service-v-3-8-0"
       ]
@@ -707,8 +707,8 @@
         "detail": "Duration: 'as long as necessary' — not numerically specified. Object Storage: deleted within 4 days of deletion request. Security logs: 24 months."
       },
       "zdr": {
-        "label": "Yes — self-serve, all tiers",
-        "detail": "ZDR in account profile settings — disables Speculative Decoding data collection. Required for HIPAA/BAA compliance. May impact inference latency."
+        "label": "Yes — onboarding form or email",
+        "detail": "ZDR available via onboarding form or by emailing tokenfactory-support@nebius.com — not a self-serve UI toggle. Disables Speculative Decoding data collection. Required for HIPAA/BAA compliance. May impact inference latency."
       },
       "location": {
         "label": "EU (Finland) + US",
@@ -733,7 +733,7 @@
       "incident": false,
       "training": {
         "label": "Not explicitly prohibited",
-        "detail": "'No storage' claim confirmed for Interaction Data (API prompts/completions) in Chinese-language policy (Oct 11, 2025): 'we will not conduct any unauthorised use or disclosure of your Interaction Data, and will not store it.' However, NO explicit training prohibition found in any version. Implicit (can't train without storing) but not stated."
+        "detail": "Terms of Service (Mar 31, 2025): 'We will not access your Interaction Data...will not use or disclose it without authorization...will only use your Interaction Data in compliance with applicable laws and solely for the purpose of providing Services to you.' This constrains use to service provision but contains no explicit training prohibition. CN Privacy Policy (.cn entity): 'we will not conduct any unauthorised use or disclosure of your Interaction Data, and will not store it' — functionally stronger but applies to Chinese entity/users."
       },
       "retention": {
         "label": "No storage (Interaction Data only)",
@@ -748,9 +748,9 @@
         "flag": "🌐",
         "detail": "Server locations NOT specified in any policy version. Singapore entity governed by PDPA; China entity by Chinese law. International .com product explicitly excludes China users — separate siliconflow.cn product."
       },
-      "sourceUrl": "https://docs.siliconflow.cn/cn/legals/privacy-policy",
+      "sourceUrl": "https://docs.siliconflow.com/en/legals/terms-of-service",
       "sourceDate": "2026-05-27",
-      "notes": "Upgraded from Unverified: Chinese-language policy (Oct 11, 2025) is the most current and contains the strongest language. No SOC 2, ISO 27001, DPA, or sub-processor list. Training prohibition is implicit only. Data location undisclosed.",
+      "notes": "Source updated to English Terms of Service (Mar 31, 2025), which explicitly restricts Interaction Data use: 'will not access your Interaction Data...will not use or disclose it without authorization...solely for the purpose of providing Services to you.' CN Privacy Policy (.cn entity, Oct 2025) has stronger language: 'will not conduct any unauthorised use or disclosure of your Interaction Data, and will not store it.' No explicit training prohibition in any version — constraint is 'solely for purpose of providing Services.' No SOC 2, ISO 27001, DPA, or sub-processor list.",
       "relatedUrls": [
         "https://docs.siliconflow.com/en/legals/privacy-policy",
         "https://docs.siliconflow.cn/en/legals/privacy-policy",

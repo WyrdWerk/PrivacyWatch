@@ -5,6 +5,21 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 ---
 
+## v1.2.0 — 2026-06-07
+
+**Audit-driven updates.** Verified all 33 entries against policywatch NotebookLM (157 sources). 5 factual corrections applied; no rating changes.
+
+### Policy updates
+- **xAI / Grok — API:** ZDR label updated from "Enterprise Vault (functional)" to "Yes — ZDR-Enabled API" — May 12, 2026 Enterprise ToS formally names and defines the product. Deletion timeline: within 1 hour of inference or response delivery. Training prohibition now explicit in ToS.
+- **Alibaba / Qwen — API:** Added caveat to location detail — May 29, 2026 Product ToS uses generic location language for Model Studio with no specific regional binding; specific endpoint guarantees remain in Qwen Cloud ZDR docs.
+- **Nebius AI — API:** ZDR access method corrected — ToS specifies onboarding form or email (tokenfactory-support@nebius.com), not a self-serve UI toggle. Label updated from "self-serve, all tiers" to "onboarding form or email."
+
+### Source gap fixes
+- **Google Gemini App / AI Studio:** Source URL corrected from 404 (`ai.google.dev/gemini-api/docs/faq`) to Gemini Apps Privacy Hub (`support.google.com/gemini/answer/13594961`, last updated May 19, 2026). sourceDate updated to 2026-05-19.
+- **SiliconFlow:** Source updated from Chinese-language privacy policy to English Terms of Service (`docs.siliconflow.com/en/legals/terms-of-service`) which explicitly restricts Interaction Data use. Training prohibition remains implicit only; Caution rating unchanged.
+
+---
+
 ## v1.0.0 — 2026-05-27
 
 **Initial release.** 22 providers across 4 categories researched and documented.

@@ -1,12 +1,13 @@
 {
   "name": "modelwatch",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "private": true,
   "description": "LLM Data Policy Tracker — track data retention and model training policies",
   "scripts": {
-    "deploy": "wrangler pages deploy . --project-name modelwatch",
-    "dev": "wrangler pages dev .",
-    "validate": "node -e \"const fs=require('fs');const j=JSON.parse(fs.readFileSync('providers.json','utf-8'));const p=j.providers;const e=p.filter(x=>!x.id||!x.name||!x.surface||!x.surfaceType||!x.category||!x.rating||!x.training||!x.retention||!x.zdr||!x.location||!x.sourceUrl||!x.sourceDate||!['full','partial','none'].includes(x.zdr.status));if(e.length){console.error('❌',e.length,'provider(s) missing required fields:',e.map(x=>x.id||'?'));process.exit(1)}console.log('✅ providers.json —',p.length,'providers, last updated',j.meta.lastUpdated)\""
+    "build": "node scripts/build.mjs",
+    "deploy": "npm run build && npm run validate && wrangler pages deploy dist --project-name modelwatch",
+    "dev": "npm run build && wrangler pages dev dist",
+    "validate": "node scripts/validate.mjs"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"

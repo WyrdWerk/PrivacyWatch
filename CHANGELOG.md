@@ -5,13 +5,22 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 ---
 
-## v1.1.0 — 2026-06-01
+## v1.3.0 — 2026-06-08
 
-**Schema refinements.** Separated API vs consumer surfaces into distinct entries. Rating system formalized with 5 tiers.
+**Production recovery and release hygiene.** Restored wiped dashboard rendering, hardened frontend bootstrap, and tightened deploy output.
 
-- **Dual-surface tracking**: Providers with separate API and consumer products (OpenAI, Anthropic, Google Gemini, xAI/Grok, Moonshot AI/Kimi, Zhipu AI/GLM, MiniMax, DeepSeek, Cursor, OpenCode, Wafer AI) split into distinct entries per surface
-- **Rating system finalized**: 5-tier system formalized: Clean 🟢, Guarded 🟡, Caution 🟠, High Risk 🔴, Unverified ⚫
-- **Incident flag 🚩 introduced**: Additive marker for confirmed security breaches, regulatory actions, or government bans
+### Frontend fixes
+- Fixed startup crash caused by missing `#footerDate` element blocking `init()` and `/providers.json` fetch
+- Closed malformed toolbar markup (unclosed `.search-wrap`) that broke filter layout
+- Added defensive data-load validation, explicit error state, and URL-param sanitization
+- Escaped helper-rendered badge/ZDR fields; improved keyboard sort, search labeling, and dark-mode badge tokens
+- Header/footer dates and hero count now sync from `providers.json` `meta` after load
+
+### Release / deploy
+- Added curated `dist/` build (`npm run build`) so production no longer publishes internal `policies/` archives
+- Tightened cache headers for `/index.html` and `/providers.json` to avoid stale post-deploy content
+- Aligned `meta.version`, `package.json`, and public copy to v1.3.0 / 33 tracked surfaces
+- Standardized coding category label to "Coding Tools"
 
 ---
 
@@ -30,9 +39,19 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 ---
 
+## v1.1.0 — 2026-06-01
+
+**Schema refinements.** Separated API vs consumer surfaces into distinct entries. Rating system formalized with 5 tiers.
+
+- **Dual-surface tracking**: Providers with separate API and consumer products (OpenAI, Anthropic, Google Gemini, xAI/Grok, Moonshot AI/Kimi, Zhipu AI/GLM, MiniMax, DeepSeek, Cursor, OpenCode, Wafer AI) split into distinct entries per surface
+- **Rating system finalized**: 5-tier system formalized: Clean 🟢, Guarded 🟡, Caution 🟠, High Risk 🔴, Unverified ⚫
+- **Incident flag 🚩 introduced**: Additive marker for confirmed security breaches, regulatory actions, or government bans
+
+---
+
 ## v1.0.0 — 2026-05-27
 
-**Initial release.** 22 providers across 4 categories researched and documented.
+**Initial release.** 22 provider families across 4 categories researched and documented (33 surfaces after dual-surface splits in v1.1).
 
 ### Providers added
 - OpenAI (API + ChatGPT)

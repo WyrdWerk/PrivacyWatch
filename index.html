@@ -20,11 +20,10 @@
     "@context": "https://schema.org",
     "@type": "Dataset",
     "name": "ModelWatch — LLM Data Policy Tracker",
-    "description": "Data retention and model training policies for 22 LLM providers across 4 categories (US Frontier, Chinese, Inference, Coding Tools). Tracks 5 dimensions: training use, training default, zero data retention, retention duration, and data location.",
+    "description": "Data retention and model training policies for 33 tracked provider surfaces across 4 categories (US Frontier, Chinese, Inference, Coding Tools). Tracks training use, retention, zero data retention, and data location.",
     "url": "https://modelwatch.pages.dev",
-    "dateModified": "2026-06-07",
+    "dateModified": "2026-06-08",
     "keywords": ["LLM", "AI", "data retention", "privacy", "training data", "ZDR", "model training"],
-    "license": "https://github.com/WyrdWerk/modelwatch/blob/main/LICENSE",
     "creator": {
       "@type": "Organization",
       "name": "WyrdWerk",
@@ -36,6 +35,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
+      color-scheme: light dark;
       --bg: #f8fafc;
       --surface: #ffffff;
       --border: #e2e8f0;
@@ -160,6 +160,7 @@
     .detail-notes { margin-top: 12px; padding: 10px 12px; background: #fff8e1; border: 1px solid #fde68a; border-radius: var(--radius); font-size: 12px; color: #92400e; }
     .detail-incident { margin-top: 10px; padding: 10px 12px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: var(--radius); font-size: 12px; color: #9f1239; }
     .detail-incident strong { display: block; margin-bottom: 2px; }
+    .detail-source-footer { margin-top: 12px; font-size: 11px; color: var(--text-muted); }
 
     /* ── LEGEND ── */
     .legend { max-width: 1280px; margin: 0 auto 0; padding: 0 24px 16px; display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
@@ -170,6 +171,7 @@
 
     /* ── EMPTY STATE ── */
     .empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 14px; }
+    .error-state { text-align: center; padding: 48px 24px; color: var(--high-risk-text); font-size: 14px; }
     .loading-state { text-align: center; padding: 64px 24px; font-size: 14px; color: var(--text-muted); }
     .loading-state .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .6s linear infinite; margin-bottom: 12px; }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -177,7 +179,7 @@
     /* ── ACCESSIBILITY / POLISH ── */
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
     .sticky-col { position: sticky; left: 0; z-index: 1; background: var(--surface); }
-    th.sticky-col { z-index: 2; }
+    th.sticky-col { z-index: 2; background: #f8fafc; }
     tbody tr:hover .sticky-col { background: #fafbfc; }
     tbody tr.expanded .sticky-col { background: #f8fafc; }
     @media (prefers-color-scheme: dark) {
@@ -200,7 +202,13 @@
     /* ── DARK MODE ── */
     @media (prefers-color-scheme: dark) {
       :root {
+        color-scheme: dark;
         --bg: #0f172a;
+        --clean-bg: #14532d; --clean-text: #86efac;
+        --guarded-bg: #422006; --guarded-text: #fcd34d;
+        --caution-bg: #431407; --caution-text: #fdba74;
+        --high-risk-bg: #450a0a; --high-risk-text: #fca5a5;
+        --unverified-bg: #1e293b; --unverified-text: #94a3b8;
         --surface: #1e293b;
         --border: #334155;
         --border-light: #1e293b;
@@ -211,6 +219,7 @@
         --shadow-sm: 0 1px 3px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.2);
       }
       thead { background: #1e293b; }
+      th.sticky-col { background: #1e293b; }
       th { color: #94a3b8; }
       th:hover { color: #e2e8f0; }
       tbody tr:hover { background: #1e293b; }
@@ -257,7 +266,7 @@
 <!-- HERO -->
 <div class="hero">
   <h1>LLM Data Policy Tracker</h1>
-  <p>Who stores your prompts? Who trains on them? Researched from primary sources — privacy policies, ToS, DPAs, and API docs — across 22 providers.</p>
+  <p id="heroText">Who stores your prompts? Who trains on them? Researched from primary sources — privacy policies, ToS, DPAs, and API docs — across 33 tracked surfaces.</p>
 </div>
 
 <!-- LEGEND -->
@@ -277,22 +286,24 @@
 <!-- TOOLBAR -->
 <div class="toolbar">
   <div class="search-wrap">
-    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-    <input class="search-input" type="text" id="searchInput" placeholder="Search providers…" autocomplete="off" />
-    <button class="search-clear" id="searchClear" aria-label="Clear search">×</button>
-  <div class="filter-tabs" id="categoryTabs">
-    <button class="tab active" data-cat="all">All <span id="countAll"></span></button>
-    <button class="tab" data-cat="us-frontier">US Frontier</button>
-    <button class="tab" data-cat="chinese">Chinese</button>
-    <button class="tab" data-cat="inference">Inference</button>
-    <button class="tab" data-cat="coding">Coding Tools</button>
+    <label class="sr-only" for="searchInput">Search providers</label>
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input class="search-input" type="search" id="searchInput" placeholder="Search providers…" autocomplete="off" aria-label="Search providers" />
+    <button class="search-clear" id="searchClear" aria-label="Clear search" type="button">×</button>
+  </div>
+  <div class="filter-tabs" id="categoryTabs" role="tablist" aria-label="Filter by category">
+    <button class="tab active" type="button" role="tab" aria-selected="true" data-cat="all">All <span id="countAll"></span></button>
+    <button class="tab" type="button" role="tab" aria-selected="false" data-cat="us-frontier">US Frontier</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" data-cat="chinese">Chinese</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" data-cat="inference">Inference</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" data-cat="coding">Coding Tools</button>
   </div>
   <div class="rating-filters" id="ratingFilters">
-    <button class="rating-pill" data-rating="clean" aria-pressed="true">🟢 Clean</button>
-    <button class="rating-pill" data-rating="guarded" aria-pressed="true">🟡 Guarded</button>
-    <button class="rating-pill" data-rating="caution" aria-pressed="true">🟠 Caution</button>
-    <button class="rating-pill" data-rating="high-risk" aria-pressed="true">🔴 High Risk</button>
-    <button class="rating-pill" data-rating="unverified" aria-pressed="true">⚫ Unverified</button>
+    <button class="rating-pill" type="button" data-rating="clean" aria-pressed="true">🟢 Clean</button>
+    <button class="rating-pill" type="button" data-rating="guarded" aria-pressed="true">🟡 Guarded</button>
+    <button class="rating-pill" type="button" data-rating="caution" aria-pressed="true">🟠 Caution</button>
+    <button class="rating-pill" type="button" data-rating="high-risk" aria-pressed="true">🔴 High Risk</button>
+    <button class="rating-pill" type="button" data-rating="unverified" aria-pressed="true">⚫ Unverified</button>
   </div>
 </div>
 
@@ -316,22 +327,23 @@
         </colgroup>
         <thead>
           <tr>
-            <th style="width:40px"></th>
-            <th data-sort="name">Provider</th>
-            <th class="col-category" data-sort="category">Category</th>
-            <th data-sort="rating">Rating <span class="sort-icon">▴</span></th>
-            <th data-sort="training">Training</th>
-            <th data-sort="retention">Retention</th>
-            <th data-sort="zdr">ZDR</th>
-            <th class="col-location" data-sort="location">Location</th>
+            <th style="width:40px"><span class="sr-only">Expand row</span></th>
+            <th class="sticky-col" data-sort="name" tabindex="0" role="columnheader">Provider</th>
+            <th class="col-category" data-sort="category" tabindex="0" role="columnheader">Category</th>
+            <th data-sort="rating" tabindex="0" role="columnheader" aria-sort="ascending" class="sorted">Rating <span class="sort-icon">▴</span></th>
+            <th data-sort="training" tabindex="0" role="columnheader">Training</th>
+            <th data-sort="retention" tabindex="0" role="columnheader">Retention</th>
+            <th data-sort="zdr" tabindex="0" role="columnheader">ZDR</th>
+            <th class="col-location" data-sort="location" tabindex="0" role="columnheader">Location</th>
             <th class="col-source">Source</th>
           </tr>
         </thead>
         <tbody id="tableBody">
         </tbody>
       </table>
-      <div class="loading-state" id="loadingState" style="display:none;"><div class="spinner"></div>Loading provider data…</div>
+      <div class="loading-state" id="loadingState"><div class="spinner"></div>Loading provider data…</div>
       <div class="empty-state" id="emptyState" style="display:none;">No providers match your filters.</div>
+      <div class="error-state" id="errorState" style="display:none;" role="alert"></div>
     </div>
   </div>
 </div>
@@ -344,9 +356,15 @@
       <a href="https://github.com/WyrdWerk/modelwatch" target="_blank" rel="noopener">GitHub</a> ·
       Not legal advice · Policies change — always verify with primary sources
     </div>
-    <div class="footer-right">Last researched Jun 7, 2026</div>
+    <div class="footer-right" id="footerDate">Last researched Jun 8, 2026</div>
   </div>
 </footer>
+
+<noscript>
+  <div style="max-width:1280px;margin:16px auto;padding:16px 24px;background:#fff8e1;border:1px solid #fde68a;border-radius:6px;color:#92400e;">
+    ModelWatch requires JavaScript to load provider data. View the raw dataset at <a href="/providers.json">/providers.json</a> or the project on <a href="https://github.com/WyrdWerk/modelwatch">GitHub</a>.
+  </div>
+</noscript>
 
 <script>
 // ── DATA ──────────────────────────────────────────────────────────────────────
@@ -361,7 +379,12 @@ let sortKey = 'rating';
 let sortDir = 1;
 let expandedId = null;
 
-const META = { lastUpdated: "2026-06-07", version: "1.2.0" };
+let META = { lastUpdated: "2026-06-08", version: "1.3.0" };
+let LOAD_ERROR = null;
+
+const VALID_CATEGORIES = new Set(['all', 'us-frontier', 'chinese', 'inference', 'coding']);
+const VALID_RATINGS = new Set(['clean', 'guarded', 'caution', 'high-risk', 'unverified']);
+const VALID_SORT_KEYS = new Set(['name', 'category', 'rating', 'training', 'retention', 'zdr', 'location']);
 
 function formatDate(dateStr) {
   const d = new Date(dateStr + 'T00:00:00Z');
@@ -381,20 +404,55 @@ function escapeHtml(str) {
 // ── RENDER ────────────────────────────────────────────────────────────────────
 function ratingBadge(r, incident) {
   const labels = { clean:'🟢 Clean', guarded:'🟡 Guarded', caution:'🟠 Caution', 'high-risk':'🔴 High Risk', unverified:'⚫ Unverified' };
-  let html = `<span class="badge badge-${r}">${labels[r]||r}</span>`;
-  if (incident) html += `<span class="incident-flag" title="Confirmed security incident or government ban">🚩</span>`;
+  let html = `<span class="badge badge-${escapeHtml(r)}">${labels[r]||escapeHtml(r)}</span>`;
+  if (incident) html += `<span class="incident-flag" title="Confirmed security incident or government ban" aria-label="Confirmed security incident or government ban">🚩</span>`;
   return html;
 }
 
 function surfaceBadge(surfaceType, surface) {
   const cls = surfaceType === 'api' ? 'badge-api' : 'badge-consumer';
-  return `<span class="badge ${cls}">${surface}</span>`;
+  return `<span class="badge ${cls}">${escapeHtml(surface)}</span>`;
 }
 
 function zdrCell(zdr) {
-  if (zdr.status === 'full') return `<span class="zdr-yes">✓ ${zdr.label}</span>`;
-  if (zdr.status === 'partial') return `<span class="zdr-partial">◑ ${zdr.label}</span>`;
-  return `<span class="zdr-no">${zdr.label}</span>`;
+  const label = escapeHtml(zdr.label);
+  if (zdr.status === 'full') return `<span class="zdr-yes">✓ ${label}</span>`;
+  if (zdr.status === 'partial') return `<span class="zdr-partial">◑ ${label}</span>`;
+  return `<span class="zdr-no">${label}</span>`;
+}
+
+function setMetaDates() {
+  const formatted = formatDate(META.lastUpdated);
+  const lastUpdated = document.getElementById('lastUpdated');
+  const footerDate = document.getElementById('footerDate');
+  if (lastUpdated) lastUpdated.textContent = `Updated ${formatted}`;
+  if (footerDate) footerDate.textContent = `Last researched ${formatted}`;
+  const ld = document.querySelector('script[type="application/ld+json"]');
+  if (ld) {
+    try {
+      const data = JSON.parse(ld.textContent);
+      data.dateModified = META.lastUpdated;
+      ld.textContent = JSON.stringify(data, null, 2);
+    } catch (_) { /* ignore */ }
+  }
+}
+
+function updateHeroCount(count) {
+  const hero = document.getElementById('heroText');
+  if (hero && count) {
+    hero.textContent = `Who stores your prompts? Who trains on them? Researched from primary sources — privacy policies, ToS, DPAs, and API docs — across ${count} tracked surfaces.`;
+  }
+}
+
+function showLoadError(message) {
+  LOAD_ERROR = message;
+  const loading = document.getElementById('loadingState');
+  const error = document.getElementById('errorState');
+  if (loading) loading.style.display = 'none';
+  if (error) {
+    error.style.display = '';
+    error.innerHTML = `${escapeHtml(message)} <button type="button" onclick="location.reload()" style="background:none;border:1px solid var(--text-muted);border-radius:4px;padding:4px 12px;cursor:pointer;color:var(--text-primary);font-size:13px;margin-left:8px;">Retry</button>`;
+  }
 }
 
 // Logo mapping — brand SVGs + generated initials as fallback
@@ -499,24 +557,43 @@ function render() {
   const tbody = document.getElementById('tableBody');
   const empty = document.getElementById('emptyState');
   const loading = document.getElementById('loadingState');
+  const error = document.getElementById('errorState');
   const countEl = document.getElementById('resultsCount');
 
-  if (!LOADED) {
+  if (LOAD_ERROR) {
     tbody.innerHTML = '';
-    empty.style.display = 'none';
-    loading.style.display = '';
-    document.getElementById('countAll').textContent = '';
-    countEl.textContent = '';
+    if (empty) empty.style.display = 'none';
+    if (loading) loading.style.display = 'none';
+    showLoadError(LOAD_ERROR);
     return;
   }
 
-  loading.style.display = 'none';
-  const data = filtered();
-  countEl.textContent = `Showing ${data.length} of ${PROVIDERS.length} providers`;
-  document.getElementById('countAll').textContent = `(${PROVIDERS.length})`;
+  if (!LOADED) {
+    tbody.innerHTML = '';
+    if (empty) empty.style.display = 'none';
+    if (error) error.style.display = 'none';
+    if (loading) loading.style.display = '';
+    const countAll = document.getElementById('countAll');
+    if (countAll) countAll.textContent = '';
+    if (countEl) countEl.textContent = '';
+    return;
+  }
 
-  if (!data.length) { tbody.innerHTML = ''; empty.style.display = ''; loading.style.display = 'none'; syncUrl(); return; }
-  empty.style.display = 'none';
+  if (loading) loading.style.display = 'none';
+  if (error) error.style.display = 'none';
+  const data = filtered();
+  if (countEl) countEl.textContent = `Showing ${data.length} of ${PROVIDERS.length} providers`;
+  const countAll = document.getElementById('countAll');
+  if (countAll) countAll.textContent = `(${PROVIDERS.length})`;
+
+  if (!data.length) {
+    tbody.innerHTML = '';
+    if (empty) empty.style.display = '';
+    if (loading) loading.style.display = 'none';
+    syncUrl();
+    return;
+  }
+  if (empty) empty.style.display = 'none';
 
   try {
     tbody.innerHTML = data.map(p => {
@@ -569,8 +646,8 @@ function render() {
           </div>
           ${p.incident && pIncidentDetail ? `<div class="detail-incident"><strong>🚩 Confirmed Incident / Government Action</strong>${pIncidentDetail}</div>` : ''}
           ${pNotes ? `<div class="detail-notes">📌 ${pNotes}</div>` : ''}
-          <div style="margin-top:12px;font-size:11px;color:#94a3b8;">
-            Primary Source: <a class="source-link" href="${pSourceUrl}" target="_blank" rel="noopener">${pSourceUrl}</a> — Verified ${pSourceDate}
+          <div class="detail-source-footer">
+            Primary Source: <a class="source-link" href="${pSourceUrl}" target="_blank" rel="noopener noreferrer">${pSourceUrl}</a> — Verified ${pSourceDate}
             ${pRelatedUrls ? `<div style="margin-top:4px;">Related: ${pRelatedUrls.map(u => `<a class="source-link" href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(u)}</a>`).join(' · ')}</div>` : ''}
           </div>
         </div>
@@ -580,8 +657,9 @@ function render() {
   } catch (err) {
     console.error('Render error:', err);
     tbody.innerHTML = '';
-    empty.style.display = '';
-    loading.style.display = 'none';
+    if (empty) empty.style.display = 'none';
+    if (loading) loading.style.display = 'none';
+    showLoadError('Unable to display provider results.');
   }
   syncUrl();
 }
@@ -595,8 +673,12 @@ function toggleRow(id) {
 document.getElementById('categoryTabs').addEventListener('click', e => {
   const t = e.target.closest('.tab');
   if (!t) return;
-  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(x => {
+    x.classList.remove('active');
+    x.setAttribute('aria-selected', 'false');
+  });
   t.classList.add('active');
+  t.setAttribute('aria-selected', 'true');
   activeCategory = t.dataset.cat;
   expandedId = null;
   render();
@@ -643,26 +725,33 @@ document.getElementById('searchInput').addEventListener('input', e => {
   }, 150);
 });
 
-// Sort
+function applySort(th) {
+  const k = th.dataset.sort;
+  if (!VALID_SORT_KEYS.has(k)) return;
+  if (sortKey === k) sortDir *= -1;
+  else { sortKey = k; sortDir = 1; }
+  document.querySelectorAll('th').forEach(x => x.classList.remove('sorted'));
+  th.classList.add('sorted');
+  document.querySelectorAll('th[data-sort]').forEach(h => {
+    if (h === th) {
+      h.setAttribute('aria-sort', sortDir === 1 ? 'ascending' : 'descending');
+    } else {
+      h.removeAttribute('aria-sort');
+    }
+  });
+  let icon = th.querySelector('.sort-icon');
+  if (!icon) { icon = document.createElement('span'); icon.className = 'sort-icon'; th.appendChild(icon); }
+  icon.textContent = sortDir === 1 ? '▴' : '▾';
+  render();
+}
+
 document.querySelectorAll('th[data-sort]').forEach(th => {
-  th.addEventListener('click', () => {
-    const k = th.dataset.sort;
-    if (sortKey === k) sortDir *= -1;
-    else { sortKey = k; sortDir = 1; }
-    document.querySelectorAll('th').forEach(x => x.classList.remove('sorted'));
-    th.classList.add('sorted');
-    // Update aria-sort on all sortable headers
-    document.querySelectorAll('th[data-sort]').forEach(h => {
-      if (h === th) {
-        h.setAttribute('aria-sort', sortDir === 1 ? 'ascending' : 'descending');
-      } else {
-        h.removeAttribute('aria-sort');
-      }
-    });
-    let icon = th.querySelector('.sort-icon');
-    if (!icon) { icon = document.createElement('span'); icon.className = 'sort-icon'; th.appendChild(icon); }
-    icon.textContent = sortDir === 1 ? '▴' : '▾';
-    render();
+  th.addEventListener('click', () => applySort(th));
+  th.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      applySort(th);
+    }
   });
 });
 
@@ -672,56 +761,81 @@ document.getElementById('tableBody').addEventListener('click', e => {
 });
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
-document.getElementById('lastUpdated').textContent = `Updated ${formatDate(META.lastUpdated)}`;
-document.getElementById('footerDate').textContent = `Last researched ${formatDate(META.lastUpdated)}`;
-
-async function init() {
-  // Restore state from URL params
+function restoreUrlState() {
   const params = new URLSearchParams(window.location.search);
+
   if (params.has('cat')) {
-    activeCategory = params.get('cat');
-    document.querySelectorAll('.tab').forEach(t => {
-      t.classList.toggle('active', t.dataset.cat === activeCategory);
-    });
+    const cat = params.get('cat');
+    if (VALID_CATEGORIES.has(cat)) activeCategory = cat;
   }
+  document.querySelectorAll('.tab').forEach(t => {
+    const active = t.dataset.cat === activeCategory;
+    t.classList.toggle('active', active);
+    t.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+
   if (params.has('rating')) {
-    const ratings = params.get('rating').split(',');
-    activeRatings = new Set(ratings);
-    document.querySelectorAll('.rating-pill').forEach(p => {
-      const active = activeRatings.has(p.dataset.rating);
-      p.classList.toggle('inactive', !active);
-      p.setAttribute('aria-pressed', active);
-    });
+    const ratings = params.get('rating').split(',').filter(r => VALID_RATINGS.has(r));
+    if (ratings.length) activeRatings = new Set(ratings);
   }
+  document.querySelectorAll('.rating-pill').forEach(p => {
+    const active = activeRatings.has(p.dataset.rating);
+    p.classList.toggle('inactive', !active);
+    p.setAttribute('aria-pressed', active);
+  });
+
   if (params.has('sort')) {
-    sortKey = params.get('sort');
-    sortDir = params.has('dir') ? parseInt(params.get('dir'), 10) : 1;
-    document.querySelectorAll('th').forEach(x => x.classList.remove('sorted'));
-    const th = document.querySelector(`th[data-sort="${sortKey}"]`);
-    if (th) {
-      th.classList.add('sorted');
-      th.setAttribute('aria-sort', sortDir === 1 ? 'ascending' : 'descending');
-      let icon = th.querySelector('.sort-icon');
-      if (!icon) { icon = document.createElement('span'); icon.className = 'sort-icon'; th.appendChild(icon); }
-      icon.textContent = sortDir === 1 ? '▴' : '▾';
-    }
+    const sort = params.get('sort');
+    if (VALID_SORT_KEYS.has(sort)) sortKey = sort;
   }
+  if (params.has('dir')) {
+    const dir = parseInt(params.get('dir'), 10);
+    if (dir === 1 || dir === -1) sortDir = dir;
+  }
+  document.querySelectorAll('th').forEach(x => x.classList.remove('sorted'));
+  const th = document.querySelector(`th[data-sort="${sortKey}"]`);
+  if (th) {
+    th.classList.add('sorted');
+    th.setAttribute('aria-sort', sortDir === 1 ? 'ascending' : 'descending');
+    let icon = th.querySelector('.sort-icon');
+    if (!icon) { icon = document.createElement('span'); icon.className = 'sort-icon'; th.appendChild(icon); }
+    icon.textContent = sortDir === 1 ? '▴' : '▾';
+  }
+
   if (params.has('q')) {
     searchQuery = params.get('q');
     const input = document.getElementById('searchInput');
-    input.value = searchQuery;
-    input.closest('.search-wrap').classList.toggle('has-value', searchQuery.length > 0);
+    if (input) {
+      input.value = searchQuery;
+      input.closest('.search-wrap')?.classList.toggle('has-value', searchQuery.length > 0);
+    }
   }
+}
+
+async function init() {
+  setMetaDates();
+  restoreUrlState();
+  render();
 
   try {
     const res = await fetch('/providers.json');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = await res.json();
+    if (!json || !Array.isArray(json.providers) || !json.providers.length) {
+      throw new Error('Invalid provider data payload');
+    }
     PROVIDERS = json.providers;
+    if (json.meta) {
+      if (json.meta.lastUpdated) META.lastUpdated = json.meta.lastUpdated;
+      if (json.meta.version) META.version = json.meta.version;
+      setMetaDates();
+    }
+    updateHeroCount(PROVIDERS.length);
     LOADED = true;
+    LOAD_ERROR = null;
   } catch (err) {
     console.error('Failed to load provider data:', err);
-    document.getElementById('loadingState').innerHTML = 'Failed to load provider data. <button onclick="location.reload()" style="background:none;border:1px solid var(--text-muted);border-radius:4px;padding:4px 12px;cursor:pointer;color:var(--text-primary);font-size:13px;">Retry</button>';
+    showLoadError('Failed to load provider data.');
   }
   render();
 }

@@ -1,6 +1,6 @@
-# ModelWatch — Archived Policy Documents
+# PolicyWatch — Archived Policy Documents
 
-Local snapshots of the primary source documents underlying the ModelWatch dashboard ratings.
+Local snapshots of the primary source documents underlying the PolicyWatch dashboard ratings.
 All files scraped and saved on **2026-05-27**.
 
 | Provider | Surface | Category | Source URL | Archived File |

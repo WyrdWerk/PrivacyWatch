@@ -1,6 +1,6 @@
-# ModelWatch Policy Audit — 2026-06-07
+# PolicyWatch Policy Audit — 2026-06-07
 
-**Method:** Cross-reference of all 33 `providers.json` entries against the policywatch NotebookLM notebook (157 sources), including documents dated after the May 27, 2026 local archive cutoff.
+**Method:** Cross-reference of all 33 `providers.json` entries against the PolicyWatch NotebookLM notebook (157 sources), including documents dated after the May 27, 2026 local archive cutoff.
 **Prior audit:** `policies/VERIFICATION_REPORT.md` (2026-05-27, 29 archived files)
 **Conducted:** 2026-06-07
 
@@ -572,7 +572,7 @@
 
 ## Notebook Coverage Notes
 
-The policywatch notebook (157 sources) contains archived policy documents plus live ToS/DPA documents retrieved from provider websites. Post-May 2026 documents found:
+The PolicyWatch notebook (157 sources) contains archived policy documents plus live ToS/DPA documents retrieved from provider websites. Post-May 2026 documents found:
 - Google Cloud Platform ToS — June 1, 2026 (enterprise only; no material change)
 - xAI Enterprise ToS — May 12, 2026 (ZDR terminology update)
 - Alibaba Cloud Product ToS — May 29, 2026 (generic location language for Model Studio)

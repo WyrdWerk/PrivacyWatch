@@ -5,6 +5,12 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 ---
 
+## v1.3.1 — 2026-06-08
+
+**PolicyWatch branding rename.** User-facing product name updated from ModelWatch to PolicyWatch across UI, public data metadata, schema title, and internal policy docs. Infra-dependent targets (`modelwatch.pages.dev`, GitHub repo slug, Cloudflare Pages project name) intentionally unchanged until new targets are live.
+
+---
+
 ## v1.3.0 — 2026-06-08
 
 **Production recovery and release hygiene.** Restored wiped dashboard rendering, hardened frontend bootstrap, and tightened deploy output.
@@ -26,7 +32,7 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 ## v1.2.0 — 2026-06-07
 
-**Audit-driven updates.** Verified all 33 entries against policywatch NotebookLM (157 sources). 5 factual corrections applied; no rating changes.
+**Audit-driven updates.** Verified all 33 entries against PolicyWatch NotebookLM (157 sources). 5 factual corrections applied; no rating changes.
 
 ### Policy updates
 - **xAI / Grok — API:** ZDR label updated from "Enterprise Vault (functional)" to "Yes — ZDR-Enabled API" — May 12, 2026 Enterprise ToS formally names and defines the product. Deletion timeline: within 1 hour of inference or response delivery. Training prohibition now explicit in ToS.

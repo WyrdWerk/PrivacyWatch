@@ -1,4 +1,4 @@
-# ModelWatch
+# PolicyWatch
 
 **LLM data retention and model training policy tracker.**
 
@@ -97,6 +97,17 @@ npm run deploy     # build, validate, deploy to Cloudflare Pages
 ```
 
 Hosted on Cloudflare Pages. Production deploys only the curated `dist/` output (app shell, data JSON, assets, and public metadata).
+
+### Rename follow-up (infra-gated)
+
+Product branding is **PolicyWatch**. The following still point at live `modelwatch` infrastructure until new targets exist:
+
+- `index.html` canonical / Open Graph / JSON-LD URLs
+- `robots.txt` and `sitemap.xml` sitemap URLs
+- GitHub links (`WyrdWerk/modelwatch`) and `providers.json` maintainer URL
+- `wrangler.jsonc` project name and `npm run deploy` `--project-name`
+
+Update these in one release when `policywatch.pages.dev` (or `policywatch.wyrdwerk.com`), the renamed GitHub repo, and the Cloudflare Pages project are ready.
 
 ---
 

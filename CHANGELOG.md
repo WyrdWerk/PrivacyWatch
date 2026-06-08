@@ -5,6 +5,16 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 ---
 
+## v1.1.0 — 2026-06-01
+
+**Schema refinements.** Separated API vs consumer surfaces into distinct entries. Rating system formalized with 5 tiers.
+
+- **Dual-surface tracking**: Providers with separate API and consumer products (OpenAI, Anthropic, Google Gemini, xAI/Grok, Moonshot AI/Kimi, Zhipu AI/GLM, MiniMax, DeepSeek, Cursor, OpenCode, Wafer AI) split into distinct entries per surface
+- **Rating system finalized**: 5-tier system formalized: Clean 🟢, Guarded 🟡, Caution 🟠, High Risk 🔴, Unverified ⚫
+- **Incident flag 🚩 introduced**: Additive marker for confirmed security breaches, regulatory actions, or government bans
+
+---
+
 ## v1.2.0 — 2026-06-07
 
 **Audit-driven updates.** Verified all 33 entries against policywatch NotebookLM (157 sources). 5 factual corrections applied; no rating changes.

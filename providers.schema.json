@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ModelWatch Provider Data",
+  "type": "object",
+  "required": ["meta", "providers"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["lastUpdated", "version", "description"],
+      "properties": {
+        "lastUpdated": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+        "version": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "providers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "surface", "surfaceType", "category", "rating", "training", "retention", "zdr", "location", "sourceUrl", "sourceDate"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "surface": { "type": "string" },
+          "surfaceType": { "type": "string", "enum": ["api", "consumer"] },
+          "category": { "type": "string", "enum": ["us-frontier", "chinese", "inference", "coding"] },
+          "categoryLabel": { "type": "string" },
+          "rating": { "type": "string", "enum": ["clean", "guarded", "caution", "high-risk", "unverified"] },
+          "incident": { "type": "boolean" },
+          "incidentDetail": { "type": "string" },
+          "training": {
+            "type": "object",
+            "required": ["label", "detail"],
+            "properties": {
+              "label": { "type": "string" },
+              "detail": { "type": "string" }
+            }
+          },
+          "retention": {
+            "type": "object",
+            "required": ["label", "detail"],
+            "properties": {
+              "label": { "type": "string" },
+              "detail": { "type": "string" }
+            }
+          },
+          "zdr": {
+            "type": "object",
+            "required": ["label", "detail", "status"],
+            "properties": {
+              "label": { "type": "string" },
+              "detail": { "type": "string" },
+              "status": { "type": "string", "enum": ["full", "partial", "none"] }
+            }
+          },
+          "location": {
+            "type": "object",
+            "required": ["label", "flag", "detail"],
+            "properties": {
+              "label": { "type": "string" },
+              "flag": { "type": "string" },
+              "detail": { "type": "string" }
+            }
+          },
+          "sourceUrl": { "type": "string", "format": "uri" },
+          "sourceDate": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+          "notes": { "type": "string" },
+          "relatedUrls": {
+            "type": "array",
+            "items": { "type": "string", "format": "uri" }
+          }
+        }
+      }
+    }
+  }
+}

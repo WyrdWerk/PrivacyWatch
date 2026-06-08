@@ -7,6 +7,31 @@
   <meta name="description" content="Track data retention and model training policies across major LLM providers, inference APIs, and AI coding tools." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="canonical" href="https://modelwatch.pages.dev" />
+  <meta property="og:title" content="ModelWatch — LLM Data Policy Tracker" />
+  <meta property="og:description" content="Track data retention and model training policies across major LLM providers, inference APIs, and AI coding tools." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://modelwatch.pages.dev" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ModelWatch — LLM Data Policy Tracker" />
+  <meta name="twitter:description" content="Track data retention and model training policies across major LLM providers, inference APIs, and AI coding tools." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "name": "ModelWatch — LLM Data Policy Tracker",
+    "description": "Data retention and model training policies for 22 LLM providers across 4 categories (US Frontier, Chinese, Inference, Coding Tools). Tracks 5 dimensions: training use, training default, zero data retention, retention duration, and data location.",
+    "url": "https://modelwatch.pages.dev",
+    "dateModified": "2026-06-07",
+    "keywords": ["LLM", "AI", "data retention", "privacy", "training data", "ZDR", "model training"],
+    "license": "https://github.com/WyrdWerk/modelwatch/blob/main/LICENSE",
+    "creator": {
+      "@type": "Organization",
+      "name": "WyrdWerk",
+      "url": "https://wyrdwerk.com"
+    }
+  }
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -17,9 +42,8 @@
       --border-light: #f1f5f9;
       --text-primary: #0f172a;
       --text-secondary: #475569;
-      --text-muted: #94a3b8;
+      --text-muted: #64748b;
       --accent: #3b82f6;
-      --accent-hover: #2563eb;
       --clean-bg: #dcfce7; --clean-text: #15803d;
       --guarded-bg: #fef9c3; --guarded-text: #854d0e;
       --caution-bg: #ffedd5; --caution-text: #9a3412;
@@ -146,6 +170,24 @@
 
     /* ── EMPTY STATE ── */
     .empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 14px; }
+    .loading-state { text-align: center; padding: 64px 24px; font-size: 14px; color: var(--text-muted); }
+    .loading-state .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .6s linear infinite; margin-bottom: 12px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── ACCESSIBILITY / POLISH ── */
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .sticky-col { position: sticky; left: 0; z-index: 1; background: var(--surface); }
+    th.sticky-col { z-index: 2; }
+    tbody tr:hover .sticky-col { background: #fafbfc; }
+    tbody tr.expanded .sticky-col { background: #f8fafc; }
+    @media (prefers-color-scheme: dark) {
+      tbody tr:hover .sticky-col { background: #1e293b; }
+      tbody tr.expanded .sticky-col { background: #1e293b; }
+    }
+    .search-clear { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 16px; line-height: 1; padding: 2px 6px; display: none; border-radius: 3px; }
+    .search-clear:hover { color: var(--text-primary); background: var(--border-light); }
+    .search-wrap.has-value .search-clear { display: block; }
+    .search-wrap.has-value .search-input { padding-right: 28px; }
 
     /* ── FOOTER ── */
     footer { border-top: 1px solid var(--border); background: var(--surface); margin-top: 0; }
@@ -155,9 +197,36 @@
     .footer-left a:hover { color: var(--accent); }
     .footer-right { font-size: 12px; color: var(--text-muted); }
 
-    /* ── TOOLTIP ── */
-    [data-tip] { position: relative; }
-    [data-tip]:hover::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: #1e293b; color: #f8fafc; font-size: 11px; padding: 6px 10px; border-radius: 5px; white-space: normal; max-width: 240px; text-align: left; z-index: 200; line-height: 1.4; pointer-events: none; }
+    /* ── DARK MODE ── */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --surface: #1e293b;
+        --border: #334155;
+        --border-light: #1e293b;
+        --text-primary: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+        --accent: #60a5fa;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.2);
+      }
+      thead { background: #1e293b; }
+      th { color: #94a3b8; }
+      th:hover { color: #e2e8f0; }
+      tbody tr:hover { background: #1e293b; }
+      tbody tr.expanded { background: #1e293b; }
+      tbody tr:nth-child(even):not(.detail-row) { background: #1a2332; }
+      .table-card { border-color: #334155; }
+      .detail-inner { background: #1e293b; }
+      .detail-notes { background: #422006; border-color: #78350f; color: #fcd34d; }
+      .detail-incident { background: #4c0519; border-color: #881337; color: #fda4af; }
+      .search-input { background: #334155; border-color: #475569; color: #f1f5f9; }
+      .tab:hover { background: rgba(30,41,59,.7); }
+      .filter-tabs { background: #1e293b; }
+      .tab.active { background: #334155; box-shadow: none; }
+      .header-meta a { color: #94a3b8; }
+      footer { border-color: #334155; }
+    }
 
     @media (max-width: 768px) {
       .header-inner { padding: 0 16px; }
@@ -210,7 +279,7 @@
   <div class="search-wrap">
     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
     <input class="search-input" type="text" id="searchInput" placeholder="Search providers…" autocomplete="off" />
-  </div>
+    <button class="search-clear" id="searchClear" aria-label="Clear search">×</button>
   <div class="filter-tabs" id="categoryTabs">
     <button class="tab active" data-cat="all">All <span id="countAll"></span></button>
     <button class="tab" data-cat="us-frontier">US Frontier</button>
@@ -219,15 +288,15 @@
     <button class="tab" data-cat="coding">Coding Tools</button>
   </div>
   <div class="rating-filters" id="ratingFilters">
-    <div class="rating-pill" data-rating="clean">🟢 Clean</div>
-    <div class="rating-pill" data-rating="guarded">🟡 Guarded</div>
-    <div class="rating-pill" data-rating="caution">🟠 Caution</div>
-    <div class="rating-pill" data-rating="high-risk">🔴 High Risk</div>
-    <div class="rating-pill" data-rating="unverified">⚫ Unverified</div>
+    <button class="rating-pill" data-rating="clean" aria-pressed="true">🟢 Clean</button>
+    <button class="rating-pill" data-rating="guarded" aria-pressed="true">🟡 Guarded</button>
+    <button class="rating-pill" data-rating="caution" aria-pressed="true">🟠 Caution</button>
+    <button class="rating-pill" data-rating="high-risk" aria-pressed="true">🔴 High Risk</button>
+    <button class="rating-pill" data-rating="unverified" aria-pressed="true">⚫ Unverified</button>
   </div>
 </div>
 
-<div class="results-bar"><span id="resultsCount"></span></div>
+<div class="results-bar"><span id="resultsCount" aria-live="polite" aria-atomic="true"></span></div>
 
 <!-- TABLE -->
 <div class="table-wrap">
@@ -250,7 +319,7 @@
             <th style="width:40px"></th>
             <th data-sort="name">Provider</th>
             <th class="col-category" data-sort="category">Category</th>
-            <th data-sort="rating">Rating ▾</th>
+            <th data-sort="rating">Rating <span class="sort-icon">▴</span></th>
             <th data-sort="training">Training</th>
             <th data-sort="retention">Retention</th>
             <th data-sort="zdr">ZDR</th>
@@ -261,6 +330,7 @@
         <tbody id="tableBody">
         </tbody>
       </table>
+      <div class="loading-state" id="loadingState" style="display:none;"><div class="spinner"></div>Loading provider data…</div>
       <div class="empty-state" id="emptyState" style="display:none;">No providers match your filters.</div>
     </div>
   </div>
@@ -280,7 +350,8 @@
 
 <script>
 // ── DATA ──────────────────────────────────────────────────────────────────────
-const PROVIDERS = [{"id":"openai-api","name":"OpenAI","surface":"API","surfaceType":"api","category":"us-frontier","categoryLabel":"US Frontier","rating":"clean","incident":false,"training":{"label":"Off by default","detail":"No training on API data since March 1, 2023. Opt-in available if customer explicitly requests."},"retention":{"label":"30 days","detail":"API inputs/outputs auto-deleted after 30 days. Application state retention varies by endpoint."},"zdr":{"label":"Yes — approval required","detail":"ZDR requires OpenAI approval + written amendment + 10% price uplift. EU data residency requires ZDR amendment."},"location":{"label":"US + EU option","flag":"🇺🇸","detail":"US primary. EU residency (Ireland + others) available with ZDR amendment and approval."},"sourceUrl":"https://platform.openai.com/docs/guides/your-data","sourceDate":"2026-05-27","notes":"API has been training-off by default since March 2023."},{"id":"openai-chatgpt","name":"OpenAI","surface":"ChatGPT","surfaceType":"consumer","category":"us-frontier","categoryLabel":"US Frontier","rating":"caution","incident":false,"training":{"label":"On by default","detail":"Free, Plus, Pro: training ON by default. Opt-out: Settings → Data Controls → toggle off. Business/Enterprise/Edu: OFF by default."},"retention":{"label":"30 days after deletion","detail":"Deleted chats removed within 30 days. Temporary Chats auto-deleted in 30 days, never used for training."},"zdr":{"label":"Not available","detail":"ZDR not available on any consumer plan. Enterprise tier only (approval required)."},"location":{"label":"US primary","flag":"🇺🇸","detail":"US + globally via trusted service providers. EU residency not available for consumer plans."},"sourceUrl":"https://help.openai.com/en/articles/7730893","sourceDate":"2026-05-27","notes":"Paying for Plus or Pro does NOT disable training by default."},{"id":"anthropic-api","name":"Anthropic","surface":"API","surfaceType":"api","category":"us-frontier","categoryLabel":"US Frontier","rating":"clean","incident":false,"training":{"label":"Off by default","detail":"No training on commercial API data. Opt-in via feedback submission only. 'By default, we will not use your inputs or outputs to train our models.'"},"retention":{"label":"30 days auto-delete","detail":"Inputs/outputs auto-deleted within 30 days. ZDR = immediate post-response. Policy violations: up to 2 years."},"zdr":{"label":"Yes — enterprise approval","detail":"ZDR available for enterprise API customers. Requires Anthropic account team + per-org enablement. Eligible: Messages API, Token Counting, Prompt Caching. Not eligible: Batch, Files API."},"location":{"label":"US only","flag":"🇺🇸","detail":"Workspace geo: US only. EU residency available via AWS Bedrock, GCP Vertex, or Azure Foundry — those providers' policies apply."},"sourceUrl":"https://platform.claude.com/docs/en/manage-claude/api-and-data-retention","sourceDate":"2026-05-27","notes":"If using Claude via AWS Bedrock, GCP Vertex, or Azure — Anthropic's policy does not govern; cloud provider's policies apply.","relatedUrls":["https://www.anthropic.com/legal/commercial-terms"]},{"id":"anthropic-claude","name":"Anthropic","surface":"Claude.ai","surfaceType":"consumer","category":"us-frontier","categoryLabel":"US Frontier","rating":"guarded","incident":false,"training":{"label":"Opt-in required","detail":"Training OFF by default. User must explicitly enable 'Model Improvement' toggle in Privacy Settings — the only US Frontier consumer product with opt-IN training."},"retention":{"label":"30 days after deletion","detail":"Backend storage cleared within 30 days after user deletes. If training opted in: de-identified data up to 5 years. Incognito chats: 30 days regardless, never trained."},"zdr":{"label":"Not available","detail":"ZDR not available for Claude.ai Free/Pro/Max. Incognito mode is available (auto-deleted 30 days, never trained on)."},"location":{"label":"US only","flag":"🇺🇸","detail":"No geographic controls for consumer plans."},"sourceUrl":"https://privacy.claude.com/en/articles/10023580","sourceDate":"2026-05-27","notes":"Only US Frontier consumer product where training is opt-IN, not opt-out. Incognito mode is a genuine privacy feature."},{"id":"google-vertex","name":"Google Gemini","surface":"Vertex AI / Paid API","surfaceType":"api","category":"us-frontier","categoryLabel":"US Frontier","rating":"clean","incident":false,"training":{"label":"Off by default","detail":"Paid API/Vertex AI: data NOT used for training. Governed by Cloud Data Processing Addendum; Google acts as data processor."},"retention":{"label":"Limited period (unspecified)","detail":"Abuse monitoring: 'limited period' — duration deliberately not specified. Grounding (Search/Maps): mandatory 30-day retention even under ZDR."},"zdr":{"label":"Yes — Vertex AI","detail":"ZDR equivalent available. Caveat: grounding with Google Search/Maps retains data for 30 days mandatory — true zero retention not achievable when grounding is used."},"location":{"label":"US + EU residency","flag":"🇺🇸🇪🇺","detail":"Vertex AI offers EU data residency for enterprise. Regional Google Cloud options available."},"sourceUrl":"https://cloud.google.com/vertex-ai/generative-ai/docs/data-governance","sourceDate":"2026-05-27","notes":"'Limited period' retention is deliberately vague. Grounding creates a ZDR exception."},{"id":"google-gemini-app","name":"Google Gemini","surface":"Gemini App / AI Studio","surfaceType":"consumer","category":"us-frontier","categoryLabel":"US Frontier","rating":"caution","incident":false,"training":{"label":"On by default","detail":"Free Gemini App and AI Studio: training ON. Used to improve Google products and ML technologies. Paying for Gemini Advanced does NOT change this — same policy as free."},"retention":{"label":"Until deleted; 3yr post-review","detail":"Until user deletes. Human-reviewed data retained 3 years post-anonymization."},"zdr":{"label":"Not available","detail":"ZDR not available on Gemini App or free AI Studio."},"location":{"label":"US","flag":"🇺🇸","detail":"No location controls for Gemini App or free AI Studio."},"sourceUrl":"https://support.google.com/gemini/answer/13594961","sourceDate":"2026-05-19","notes":"Critical: paying for Gemini Advanced does NOT improve privacy. Training is on by default regardless of subscription tier. Opt-out via 'Gemini Apps Activity' toggle — but disabling it also removes chat history. Source updated from 404 URL to Gemini Apps Privacy Hub (last updated May 19, 2026)."},{"id":"xai-api","name":"xAI / Grok","surface":"API","surfaceType":"api","category":"us-frontier","categoryLabel":"US Frontier","rating":"clean","incident":false,"training":{"label":"Off by default","detail":"'We do not use your business data, including inputs or outputs, for training our models.' Opt-in available (free credits in exchange)."},"retention":{"label":"30 days auto-delete","detail":"API inputs/outputs auto-deleted within 30 days. Exceptions: written agreement or policy violations/legal compliance."},"zdr":{"label":"Yes — ZDR-Enabled API","detail":"May 12, 2026 Enterprise ToS formally names this the 'ZDR-Enabled API.' User Content exists transiently only; deleted upon the earlier of: (a) one hour after inference completion, or (b) delivery of the response. No logs, backups, or durable copies retained for any purpose, including safety or legal compliance. Personal Data must be submitted exclusively through the ZDR-Enabled API. Foundation model training explicitly prohibited: 'xAI shall not use any User Content to train any foundation models, large language models, or other artificial intelligence systems.'"},"location":{"label":"US only","flag":"🇺🇸","detail":"All xAI services processed in the United States. No EU data residency."},"sourceUrl":"https://x.ai/legal/faq-enterprise","sourceDate":"2026-05-27","notes":"Updated May 12, 2026: xAI Enterprise ToS now formally names the product 'ZDR-Enabled API' — superseding the prior 'Enterprise Vault' label. ZDR deletion: within 1 hour of inference completion or response delivery, whichever is sooner. Training prohibition explicitly stated in ToS.","relatedUrls":["https://x.ai/legal/terms-of-service-enterprise"]},{"id":"xai-grok-consumer","name":"xAI / Grok","surface":"Grok.com / X","surfaceType":"consumer","category":"us-frontier","categoryLabel":"US Frontier","rating":"caution","incident":false,"training":{"label":"On by default","detail":"Grok.com/mobile: conversations used for training by default. Grok on X: X Corp shares public posts + Grok interactions with xAI for training. Opt-out available in both."},"retention":{"label":"Indefinite until deleted","detail":"Grok.com: conversations kept until deleted; 30-day recovery window. Grok on X: governed by X Corp policy — duration not confirmed."},"zdr":{"label":"Not available","detail":"No ZDR for consumer surfaces."},"location":{"label":"US only","flag":"🇺🇸","detail":"xAI: all processing in US. Grok on X governed by X Corp (separate legal entity)."},"sourceUrl":"https://x.ai/legal/faq","sourceDate":"2026-05-27","notes":"Grok on X.com is governed by X Corp's privacy policy, NOT xAI's — legally separate entities. Opt-out is forward-looking only."},{"id":"alibaba-qwen","name":"Alibaba / Qwen","surface":"API (DashScope)","surfaceType":"api","category":"chinese","categoryLabel":"Chinese","rating":"guarded","incident":false,"training":{"label":"Off — explicit","detail":"'Qwen Cloud does not use your API inputs or outputs to train or improve models.' Training data sourced from public data, partners, synthetic data only."},"retention":{"label":"ZDR baseline; 7-day (Responses API)","detail":"Standard inference: memory-only, not persisted post-response. Responses API: 7-day conversation storage. Metadata (billing): duration unspecified. CRITICAL: Model Studio assistant API retains conversation history with NO expiration date — materially different product."},"zdr":{"label":"Yes — built-in baseline","detail":"ZDR documented as baseline on Qwen Cloud. Separate regional endpoints: CN/SG/US/EU. Responses API 7-day retention is an exception."},"location":{"label":"Multi-region (Frankfurt = genuine EU)","flag":"🌐","detail":"Separate endpoints: China (Beijing), Singapore, US (Virginia), EU (Frankfurt), Hong Kong. Frankfurt endpoint uses ONLY Frankfurt computing resources — genuine EU data residency with German BSI C5 + AIC4 certifications. Data stays in selected region. CAVEAT (May 29, 2026 Product ToS): Alibaba Cloud's overarching Product Terms for Model Studio use generic language — 'transferred to, stored, and processed in the country where Alibaba Cloud, its affiliates, or its sub-contractors maintain facilities' — with no specific regional binding. Specific endpoint guarantees are in Qwen Cloud ZDR docs only."},"sourceUrl":"https://docs.qwencloud.com/developer-guides/security-compliance/zero-data-retention","sourceDate":"2026-05-27","notes":"Strongest Chinese provider on data governance. Frankfurt is genuine EU residency (not just routing). GDPR compliance via EU Standard Contractual Clauses (Implementing Decision 2021/914/EU) + UK Addendum. China-based subprocessors in transfer chain: iSoftStone, Beyondsoft, Hangzhou Xutian Technology, Accenture Enterprise Cloud Hangzhou. Model Studio assistant has indefinite retention — avoid for sensitive data. NOTE (May 29, 2026 Product ToS): Overarching Alibaba Cloud Product Terms for Model Studio use generic location language with no specific regional binding; specific endpoint guarantees are in Qwen Cloud ZDR documentation.","relatedUrls":["https://www.alibabacloud.com/help/en/legal/latest/alibaba-cloud-international-website-product-terms-of-service-v-3-8-0"]},{"id":"moonshot-kimi-api","name":"Moonshot AI / Kimi","surface":"API","surfaceType":"api","category":"chinese","categoryLabel":"Chinese","rating":"caution","incident":false,"training":{"label":"On by default — CRITICAL","detail":"Privacy Policy Section 2 (April 30, 2025): 'We process this information to provide and improve the Services, including training and optimizing our models.' NO legally operative document (Privacy Policy, ToS, DPA, Model Use Agreement) explicitly carves out API data from this training clause. FAQ claim of 'no training' is NOT referenced in any legal document and has no contractual force."},"retention":{"label":"Vague — 'as necessary'","detail":"No specific duration. 'As long as necessary to provide services and legitimate business purposes.' Post-account-deletion: transaction/billing records may be retained indefinitely for tax/fraud/legal."},"zdr":{"label":"Via 3rd party only (limited models)","detail":"ZDR via Vercel AI Gateway for K2.6 and Thinking Turbo ONLY — NOT for K2 Instruct. Not available directly from Moonshot platform."},"location":{"label":"Singapore entity; Beijing parent","flag":"🇸🇬","detail":"Corporate entity: Moonshot AI PTE. LTD. (Singapore). Parent: Beijing (北京月之暗面). Chinese-language policy states data stored within PRC for domestic users."},"sourceUrl":"https://platform.kimi.ai/docs/agreement/userprivacy","sourceDate":"2026-05-27","notes":"CRITICAL: Privacy Policy governs. API data CAN be used for training under current legal documentation. FAQ claim is not legally operative. English policy omits PIPL; Chinese policy includes cross-border consent requirements. OpenRouter lists Moonshot as 'zero retention, does not train' — reflects routing contract, contradicts Privacy Policy.","relatedUrls":["https://platform.moonshot.ai/docs/agreement/modeluse","https://www.kimi.com/help/kimi-api/api-data-security"]},{"id":"moonshot-kimi-consumer","name":"Moonshot AI / Kimi","surface":"Kimi App","surfaceType":"consumer","category":"chinese","categoryLabel":"Chinese","rating":"caution","incident":false,"training":{"label":"On by default","detail":"Policy: 'We process this information to...training and optimizing our models.' Opt-out via email to membership@moonshot.ai only — no in-app toggle documented."},"retention":{"label":"Vague — 'as necessary'","detail":"No specific duration."},"zdr":{"label":"Not available","detail":"No ZDR for consumer app."},"location":{"label":"Singapore entity; Beijing parent","flag":"🇸🇬","detail":"Singapore entity for international. PRC storage confirmed for domestic users in Chinese-language policy."},"sourceUrl":"https://www.kimi.com/user/agreement/userprivacy","sourceDate":"2026-05-27","notes":"Opt-out is email-only with no documented technical implementation.","relatedUrls":["https://platform.moonshot.ai/docs/agreement/modeluse"]},{"id":"zhipu-bigmodel","name":"Zhipu AI / GLM","surface":"BigModel (China)","surfaceType":"api","category":"chinese","categoryLabel":"Chinese","rating":"caution","incident":false,"training":{"label":"On by default","detail":"BigModel API: data used for service improvement by default. No public opt-out mechanism. Separate agreement required to restrict use."},"retention":{"label":"30-day (batch); vague (general)","detail":"Batch API files: 30-day auto-delete. General API data: 'minimum necessary period' — no specific number."},"zdr":{"label":"None documented","detail":"No ZDR option found for BigModel API."},"location":{"label":"China only","flag":"🇨🇳","detail":"Policy: all data stored within PRC. No cross-border transfer currently. English policy not published — Chinese only."},"sourceUrl":"https://docs.bigmodel.cn/cn/terms/privacy-policy","sourceDate":"2026-05-27","notes":"Privacy policy available in Chinese only. No public DPA. International users should use Z.ai (Singapore entity) instead.","relatedUrls":["https://docs.z.ai/legal-agreement/privacy-policy"]},{"id":"zhipu-zai","name":"Zhipu AI / GLM","surface":"Z.ai (International)","surfaceType":"api","category":"chinese","categoryLabel":"Chinese","rating":"guarded","incident":false,"training":{"label":"Off by default","detail":"Z.ai API (Singapore entity): 'We will not use your User Content for developing or improving Services unless you explicitly agree.' Privacy Policy (Sept 29, 2025) explicitly states: 'The Company do not store any of the content the Customer or its End Users provide or generate while using our Services...processed in real-time...not saved on our servers.' API users governed by DPA, not consumer policy."},"retention":{"label":"Real-time only (no storage)","detail":"DPA embedded in Privacy Policy: no storage of API content. Processed in real-time, not saved on servers. Functionally equivalent to ZDR with legal backing. Consumer policy: 'minimum necessary period' — different (and weaker) commitment."},"zdr":{"label":"Yes — legally operative","detail":"DPA explicitly confirms real-time processing with no storage. This is a legally operative commitment (embedded in Privacy Policy, Additional Terms for API Services prevail in conflict). Not marketed as 'ZDR' but functionally and legally equivalent."},"location":{"label":"Singapore","flag":"🇸🇬","detail":"Z.ai: JINGSHENG HENGXING TECHNOLOGY PTE. LTD., Singapore. Data processed in Singapore. Separate from BigModel China entity."},"sourceUrl":"https://docs.z.ai/legal-agreement/privacy-policy","sourceDate":"2026-05-27","notes":"STRONG UPDATE: DPA in Privacy Policy explicitly states 'no storage of API content' — legally operative. API and consumer explicitly separated. Consumer policy is weaker. BigModel China has perpetual licence clause — different entity, same underlying models.","relatedUrls":["https://docs.z.ai/legal-agreement/privacy-policy","https://docs.z.ai/legal-agreement/dpa","https://docs.z.ai/legal-agreement/terms-of-use","https://chat.z.ai/legal-agreement/terms-of-service"]},{"id":"minimax-api","name":"MiniMax","surface":"API","surfaceType":"api","category":"chinese","categoryLabel":"Chinese","rating":"caution","incident":false,"training":{"label":"Ambiguous — profiling only excluded","detail":"Privacy Policy (March 30, 2026): 'We do not use your input personal data to infer characteristics about an individual, nor use personal data for training to profile or target consumers.' This ONLY prohibits training for PROFILING/TARGETING. Completely SILENT on whether inference data can be used for general model improvement. No other document in 6 retrieved addresses this. Service Rules (governing privacy/security) require platform login to access."},"retention":{"label":"Vague (general); specific for audio/voice","detail":"General inference data: 'as long as necessary / as soon as reasonable' — still vague. ONLY specific durations found: audio generation URLs expire in 9 hours; temporary voice assets valid for 7 days maximum."},"zdr":{"label":"Undocumented officially","detail":"No formal ZDR offering documented in any of 6 retrieved documents. Third-party review (Oct 2025) confirms zero-retention mode for MiniMax M2, but not in official policy."},"location":{"label":"Undisclosed (inferred US)","flag":"🇺🇸","detail":"Privacy Policy does not specify server locations. EU-US Privacy Framework certification implies US data center for international API, but not explicitly stated. China domestic apps: stored in PRC."},"sourceUrl":"https://platform.minimax.io/protocol/privacy-policy","sourceDate":"2026-05-27","notes":"Nanonoble Pte. Ltd. (Singapore entity) for international API. Training policy gap confirmed across 6 retrieved documents — only profiling/targeting excluded, general improvement not addressed. Service Rules inaccessible without login. SOC 2 / ISO potentially available under NDA for enterprise.","relatedUrls":["https://www.minimax.io/platform/protocol/terms-of-service"]},{"id":"minimax-consumer","name":"MiniMax","surface":"Hailuo AI","surfaceType":"consumer","category":"chinese","categoryLabel":"Chinese","rating":"caution","incident":false,"training":{"label":"Vague 'service improvement'","detail":"Consumer prompts 'may be retained for service improvement, anonymized where possible.' No explicit prohibition on training use."},"retention":{"label":"30 days post-deletion","detail":"Active accounts: indefinite. Deletion: cleared within 30 days. Facial data (video): permanently deleted on completion."},"zdr":{"label":"Not available","detail":"No ZDR for consumer product."},"location":{"label":"China (domestic apps)","flag":"🇨🇳","detail":"Chinese consumer apps stored within PRC per PIPL compliance."},"sourceUrl":"https://hailuoai.com/doc/privacy-policy.html","sourceDate":"2026-05-27","notes":"Facial data explicitly non-retained post-generation — a positive specific commitment.","relatedUrls":["https://www.minimax.io/platform/protocol/terms-of-service"]},{"id":"deepseek-api","name":"DeepSeek","surface":"API","surfaceType":"api","category":"chinese","categoryLabel":"Chinese","rating":"high-risk","incident":true,"incidentDetail":"Jan 2025: ClickHouse DB breach exposing 1M+ records (chat logs, API keys). Korea PIPC (Apr 2025): unauthorized data transfers to ByteDance-affiliated entity. Italy Garante: ongoing GDPR investigation. Gov bans: NASA, DoD, Congress (US), Australia, Italy, Taiwan.","training":{"label":"On by default; API opt-out not documented","detail":"ToS Section 4.3 (March 27, 2026): 'we may use Inputs and Outputs to provide, maintain, operate, develop or improve the Services.' Consumer product has opt-out toggle ('Improve the model for everyone'). NO equivalent opt-out is documented for API tier."},"retention":{"label":"Indefinite (post-deletion rights reserved)","detail":"ToS Section 2.5: 'Retain certain data as required by laws and regulations' — indefinite. Shared conversation links may be crawled despite anti-scraping measures — risk 'cannot be entirely eliminated.'"},"zdr":{"label":"Not available","detail":"No ZDR tier or enterprise agreement. Alternatives: self-host open weights (MIT license), or use Google Cloud / Azure hosting (their policies apply)."},"location":{"label":"China — all users","flag":"🇨🇳","detail":"ToS Section 10.1: Governed by People's Republic of China law. Policy (explicit): 'we directly collect, process and store your Personal Data in People's Republic of China.' All global users — no separate international infrastructure."},"sourceUrl":"https://chat.deepseek.com/downloads/DeepSeek%20Terms%20of%20Use.html","sourceDate":"2026-05-27","notes":"Updated to official March 27, 2026 ToS. Korea PIPC investigation concluded November 2025 with minor remediations (Korean-language policy added, Volcano/ByteDance transfers blocked, opt-out toggle added). Core China storage and training policy unchanged. Italy Garante ban still in force. No DPA, no SOC 2, no enterprise ZDR as of May 2026. Open-source weights (MIT license) self-hosted removes all these concerns.","relatedUrls":["https://chat.deepseek.com/downloads/DeepSeek%20Terms%20of%20Use.html","https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html"]},{"id":"deepseek-consumer","name":"DeepSeek","surface":"Chat App","surfaceType":"consumer","category":"chinese","categoryLabel":"Chinese","rating":"high-risk","incident":true,"incidentDetail":"See API row — same incidents apply.","training":{"label":"On by default","detail":"Policy: 'We may use your Personal Data to...train and improve our technology, such as our machine learning models.' Opt-out toggle available in account settings."},"retention":{"label":"Indefinite (account active)","detail":"Retained for duration of account existence. ToS violations may extend indefinitely."},"zdr":{"label":"Not available","detail":"No ZDR option."},"location":{"label":"China — all users","flag":"🇨🇳","detail":"Explicit China storage for all global users."},"sourceUrl":"https://deepseek-en.com/privacy-policy.html","sourceDate":"2026-05-27","notes":"Not appropriate for sensitive or regulated data. Mobile app had hardcoded encryption keys and unencrypted data transmission (NowSecure, 2025).","relatedUrls":["https://chat.deepseek.com/downloads/DeepSeek%20Terms%20of%20Use.html"]},{"id":"xiaomi-mimo","name":"Xiaomi MiMo","surface":"Cloud API","surfaceType":"api","category":"chinese","categoryLabel":"Chinese","rating":"guarded","incident":false,"training":{"label":"Not stated (OpenRouter: no training)","detail":"Service Agreement does not explicitly address training. OpenRouter lists MiMo as 'Does not train.' Privacy Policy at privacy.mi.com/XiaomiMiMoPlatform/en_GB/ was inaccessible (504 timeout) — needs manual verification."},"retention":{"label":"Reasonable period","detail":"Service Agreement: 'permanently delete personal information within a reasonable period' upon service expiration or user request. No specific timeframe."},"zdr":{"label":"Not available","detail":"Confirmed absent by Vercel AI Gateway: 'Zero Data Retention is not currently available for this model.'"},"location":{"label":"EU + Singapore (international)","flag":"🇪🇺🇸🇬","detail":"CRITICAL UPDATE: Service Agreement explicitly states international user data is stored on servers in Europe and Singapore — NOT mainland China. User is Data Controller, Xiaomi is Data Processor. Domestic China users: data in PRC."},"sourceUrl":"https://platform.xiaomimimo.com/docs/terms/user-agreement","sourceDate":"2026-05-27","notes":"Upgraded from Unverified based on Service Agreement (April 26, 2026). Major finding: international data goes to EU/Singapore, not China. Privacy Policy still inaccessible — training policy needs confirmation. Open-source weights on HuggingFace (MIT) available for self-hosting.","relatedUrls":["https://platform.xiaomimimo.com/#/docs/terms/user-agreement","https://privacy.mi.com/XiaomiMiMoPlatform/en_GB/"]},{"id":"fireworks-ai","name":"Fireworks AI","surface":"API","surfaceType":"api","category":"inference","categoryLabel":"Inference","rating":"clean","incident":false,"training":{"label":"Off — ZDR default","detail":"No training on inference data. FireOptimizer (optional) requires explicit opt-in; deleted after use, contractually enforced."},"retention":{"label":"ZDR default; Response API 30-day*","detail":"Standard inference: ZDR default (volatile memory only). IMPORTANT: Response API defaults to store=True (30-day retention) — set store=False to disable."},"zdr":{"label":"Default — all tiers","detail":"ZDR is the default for all tiers. Not an add-on. Enterprise explicitly guarantees no data retention."},"location":{"label":"US + EU + APAC","flag":"🌐","detail":"Dedicated deployments: US, EUROPE, APAC, or GLOBAL region options."},"sourceUrl":"https://docs.fireworks.ai/guides/security_compliance/data_handling","sourceDate":"2026-05-27","notes":"ISO 27001/27701/42001, SOC 2 Type II, HIPAA. *Response API has store=True as default — must explicitly set store=False.","relatedUrls":["https://fireworks.ai/terms-of-service"]},{"id":"together-ai","name":"Together AI","surface":"API","surfaceType":"api","category":"inference","categoryLabel":"Inference","rating":"clean","incident":false,"training":{"label":"Off — opt-in only","detail":"'We do not use any data collected from you to train our models without your explicit opt-in and consent.' Toggle in account Privacy & Security settings."},"retention":{"label":"Not stored by default","detail":"No default storage of prompts/completions. ZDR self-serve. Temporary cache duration unspecified."},"zdr":{"label":"Yes — self-serve, all tiers","detail":"ZDR available via Settings → Profile → Privacy & Security. Most accessible ZDR of any inference provider — no sales call required."},"location":{"label":"US + EU (enterprise)","flag":"🇺🇸🇪🇺","detail":"Default: North America. EU data residency for enterprise (UK, Spain, France, Portugal, Iceland). SCCs in place for GDPR."},"sourceUrl":"https://www.together.ai/privacy","sourceDate":"2026-05-27","notes":"SOC 2 Type II (Jul 2025). DPA for enterprise only. HIPAA BAA available.","relatedUrls":["https://www.together.ai/terms-of-service"]},{"id":"deepinfra","name":"DeepInfra","surface":"API","surfaceType":"api","category":"inference","categoryLabel":"Inference","rating":"guarded","incident":false,"training":{"label":"Off — explicit","detail":"'We do not train on your data.' Memory-only processing. Exception: Google/Anthropic models follow those providers' own policies when accessed via DeepInfra."},"retention":{"label":"Memory only (not to disk)","detail":"Standard inference: in-memory, not stored to disk. Account data: 30-day post-deletion. Bulk APIs: temporary encrypted disk during processing."},"zdr":{"label":"Yes — enterprise only","detail":"ZDR available via enterprise arrangement. Not self-serve. Trust Center has formal Data Retention Policy document."},"location":{"label":"US only","flag":"🇺🇸","detail":"US data centers only. No EU data residency. GDPR DPA: in progress — not yet published."},"sourceUrl":"https://docs.deepinfra.com/account/data-privacy","sourceDate":"2026-05-27","notes":"Google/Anthropic model calls follow those providers' policies, not DeepInfra's. GDPR DPA absent — gap for EU enterprise. SOC 2, ISO 27001, HIPAA compliant.","relatedUrls":["https://deepinfra.com/terms"]},{"id":"nebius-ai","name":"Nebius AI","surface":"API (Token Factory)","surfaceType":"api","category":"inference","categoryLabel":"Inference","rating":"guarded","incident":false,"training":{"label":"Speculative decoding only","detail":"Training ON by default — but ONLY to train small internal draft models for Speculative Decoding (inference speed optimization). Explicitly NOT for foundational LLM training. ZDR disables entirely."},"retention":{"label":"Retained for Speculative Decoding","detail":"Duration: 'as long as necessary' — not numerically specified. Object Storage: deleted within 4 days of deletion request. Security logs: 24 months."},"zdr":{"label":"Yes — onboarding form or email","detail":"ZDR available via onboarding form or by emailing tokenfactory-support@nebius.com — not a self-serve UI toggle. Disables Speculative Decoding data collection. Required for HIPAA/BAA compliance. May impact inference latency."},"location":{"label":"EU (Finland) + US","flag":"🇪🇺🇺🇸","detail":"Token Factory: EU-North1 (Finland) primary. Both EU and US inference available. Nebius B.V. incorporated Netherlands."},"sourceUrl":"https://docs.tokenfactory.nebius.com/legal/legal-quick-guide","sourceDate":"2026-05-27","notes":"Ex-Yandex: full divestment completed July 2024. Fully independent EU entity now. SOC 2 Type II, ISO 27001:2022. DPA published.","relatedUrls":["https://docs.nebius.com/legal/studio/terms-of-use/"]},{"id":"siliconflow","name":"SiliconFlow","surface":"API","surfaceType":"api","category":"inference","categoryLabel":"Inference","rating":"caution","incident":false,"training":{"label":"Not explicitly prohibited","detail":"Terms of Service (Mar 31, 2025): 'We will not access your Interaction Data...will not use or disclose it without authorization...will only use your Interaction Data in compliance with applicable laws and solely for the purpose of providing Services to you.' This constrains use to service provision but contains no explicit training prohibition. CN Privacy Policy (.cn entity): 'we will not conduct any unauthorised use or disclosure of your Interaction Data, and will not store it' — functionally stronger but applies to Chinese entity/users."},"retention":{"label":"No storage (Interaction Data only)","detail":"Chinese-language Privacy Policy (Oct 11, 2025): Interaction Data is not stored. Account data, billing, and profile data IS retained with no specific durations. 'No data stored, ever' marketing is misleading as a blanket claim — it applies to Interaction Data specifically."},"zdr":{"label":"Not formally documented","detail":"No formal ZDR offering found. 'No storage' claim for Interaction Data is functionally equivalent but not contractually guaranteed as a ZDR service."},"location":{"label":"Undisclosed","flag":"🌐","detail":"Server locations NOT specified in any policy version. Singapore entity governed by PDPA; China entity by Chinese law. International .com product explicitly excludes China users — separate siliconflow.cn product."},"sourceUrl":"https://docs.siliconflow.com/en/legals/terms-of-service","sourceDate":"2026-05-27","notes":"Source updated to English Terms of Service (Mar 31, 2025), which explicitly restricts Interaction Data use: 'will not access your Interaction Data...will not use or disclose it without authorization...solely for the purpose of providing Services to you.' CN Privacy Policy (.cn entity, Oct 2025) has stronger language: 'will not conduct any unauthorised use or disclosure of your Interaction Data, and will not store it.' No explicit training prohibition in any version — constraint is 'solely for purpose of providing Services.' No SOC 2, ISO 27001, DPA, or sub-processor list.","relatedUrls":["https://docs.siliconflow.com/en/legals/privacy-policy","https://docs.siliconflow.cn/en/legals/privacy-policy","https://docs.siliconflow.cn/cn/legals/privacy-policy","https://docs.siliconflow.com/en/legals/terms-of-service"]},{"id":"cursor-privacy-on","name":"Cursor","surface":"Privacy Mode ON","surfaceType":"api","category":"coding","categoryLabel":"Coding Tool","rating":"clean","incident":false,"training":{"label":"Off — contractual ZDR","detail":"Privacy Mode: contractual ZDR with OpenAI, Anthropic, Google Vertex, xAI. Cursor's own models also excluded. ToS: 'ANYSPHERE WILL NOT USE CONTENT TO TRAIN... UNLESS YOU'VE EXPLICITLY AGREED.'"},"retention":{"label":"No persistent storage","detail":"Plaintext code not retained. Embeddings metadata (hashes, filenames) retained for codebase indexing feature. Volatile memory for AI requests."},"zdr":{"label":"Yes — Privacy Mode = functional ZDR","detail":"Privacy Mode provides ZDR-equivalent guarantees via contracts with all model providers. Default for Teams/Enterprise (admin-enforced)."},"location":{"label":"US only","flag":"🇺🇸","detail":"All processing on US AWS infrastructure. No EU data residency on any plan."},"sourceUrl":"https://cursor.com/data-use","sourceDate":"2026-05-27","notes":"Default for Teams/Enterprise. SOC 2 Type II. HIPAA BAA and DPA available for enterprise only.","relatedUrls":["https://cursor.com/help/security-and-privacy/privacy"]},{"id":"cursor-privacy-off","name":"Cursor","surface":"Privacy Mode OFF (default)","surfaceType":"consumer","category":"coding","categoryLabel":"Coding Tool","rating":"caution","incident":false,"training":{"label":"On (default Free/Pro)","detail":"Without Privacy Mode: code, prompts, editor actions may be stored and used 'to improve our AI features and train our models.' Must manually enable Privacy Mode to stop."},"retention":{"label":"Variable — code may be stored","detail":"Code and context may be stored without Privacy Mode. Codebase indexing: embeddings and file metadata retained."},"zdr":{"label":"Not active","detail":"Privacy Mode must be manually enabled: Settings → General (Cmd/Ctrl+Shift+J). Free and Pro users start with it OFF."},"location":{"label":"US only","flag":"🇺🇸","detail":"US AWS only."},"sourceUrl":"https://cursor.com/data-use","sourceDate":"2026-05-27","notes":"Critical: most Free/Pro users have Privacy Mode OFF without knowing it. This is the default state for the majority of individual Cursor users.","relatedUrls":["https://cursor.com/help/security-and-privacy/privacy"]},{"id":"opencode-go","name":"OpenCode","surface":"Go (paid tier)","surfaceType":"api","category":"coding","categoryLabel":"Coding Tool","rating":"clean","incident":false,"training":{"label":"Off — zero-retention","detail":"Go tier: zero-retention policy from providers. No training on user data."},"retention":{"label":"Zero-retention","detail":"Go tier providers use zero-retention. Open-source self-hosted: user controls all data entirely."},"zdr":{"label":"Yes (Go tier)","detail":"Go subscription ($10/month) provides zero-retention model access."},"location":{"label":"US, EU, Singapore","flag":"🌐","detail":"Go models in US, EU, and Singapore. Note: some models may be proxied through 3rd-party APIs (Alibaba DashScope, Moonshot) — ZDR scope for proxied calls undocumented."},"sourceUrl":"https://dev.opencode.ai/docs/go/","sourceDate":"2026-05-27","notes":"Infrastructure may proxy through Alibaba/Moonshot — ZDR scope for those calls unclear."},{"id":"opencode-zen","name":"OpenCode","surface":"Zen (free tier)","surfaceType":"consumer","category":"coding","categoryLabel":"Coding Tool","rating":"caution","incident":false,"training":{"label":"Possible (ToS clause)","detail":"ToS: 'if you are using the Services through an unpaid account, we may use Content to further develop and improve our Services.' No explicit training prohibition."},"retention":{"label":"Stored server-side; no opt-out","detail":"Full prompts/responses stored in Cloudflare R2. No documented retention period. No user-facing opt-out. Contradicts homepage marketing claim."},"zdr":{"label":"Not available","detail":"No ZDR for free Zen tier. Use Go tier or own API keys to avoid server-side storage."},"location":{"label":"Cloudflare R2 (region unknown)","flag":"🌐","detail":"Storage location not explicitly stated."},"sourceUrl":"https://opencode.ai/legal/privacy-policy","sourceDate":"2026-05-27","notes":"Homepage states 'does not store code' — contradicted by free tier ToS and documented storage."},{"id":"hyperagent","name":"HyperAgent","surface":"Platform","surfaceType":"api","category":"coding","categoryLabel":"Coding Tool","rating":"guarded","incident":false,"training":{"label":"Off — express consent required","detail":"'We will not use, or permit others to use, Input or Output to train the generative artificial intelligence models used to provide the Services, without your express consent.'"},"retention":{"label":"Not specified; 30-day floor via subprocessors","detail":"HyperAgent own retention: 'no longer than necessary.' Subprocessors (Anthropic, Google, OpenAI) may retain I/O up to 30 days for safety/compliance."},"zdr":{"label":"Not documented","detail":"No ZDR option explicitly documented. Effective floor is 30-day subprocessor retention."},"location":{"label":"Global (unspecified)","flag":"🌐","detail":"Data may be transferred outside user's jurisdiction. EU/UK/Swiss: SCCs or adequacy decisions. Specific data centers not disclosed."},"sourceUrl":"https://hyperagent.com/privacy","sourceDate":"2026-05-27","notes":"No compliance certifications disclosed. Security page returns 404. Strong no-training commitment. Metadata (usage data) used for analytics/product improvement.","relatedUrls":["https://hyperagent.com/terms"]},{"id":"crof-ai","name":"Crof AI","surface":"API","surfaceType":"api","category":"coding","categoryLabel":"Coding Tool","rating":"clean","incident":false,"training":{"label":"Never collected","detail":"'We do NOT use your data for training AI models.' Prompts/completions never stored — real-time processing only."},"retention":{"label":"Never stored","detail":"Real-time processing only, never persisted. Account data removed within 30 days of deletion. Usage metrics: 7 years (billing only)."},"zdr":{"label":"De facto (no collection)","detail":"ZDR by design — data never collected. Strongest guarantee without requiring a formal ZDR agreement."},"location":{"label":"US","flag":"🇺🇸","detail":"Data processed in the United States."},"sourceUrl":"https://crof.ai/privacy","sourceDate":"2026-05-27","notes":"Clearest, most explicit privacy policy in this entire research. CCPA compliant."},{"id":"wafer-ai-privacy","name":"Wafer AI","surface":"Privacy Tier ($25/wk)","surfaceType":"api","category":"coding","categoryLabel":"Coding Tool","rating":"clean","incident":false,"training":{"label":"Off (ZDR tier)","detail":"No training on served models or internal speculative decoding draft models. Zero Data Retention fully active."},"retention":{"label":"No durable storage","detail":"Prompts/completions NOT written to durable storage. Operational metadata only (token counts, timestamps, request IDs)."},"zdr":{"label":"Yes — Privacy tier","detail":"Wafer Pass Privacy ($25/week): Zero Data Retention explicitly documented. DPA available."},"location":{"label":"US","flag":"🇺🇸","detail":"Inference served from US data centers."},"sourceUrl":"https://www.wafer.ai/privacy-policy","sourceDate":"2026-05-27","notes":"Y Combinator-backed. DPA available. GDPR rights acknowledged. Policy updated May 4, 2026.","relatedUrls":["https://www.wafer.ai/dpa"]},{"id":"wafer-ai-standard","name":"Wafer AI","surface":"Standard (Lite/Starter)","surfaceType":"consumer","category":"coding","categoryLabel":"Coding Tool","rating":"guarded","incident":false,"training":{"label":"Speculative decoding only","detail":"Standard tiers: may use prompts/completions to train small internal draft models for Speculative Decoding only. NOT used to train served open-source models. ZDR (Privacy tier) disables this."},"retention":{"label":"30 days (anonymized)","detail":"Prompts/completions stored in anonymized form for up to 30 days for abuse detection, then deleted."},"zdr":{"label":"Available (upgrade to Privacy)","detail":"ZDR available by upgrading to Wafer Pass Privacy ($25/week)."},"location":{"label":"US","flag":"🇺🇸","detail":"US data centers."},"sourceUrl":"https://www.wafer.ai/privacy-policy","sourceDate":"2026-05-27","notes":"Speculative decoding training is disclosed and limited to internal inference optimization. Transparent approach.","relatedUrls":["https://www.wafer.ai/dpa"]},{"id":"neuralwatt","name":"Neuralwatt","surface":"API","surfaceType":"api","category":"coding","categoryLabel":"Coding Tool","rating":"guarded","incident":false,"training":{"label":"Off — explicit","detail":"'We do not use your API inputs or outputs to train, fine-tune, or improve any machine learning models. Your inference data is yours.'"},"retention":{"label":"24-hour cache max","detail":"Prompts cached short-term (max 24 hours for multi-turn sessions). Analytics: 90 days. Billing records: account lifetime + legal."},"zdr":{"label":"Not offered","detail":"No ZDR option documented. 24-hour cache is standard."},"location":{"label":"Unknown","flag":"❓","detail":"Data center location not disclosed. On-prem deployment via Neuralwatt Deploy available for enterprises."},"sourceUrl":"https://portal.neuralwatt.com/privacy","sourceDate":"2026-05-27","notes":"Unique energy-based billing (kWh). No compliance certifications documented. Good policy intent with documentation gaps."},{"id":"commandcode","name":"CommandCode","surface":"Terminal Agent","surfaceType":"api","category":"coding","categoryLabel":"Coding Tool","rating":"guarded","incident":false,"training":{"label":"Off — local-first","detail":"'Command Code never trains on it. Never stores it.' Code stays on user's device. Taste learning generates structured local rules, not cloud training data."},"retention":{"label":"Code local; telemetry 30 days","detail":"Code never stored server-side. Taste profiles and conversation history: local only. Telemetry: 30-day auto-delete."},"zdr":{"label":"Structural (local-first)","detail":"ZDR is architectural — code never leaves the device. LLM API calls (Anthropic, OpenAI etc.) still go to those providers; CommandCode adds no additional storage layer."},"location":{"label":"Code local; cloud unknown","flag":"💻","detail":"User code stays on device. Account/telemetry cloud location not disclosed. Enterprise self-hosted option available."},"sourceUrl":"https://commandcode.ai/docs/resources/security","sourceDate":"2026-05-27","notes":"Local-first is structurally differentiated — privacy is architectural, not just policy. No compliance certifications documented."}];
+let PROVIDERS = [];
+let LOADED = false;
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
 let activeCategory = 'all';
@@ -290,8 +361,22 @@ let sortKey = 'rating';
 let sortDir = 1;
 let expandedId = null;
 
+const META = { lastUpdated: "2026-06-07", version: "1.2.0" };
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00Z');
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+}
+
 const RATING_ORDER = { 'clean':0, 'guarded':1, 'caution':2, 'high-risk':3, 'unverified':4 };
 const CAT_ORDER = { 'us-frontier':0, 'chinese':1, 'inference':2, 'coding':3 };
+
+function escapeHtml(str) {
+  if (typeof str !== 'string') return str;
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
 function ratingBadge(r, incident) {
@@ -307,11 +392,8 @@ function surfaceBadge(surfaceType, surface) {
 }
 
 function zdrCell(zdr) {
-  const l = zdr.label.toLowerCase();
-  if (l.startsWith('yes') || l.startsWith('de facto') || l.startsWith('default') || l.startsWith('struct'))
-    return `<span class="zdr-yes">✓ ${zdr.label}</span>`;
-  if (l.startsWith('available') || l.startsWith('via'))
-    return `<span class="zdr-partial">◑ ${zdr.label}</span>`;
+  if (zdr.status === 'full') return `<span class="zdr-yes">✓ ${zdr.label}</span>`;
+  if (zdr.status === 'partial') return `<span class="zdr-partial">◑ ${zdr.label}</span>`;
   return `<span class="zdr-no">${zdr.label}</span>`;
 }
 
@@ -402,58 +484,106 @@ function filtered() {
   });
 }
 
+function syncUrl() {
+  const params = new URLSearchParams();
+  if (activeCategory !== 'all') params.set('cat', activeCategory);
+  if (activeRatings.size < 5) params.set('rating', [...activeRatings].join(','));
+  if (sortKey !== 'rating') params.set('sort', sortKey);
+  if (sortDir !== 1) params.set('dir', sortDir.toString());
+  if (searchQuery) params.set('q', searchQuery);
+  const url = params.toString() ? '?' + params.toString() : window.location.pathname;
+  history.replaceState(null, '', url);
+}
+
 function render() {
-  const data = filtered();
   const tbody = document.getElementById('tableBody');
   const empty = document.getElementById('emptyState');
+  const loading = document.getElementById('loadingState');
   const countEl = document.getElementById('resultsCount');
-  countEl.textContent = `Showing ${data.length} of ${PROVIDERS.length} providers`;
 
-  if (!data.length) { tbody.innerHTML = ''; empty.style.display = ''; return; }
+  if (!LOADED) {
+    tbody.innerHTML = '';
+    empty.style.display = 'none';
+    loading.style.display = '';
+    document.getElementById('countAll').textContent = '';
+    countEl.textContent = '';
+    return;
+  }
+
+  loading.style.display = 'none';
+  const data = filtered();
+  countEl.textContent = `Showing ${data.length} of ${PROVIDERS.length} providers`;
+  document.getElementById('countAll').textContent = `(${PROVIDERS.length})`;
+
+  if (!data.length) { tbody.innerHTML = ''; empty.style.display = ''; loading.style.display = 'none'; syncUrl(); return; }
   empty.style.display = 'none';
 
-  tbody.innerHTML = data.map(p => {
+  try {
+    tbody.innerHTML = data.map(p => {
     const isExp = expandedId === p.id;
+    const pName = escapeHtml(p.name);
+    const pSurface = escapeHtml(p.surface);
+    const pCatLabel = escapeHtml(p.categoryLabel);
+    const pTrainingLabel = escapeHtml(p.training.label);
+    const pRetentionLabel = escapeHtml(p.retention.label);
+    const pLocationLabel = escapeHtml(p.location.label);
+    const pFlag = escapeHtml(p.location.flag);
+    const pTrainingDetail = escapeHtml(p.training.detail);
+    const pRetentionDetail = escapeHtml(p.retention.detail);
+    const pZdrDetail = escapeHtml(p.zdr.detail);
+    const pLocationDetail = escapeHtml(p.location.detail);
+    const pSourceUrl = escapeHtml(p.sourceUrl);
+    const pSourceDate = escapeHtml(p.sourceDate);
+    const pIncidentDetail = p.incidentDetail ? escapeHtml(p.incidentDetail) : '';
+    const pNotes = p.notes ? escapeHtml(p.notes) : '';
+    const pRelatedUrls = p.relatedUrls;
     return `
-    <tr class="${isExp ? 'expanded' : ''}" data-id="${p.id}" onclick="toggleRow('${p.id}')">
-      <td style="width:40px; padding:10px 8px 10px 14px; text-align:center;"><span class="expand-icon">${isExp ? '▲' : '▼'}</span></td>
-      <td style="padding:8px 14px;">
+    <tr class="${isExp ? 'expanded' : ''}" data-id="${escapeHtml(p.id)}" tabindex="0" role="button" aria-expanded="${isExp}" aria-label="${pName} — ${pSurface} — ${escapeHtml(p.categoryLabel)}" aria-controls="detail-${escapeHtml(p.id)}"
+      onclick="toggleRow('${escapeHtml(p.id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleRow('${escapeHtml(p.id)}')}">
+      <td style="width:40px;padding:10px 8px 10px 14px;text-align:center;"><span class="expand-icon" aria-hidden="true">${isExp ? '▲' : '▼'}</span><span class="sr-only">${isExp ? 'Collapse' : 'Expand'} details</span></td>
+      <td style="padding:8px 14px;" class="sticky-col">
         <div class="provider-cell">
           <div class="provider-icon">${providerLogo(p.name)}</div>
           <div class="provider-info">
-            <div class="provider-name" title="${p.name}">${p.name}</div>
+            <div class="provider-name" title="${pName}">${pName}</div>
             <div class="provider-surface">${surfaceBadge(p.surfaceType, p.surface)}</div>
           </div>
         </div>
       </td>
-      <td class="col-category"><span class="cell-label">${p.categoryLabel}</span></td>
+      <td class="col-category"><span class="cell-label">${pCatLabel}</span></td>
       <td><div class="rating-cell">${ratingBadge(p.rating, p.incident)}</div></td>
-      <td><span class="cell-label">${p.training.label}</span></td>
-      <td><span class="cell-label">${p.retention.label}</span></td>
+      <td><span class="cell-label">${pTrainingLabel}</span></td>
+      <td><span class="cell-label">${pRetentionLabel}</span></td>
       <td>${zdrCell(p.zdr)}</td>
-      <td class="col-location"><span class="cell-label">${p.location.flag} ${p.location.label}</span></td>
-      <td class="col-source"><a class="source-link" href="${p.sourceUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Docs ↗</a></td>
+      <td class="col-location"><span class="cell-label">${pFlag} ${pLocationLabel}</span></td>
+      <td class="col-source"><a class="source-link" href="${pSourceUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Docs ↗</a></td>
     </tr>
-    <tr class="detail-row ${isExp ? 'open' : ''}" data-detail="${p.id}">
+    <tr class="detail-row ${isExp ? 'open' : ''}" id="detail-${escapeHtml(p.id)}" data-detail="${escapeHtml(p.id)}">
       <td class="detail-cell" colspan="9">
         <div class="detail-inner">
           <div class="detail-grid">
-            <div class="detail-item"><h4>Training Use</h4><p>${p.training.detail}</p></div>
-            <div class="detail-item"><h4>Data Retention</h4><p>${p.retention.detail}</p></div>
-            <div class="detail-item"><h4>Zero Data Retention</h4><p>${p.zdr.detail}</p></div>
-            <div class="detail-item"><h4>Data Location</h4><p>${p.location.flag} ${p.location.detail}</p></div>
+            <div class="detail-item"><h4>Training Use</h4><p>${pTrainingDetail}</p></div>
+            <div class="detail-item"><h4>Data Retention</h4><p>${pRetentionDetail}</p></div>
+            <div class="detail-item"><h4>Zero Data Retention</h4><p>${pZdrDetail}</p></div>
+            <div class="detail-item"><h4>Data Location</h4><p>${pFlag} ${pLocationDetail}</p></div>
           </div>
-          ${p.incident && p.incidentDetail ? `<div class="detail-incident"><strong>🚩 Confirmed Incident / Government Action</strong>${p.incidentDetail}</div>` : ''}
-          ${p.notes ? `<div class="detail-notes">📌 ${p.notes}</div>` : ''}
+          ${p.incident && pIncidentDetail ? `<div class="detail-incident"><strong>🚩 Confirmed Incident / Government Action</strong>${pIncidentDetail}</div>` : ''}
+          ${pNotes ? `<div class="detail-notes">📌 ${pNotes}</div>` : ''}
           <div style="margin-top:12px;font-size:11px;color:#94a3b8;">
-            Primary Source: <a class="source-link" href="${p.sourceUrl}" target="_blank" rel="noopener">${p.sourceUrl}</a> — Verified ${p.sourceDate}
-            ${p.relatedUrls ? `<div style="margin-top:4px;">Related: ${p.relatedUrls.map(u => `<a class="source-link" href="${u}" target="_blank" rel="noopener">${u}</a>`).join(' · ')}</div>` : ''}
+            Primary Source: <a class="source-link" href="${pSourceUrl}" target="_blank" rel="noopener">${pSourceUrl}</a> — Verified ${pSourceDate}
+            ${pRelatedUrls ? `<div style="margin-top:4px;">Related: ${pRelatedUrls.map(u => `<a class="source-link" href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(u)}</a>`).join(' · ')}</div>` : ''}
           </div>
         </div>
       </td>
     </tr>`;
   }).join('');
-}
+  } catch (err) {
+    console.error('Render error:', err);
+    tbody.innerHTML = '';
+    empty.style.display = '';
+    loading.style.display = 'none';
+  }
+  syncUrl();
 
 function toggleRow(id) {
   expandedId = expandedId === id ? null : id;
@@ -483,15 +613,33 @@ document.getElementById('ratingFilters').addEventListener('click', e => {
   }
   document.querySelectorAll('.rating-pill').forEach(p => {
     p.classList.toggle('inactive', !activeRatings.has(p.dataset.rating));
+    p.setAttribute('aria-pressed', activeRatings.has(p.dataset.rating));
   });
   expandedId = null;
   render();
 });
 
-document.getElementById('searchInput').addEventListener('input', e => {
-  searchQuery = e.target.value.trim();
+// Clear search
+document.getElementById('searchClear').addEventListener('click', () => {
+  const input = document.getElementById('searchInput');
+  input.value = '';
+  searchQuery = '';
+  input.closest('.search-wrap').classList.remove('has-value');
+  input.focus();
   expandedId = null;
   render();
+});
+
+let searchTimer;
+document.getElementById('searchInput').addEventListener('input', e => {
+  const wrap = e.target.closest('.search-wrap');
+  wrap.classList.toggle('has-value', e.target.value.length > 0);
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    searchQuery = e.target.value.trim();
+    expandedId = null;
+    render();
+  }, 150);
 });
 
 // Sort
@@ -502,7 +650,17 @@ document.querySelectorAll('th[data-sort]').forEach(th => {
     else { sortKey = k; sortDir = 1; }
     document.querySelectorAll('th').forEach(x => x.classList.remove('sorted'));
     th.classList.add('sorted');
-    th.querySelector('.sort-icon') || (th.innerHTML += '<span class="sort-icon"></span>');
+    // Update aria-sort on all sortable headers
+    document.querySelectorAll('th[data-sort]').forEach(h => {
+      if (h === th) {
+        h.setAttribute('aria-sort', sortDir === 1 ? 'ascending' : 'descending');
+      } else {
+        h.removeAttribute('aria-sort');
+      }
+    });
+    let icon = th.querySelector('.sort-icon');
+    if (!icon) { icon = document.createElement('span'); icon.className = 'sort-icon'; th.appendChild(icon); }
+    icon.textContent = sortDir === 1 ? '▴' : '▾';
     render();
   });
 });
@@ -513,7 +671,61 @@ document.getElementById('tableBody').addEventListener('click', e => {
 });
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
-render();
+document.getElementById('lastUpdated').textContent = `Updated ${formatDate(META.lastUpdated)}`;
+document.getElementById('footerDate').textContent = `Last researched ${formatDate(META.lastUpdated)}`;
+
+async function init() {
+  // Restore state from URL params
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('cat')) {
+    activeCategory = params.get('cat');
+    document.querySelectorAll('.tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.cat === activeCategory);
+    });
+  }
+  if (params.has('rating')) {
+    const ratings = params.get('rating').split(',');
+    activeRatings = new Set(ratings);
+    document.querySelectorAll('.rating-pill').forEach(p => {
+      const active = activeRatings.has(p.dataset.rating);
+      p.classList.toggle('inactive', !active);
+      p.setAttribute('aria-pressed', active);
+    });
+  }
+  if (params.has('sort')) {
+    sortKey = params.get('sort');
+    sortDir = params.has('dir') ? parseInt(params.get('dir'), 10) : 1;
+    document.querySelectorAll('th').forEach(x => x.classList.remove('sorted'));
+    const th = document.querySelector(`th[data-sort="${sortKey}"]`);
+    if (th) {
+      th.classList.add('sorted');
+      th.setAttribute('aria-sort', sortDir === 1 ? 'ascending' : 'descending');
+      let icon = th.querySelector('.sort-icon');
+      if (!icon) { icon = document.createElement('span'); icon.className = 'sort-icon'; th.appendChild(icon); }
+      icon.textContent = sortDir === 1 ? '▴' : '▾';
+    }
+  }
+  if (params.has('q')) {
+    searchQuery = params.get('q');
+    const input = document.getElementById('searchInput');
+    input.value = searchQuery;
+    input.closest('.search-wrap').classList.toggle('has-value', searchQuery.length > 0);
+  }
+
+  try {
+    const res = await fetch('/providers.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    PROVIDERS = json.providers;
+    LOADED = true;
+  } catch (err) {
+    console.error('Failed to load provider data:', err);
+    document.getElementById('loadingState').innerHTML = 'Failed to load provider data. <button onclick="location.reload()" style="background:none;border:1px solid var(--text-muted);border-radius:4px;padding:4px 12px;cursor:pointer;color:var(--text-primary);font-size:13px;">Retry</button>';
+  }
+  render();
+}
+
+init();
 </script>
 </body>
 </html>

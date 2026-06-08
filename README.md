@@ -4,7 +4,7 @@
 
 Who stores your prompts? Who trains on them? Researched from primary sources — privacy policies, ToS, DPAs, and API docs — across 33 tracked provider surfaces.
 
-Live at: **[policywatch-8j7.pages.dev](https://policywatch-8j7.pages.dev)** (custom domain `policywatch.wyrdwerk.com` planned)
+Live at: **[policywatch.wyrdwerk.com](https://policywatch.wyrdwerk.com)** (Pages fallback: [policywatch-8j7.pages.dev](https://policywatch-8j7.pages.dev))
 
 ---
 
@@ -98,10 +98,58 @@ npm run deploy     # build, validate, deploy to Cloudflare Pages
 
 Hosted on Cloudflare Pages. Production deploys only the curated `dist/` output (app shell, data JSON, assets, and public metadata).
 
+### Custom domain setup (`policywatch.wyrdwerk.com`)
+
+`wyrdwerk.com` is already on Cloudflare (same account as other Pages projects like `metrics.wyrdwerk.com`). Link the subdomain to the **`policywatch`** Pages project:
+
+#### Step 1 — Attach the domain in Cloudflare Pages
+
+1. Open [Cloudflare Dashboard](https://dash.cloudflare.com) → **Workers & Pages**
+2. Select the **`policywatch`** project
+3. Go to **Custom domains** → **Set up a custom domain**
+4. Enter **`policywatch.wyrdwerk.com`** → **Continue**
+5. Confirm when prompted — Cloudflare should **auto-create the DNS record** because `wyrdwerk.com` is already a zone on this account
+
+Wait until the domain status shows **Active** (SSL certificate provisioning can take a few minutes).
+
+#### Step 2 — Verify DNS (usually automatic)
+
+If Cloudflare did not auto-create the record, add this manually under **wyrdwerk.com** → **DNS** → **Records**:
+
+| Type  | Name        | Content / Target              | Proxy status |
+|-------|-------------|-------------------------------|--------------|
+| CNAME | `policywatch` | `policywatch-8j7.pages.dev` | **Proxied** (orange cloud) |
+
+**Important:** Add the domain through the Pages UI first. A CNAME added only in DNS (without linking it in Pages) will 522.
+
+#### Step 3 — Smoke test
+
+```bash
+curl -sI https://policywatch.wyrdwerk.com | head -5
+# Expect: HTTP/2 200
+
+curl -sL https://policywatch.wyrdwerk.com | grep canonical
+# Expect: policywatch.wyrdwerk.com
+```
+
+#### Step 4 — Deploy and update legacy redirect
+
+After DNS is active:
+
+```bash
+npm run deploy                  # publish app with canonical URLs
+npm run deploy:legacy-redirect  # modelwatch.pages.dev → policywatch.wyrdwerk.com
+```
+
+#### Optional — Redirect `*.pages.dev` to custom domain
+
+In Cloudflare **Bulk Redirects** (account-level), you can 301 `policywatch-8j7.pages.dev` → `policywatch.wyrdwerk.com` so only the branded URL is used publicly.
+
 ### Infra notes
 
 - **Cloudflare Pages project:** `policywatch` → `policywatch-8j7.pages.dev` (bare `policywatch.pages.dev` is unavailable on Pages)
-- **Legacy URL:** `modelwatch.pages.dev` redirects to the new deployment
+- **Production canonical:** `policywatch.wyrdwerk.com`
+- **Legacy URL:** `modelwatch.pages.dev` redirects via `npm run deploy:legacy-redirect`
 - **Still on old slug:** GitHub repo (`WyrdWerk/modelwatch`) — rename when ready
 
 ---

@@ -5,6 +5,12 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 ---
 
+## v1.3.3 — 2026-06-08
+
+**Custom domain canonical URLs.** Point SEO metadata, sitemap, and robots at `policywatch.wyrdwerk.com`. Added README custom-domain setup guide and `npm run deploy:legacy-redirect` for the old `modelwatch.pages.dev` URL.
+
+---
+
 ## v1.3.2 — 2026-06-08
 
 **Pages project migration.** Created Cloudflare Pages project `policywatch` and pointed deploy/canonical URLs at `policywatch-8j7.pages.dev`. Bare `policywatch.pages.dev` is unavailable; `modelwatch.pages.dev` now redirects to the new deployment.

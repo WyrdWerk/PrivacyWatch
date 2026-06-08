@@ -1,6 +1,7 @@
 .env
 node_modules/
 dist/
+.legacy-redirect/
 
 # wrangler files
 .wrangler

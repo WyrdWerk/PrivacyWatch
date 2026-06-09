@@ -12,10 +12,10 @@
  */
 const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
 const TOKEN = process.env.CLOUDFLARE_API_TOKEN;
-const PAGES_DEV_HOST = (process.env.PAGES_DEV_HOST || 'policywatch-8j7.pages.dev').replace(/^https?:\/\//, '').replace(/\/$/, '');
+const PAGES_DEV_HOST = (process.env.PAGES_DEV_HOST || 'privacywatch.pages.dev').replace(/^https?:\/\//, '').replace(/\/$/, '');
 const TARGET = (process.env.PRIVACYWATCH_URL || process.env.POLICYWATCH_URL || 'https://privacywatch.wyrdwerk.com').replace(/\/$/, '');
-const LIST_NAME = 'policywatch_pages_dev_redirect';
-const RULE_REF = 'policywatch_pages_dev_redirect_rule';
+const LIST_NAME = 'privacywatch_pages_dev_redirect';
+const RULE_REF = 'privacywatch_pages_dev_redirect_rule';
 
 if (!ACCOUNT_ID || !TOKEN) {
   console.error('CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required.');

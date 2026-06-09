@@ -5,6 +5,12 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 ---
 
+## v1.3.8 — 2026-06-09
+
+**Cloudflare project alignment.** Updated Wrangler, deploy script, and ops defaults to the `privacywatch` Pages project and `privacywatch.pages.dev` fallback hostname. Simplified README deployment notes now that the custom domain cutover is complete.
+
+---
+
 ## v1.3.7 — 2026-06-09
 
 **PrivacyWatch rename.** Rebranded user-facing copy, public dataset metadata, SEO tags, structured data, GitHub links, and production URL references from PolicyWatch to PrivacyWatch. Public canonical now targets `privacywatch.wyrdwerk.com` while internal Cloudflare Pages slugs remain unchanged for now.

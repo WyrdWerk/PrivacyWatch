@@ -1,11 +1,11 @@
 {
   "name": "privacywatch",
-  "version": "1.3.7",
+  "version": "1.3.8",
   "private": false,
   "description": "PrivacyWatch — track data retention, privacy, and model training policies",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "deploy": "npm run build && npm run validate && wrangler pages deploy dist --project-name policywatch",
+    "deploy": "npm run build && npm run validate && wrangler pages deploy dist --project-name privacywatch",
     "deploy:legacy-redirect": "node scripts/legacy-redirect.mjs",
     "setup:bulk-redirect": "node scripts/bulk-redirect.mjs",
     "dev": "npm run build && wrangler pages dev dist",

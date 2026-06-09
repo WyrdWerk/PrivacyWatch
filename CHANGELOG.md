@@ -5,6 +5,12 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 ---
 
+## v1.3.9 — 2026-06-09
+
+**Public README cleanup.** Removed internal Cloudflare/DNS/deploy runbooks from the public README; replaced with a brief deployment summary. Updated GitHub repository description to reflect 33 tracked surfaces.
+
+---
+
 ## v1.3.8 — 2026-06-09
 
 **Cloudflare project alignment.** Updated Wrangler, deploy script, and ops defaults to the `privacywatch` Pages project and `privacywatch.pages.dev` fallback hostname. Simplified README deployment notes now that the custom domain cutover is complete.

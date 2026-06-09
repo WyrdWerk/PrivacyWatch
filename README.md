@@ -2,9 +2,9 @@
 
 **LLM data privacy, retention, and model training tracker.**
 
-Who stores your prompts? Who trains on them? Researched from primary sources — privacy policies, ToS, DPAs, and API docs — across 33 tracked provider surfaces.
+Who stores your prompts? Who trains on them? Researched from primary sources — privacy policies, ToS, DPAs, and API docs.
 
-Live at: **[privacywatch.wyrdwerk.com](https://privacywatch.wyrdwerk.com)** (Pages fallback: [privacywatch.pages.dev](https://privacywatch.pages.dev))
+**Live:** [privacywatch.wyrdwerk.com](https://privacywatch.wyrdwerk.com)
 
 ---
 
@@ -20,7 +20,7 @@ For each provider surface, we research and document:
 | **Data location** | Where is data processed and stored? |
 | **Rating** | Overall assessment: Clean, Guarded, Caution, High Risk, or Unverified |
 
-## Providers covered (v1.3, June 2026)
+## Providers covered
 
 **33 tracked surfaces** across 22 provider families in 4 categories:
 
@@ -31,6 +31,8 @@ For each provider surface, we research and document:
 **Inference:** Fireworks AI · Together AI · DeepInfra · Nebius AI · SiliconFlow
 
 **Coding Tools:** Cursor · OpenCode · HyperAgent · Crof AI · Wafer AI · Neuralwatt · CommandCode
+
+Public dataset: [`providers.json`](./providers.json) · Schema: [`providers.schema.json`](./providers.schema.json)
 
 ---
 
@@ -48,109 +50,23 @@ A 🚩 incident flag is additive — it marks confirmed security breaches, regul
 
 ---
 
-## Updating a provider
+## Contributing data updates
 
-All provider data lives in [`providers.json`](./providers.json). Each entry follows this schema (see [`providers.schema.json`](./providers.schema.json)):
+Provider data lives in [`providers.json`](./providers.json). When a policy changes:
 
-```json
-{
-  "id": "openai-api",
-  "name": "OpenAI",
-  "surface": "API",
-  "surfaceType": "api",
-  "category": "us-frontier",
-  "categoryLabel": "US Frontier",
-  "rating": "clean",
-  "incident": false,
-  "training": {
-    "label": "Off by default",
-    "detail": "Full explanation shown on row expand."
-  },
-  "retention": { "label": "30 days", "detail": "..." },
-  "zdr": { "label": "Yes — approval required", "detail": "...", "status": "full" },
-  "location": { "label": "US + EU option", "flag": "🇺🇸", "detail": "..." },
-  "sourceUrl": "https://...",
-  "sourceDate": "2026-05-27",
-  "notes": "Optional footnote shown on expand."
-}
-```
-
-To update a provider when their policy changes:
 1. Edit the relevant fields in `providers.json`
 2. Update `sourceDate` to the verification date
-3. Update `meta.lastUpdated` and bump `meta.version` at the top of the file
-4. Bump `package.json` version to match
-5. Log the change in `CHANGELOG.md`
-6. Commit and push to `main` — Cloudflare Pages Git integration builds and deploys automatically
+3. Update `meta.lastUpdated` and bump `meta.version`
+4. Log the change in `CHANGELOG.md`
+5. Open a PR or push to `main`
 
-Provider rows in the UI link to each entry's official `sourceUrl`. Local archived policy snapshots under `policies/` are for internal research reference and are not published in production builds.
+Each row links to its official `sourceUrl` on the live dashboard.
 
 ---
 
-## Development
+## Deployment
 
-```bash
-npm run build      # build curated dist/ artifact
-npm run validate   # validate providers.json
-npm run dev        # local preview from dist/
-npm run deploy     # local manual fallback (requires wrangler login; not used for normal deploys)
-```
-
-Hosted on Cloudflare Pages. Production deploys only the curated `dist/` output (app shell, data JSON, assets, and public metadata).
-
-### Auto-deploy (Cloudflare Git integration)
-
-Production deploys are triggered by **Cloudflare Pages Git integration** — no API tokens or GitHub Actions secrets in the repository.
-
-**Standard workflow:**
-
-```bash
-# Edit providers.json / index.html, then:
-git add -A && git commit -m "..." && git push origin main
-# Cloudflare builds and deploys automatically
-```
-
-#### Cloudflare build settings
-
-When connecting the repo in the Cloudflare dashboard, use:
-
-| Setting | Value |
-|---------|-------|
-| **Repository** | `WyrdWerk/PrivacyWatch` |
-| **Production branch** | `main` |
-| **Build command** | `npm ci && npm run build && npm run validate` |
-| **Build output directory** | `dist` |
-| **Root directory** | `/` (repo root) |
-| **Environment variable** | `NODE_VERSION=22` |
-
-### Custom domain (`privacywatch.wyrdwerk.com`)
-
-`wyrdwerk.com` is on Cloudflare. The custom domain is attached to the Git-linked **`privacywatch`** Pages project.
-
-If you ever need to re-attach it:
-
-1. **Workers & Pages** → **`privacywatch`** → **Custom domains** → **Set up a custom domain**
-2. Enter **`privacywatch.wyrdwerk.com`** → **Continue**
-3. Wait until status is **Active**
-
-If DNS is not auto-created, add under **wyrdwerk.com** → **DNS**:
-
-| Type | Name | Target | Proxy |
-|------|------|--------|-------|
-| CNAME | `privacywatch` | `privacywatch.pages.dev` | Proxied |
-
-**Important:** Link the domain in Pages first. DNS-only CNAME without Pages linking causes 522.
-
-### Infra notes
-
-- **GitHub:** [WyrdWerk/PrivacyWatch](https://github.com/WyrdWerk/PrivacyWatch) (public, no deploy secrets)
-- **Cloudflare Pages project:** `privacywatch`
-- **Auto-deploy:** push to `main` → Cloudflare Pages Git build
-- **Production canonical:** `privacywatch.wyrdwerk.com`
-- **Pages fallback:** `privacywatch.pages.dev`
-- **Local emergency deploy:** `npm run deploy` (wrangler login on your machine only)
-
-Redirects are optional. Since PrivacyWatch was never public under the old name, no legacy PolicyWatch redirects are required. The only optional redirect is `privacywatch.pages.dev` → `privacywatch.wyrdwerk.com` if you want the fallback hostname to always canonicalize to the custom domain.
+PrivacyWatch is a static site hosted on Cloudflare Pages. Pushes to `main` trigger an automatic build (`npm ci && npm run build && npm run validate`) and deploy the `dist/` output. No secrets are stored in this repository.
 
 ---
 

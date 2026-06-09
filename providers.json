@@ -1,9 +1,9 @@
 {
   "meta": {
     "lastUpdated": "2026-06-08",
-    "version": "1.3.6",
-    "description": "PolicyWatch — LLM data retention and model training policy tracker",
-    "maintainer": "WyrdWerk (github.com/WyrdWerk/policywatch)"
+    "version": "1.3.7",
+    "description": "PrivacyWatch — LLM data privacy, retention, and model training tracker",
+    "maintainer": "WyrdWerk (github.com/WyrdWerk/PrivacyWatch)"
   },
   "providers": [
     {

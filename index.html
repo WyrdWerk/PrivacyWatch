@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PolicyWatch — LLM Data Policy Tracker</title>
-  <meta name="description" content="Track data retention and model training policies across major LLM providers, inference APIs, and AI coding tools." />
+  <title>PrivacyWatch — LLM Data Privacy Tracker</title>
+  <meta name="description" content="Compare data privacy, retention, and model training policies across major LLM providers, inference APIs, and AI coding tools." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="canonical" href="https://policywatch.wyrdwerk.com" />
-  <meta property="og:title" content="PolicyWatch — LLM Data Policy Tracker" />
-  <meta property="og:description" content="Track data retention and model training policies across major LLM providers, inference APIs, and AI coding tools." />
+  <link rel="canonical" href="https://privacywatch.wyrdwerk.com" />
+  <meta property="og:title" content="PrivacyWatch — LLM Data Privacy Tracker" />
+  <meta property="og:description" content="Compare data privacy, retention, and model training policies across major LLM providers, inference APIs, and AI coding tools." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://policywatch.wyrdwerk.com" />
+  <meta property="og:url" content="https://privacywatch.wyrdwerk.com" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="PolicyWatch — LLM Data Policy Tracker" />
-  <meta name="twitter:description" content="Track data retention and model training policies across major LLM providers, inference APIs, and AI coding tools." />
+  <meta name="twitter:title" content="PrivacyWatch — LLM Data Privacy Tracker" />
+  <meta name="twitter:description" content="Compare data privacy, retention, and model training policies across major LLM providers, inference APIs, and AI coding tools." />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Dataset",
-    "name": "PolicyWatch — LLM Data Policy Tracker",
-    "description": "Data retention and model training policies for 33 tracked provider surfaces across 4 categories (US Frontier, Chinese, Inference, Coding Tools). Tracks training use, retention, zero data retention, and data location.",
-    "url": "https://policywatch.wyrdwerk.com",
+    "name": "PrivacyWatch — LLM Data Privacy Tracker",
+    "description": "Data privacy, retention, and model training policies for 33 tracked provider surfaces across 4 categories (US Frontier, Chinese, Inference, Coding Tools). Tracks training use, retention, zero data retention, and data location.",
+    "url": "https://privacywatch.wyrdwerk.com",
     "dateModified": "2026-06-08",
     "keywords": ["LLM", "AI", "data retention", "privacy", "training data", "ZDR", "model training"],
     "creator": {
@@ -254,19 +254,19 @@
         <rect width="28" height="28" rx="6" fill="#0f172a"/>
         <path d="M6 22L14 6L22 22M9 16H19" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
       </svg>
-      <span class="logo-wordmark">Policy<span>Watch</span></span>
+      <span class="logo-wordmark">Privacy<span>Watch</span></span>
     </a>
     <div class="header-meta">
-      <span id="lastUpdated">Updated Jun 7, 2026</span>
-      <a href="https://github.com/WyrdWerk/policywatch" target="_blank" rel="noopener">GitHub ↗</a>
+      <span id="lastUpdated">Updated Jun 8, 2026</span>
+      <a href="https://github.com/WyrdWerk/PrivacyWatch" target="_blank" rel="noopener">GitHub ↗</a>
     </div>
   </div>
 </header>
 
 <!-- HERO -->
 <div class="hero">
-  <h1>LLM Data Policy Tracker</h1>
-  <p id="heroText">Who stores your prompts? Who trains on them? Researched from primary sources — privacy policies, ToS, DPAs, and API docs — across 33 tracked surfaces.</p>
+  <h1>PrivacyWatch</h1>
+  <p id="heroText">Track data retention, training use, and zero-data-retention policies across major LLM providers, inference APIs, and AI coding tools.</p>
 </div>
 
 <!-- LEGEND -->
@@ -353,7 +353,7 @@
   <div class="footer-inner">
     <div class="footer-left">
       Maintained by <a href="https://wyrdwerk.com" target="_blank" rel="noopener">WyrdWerk</a> ·
-      <a href="https://github.com/WyrdWerk/policywatch" target="_blank" rel="noopener">GitHub</a> ·
+      <a href="https://github.com/WyrdWerk/PrivacyWatch" target="_blank" rel="noopener">GitHub</a> ·
       Not legal advice · Policies change — always verify with primary sources
     </div>
     <div class="footer-right" id="footerDate">Last researched Jun 8, 2026</div>
@@ -362,7 +362,7 @@
 
 <noscript>
   <div style="max-width:1280px;margin:16px auto;padding:16px 24px;background:#fff8e1;border:1px solid #fde68a;border-radius:6px;color:#92400e;">
-    PolicyWatch requires JavaScript to load provider data. View the raw dataset at <a href="/providers.json">/providers.json</a> or the project on <a href="https://github.com/WyrdWerk/policywatch">GitHub</a>.
+    PrivacyWatch requires JavaScript to load provider data. View the raw dataset at <a href="/providers.json">/providers.json</a> or the project on <a href="https://github.com/WyrdWerk/PrivacyWatch">GitHub</a>.
   </div>
 </noscript>
 
@@ -379,7 +379,7 @@ let sortKey = 'rating';
 let sortDir = 1;
 let expandedId = null;
 
-let META = { lastUpdated: "2026-06-08", version: "1.3.0" };
+let META = { lastUpdated: "2026-06-08", version: "1.3.7" };
 let LOAD_ERROR = null;
 
 const VALID_CATEGORIES = new Set(['all', 'us-frontier', 'chinese', 'inference', 'coding']);

@@ -1,10 +1,10 @@
-# PolicyWatch
+# PrivacyWatch
 
-**LLM data retention and model training policy tracker.**
+**LLM data privacy, retention, and model training tracker.**
 
 Who stores your prompts? Who trains on them? Researched from primary sources — privacy policies, ToS, DPAs, and API docs — across 33 tracked provider surfaces.
 
-Live at: **[policywatch.wyrdwerk.com](https://policywatch.wyrdwerk.com)** (Pages fallback: [policywatch-8j7.pages.dev](https://policywatch-8j7.pages.dev))
+Live at: **[privacywatch.wyrdwerk.com](https://privacywatch.wyrdwerk.com)** (Pages fallback retained for now: [policywatch-8j7.pages.dev](https://policywatch-8j7.pages.dev))
 
 ---
 
@@ -116,7 +116,7 @@ When connecting the repo in the Cloudflare dashboard, use:
 
 | Setting | Value |
 |---------|-------|
-| **Repository** | `WyrdWerk/policywatch` |
+| **Repository** | `WyrdWerk/PrivacyWatch` |
 | **Production branch** | `main` |
 | **Build command** | `npm ci && npm run build && npm run validate` |
 | **Build output directory** | `dist` |
@@ -127,13 +127,13 @@ When connecting the repo in the Cloudflare dashboard, use:
 
 The existing `policywatch` Pages project was created as **Direct Upload** and cannot be converted to Git integration. Perform this cutover once in the Cloudflare dashboard:
 
-1. **Detach** `policywatch.wyrdwerk.com` from the current Direct Upload `policywatch` project (Custom domains → Remove).
+1. **Detach** `privacywatch.wyrdwerk.com` from the current Direct Upload `policywatch` project (Custom domains → Remove).
 2. **Delete** the Direct Upload `policywatch` project.
 3. **Create** a new project: **Workers & Pages → Create → Pages → Connect to Git**.
-4. Select **`WyrdWerk/policywatch`**, branch **`main`**, and the build settings above.
+4. Select **`WyrdWerk/PrivacyWatch`**, branch **`main`**, and the build settings above.
 5. **Save and Deploy** — wait for the first successful build.
-6. **Re-attach** custom domain `policywatch.wyrdwerk.com` on the new Git-linked project.
-7. Verify: `curl -sI https://policywatch.wyrdwerk.com`
+6. **Re-attach** custom domain `privacywatch.wyrdwerk.com` on the new Git-linked project.
+7. Verify: `curl -sI https://privacywatch.wyrdwerk.com`
 
 The new project may receive a different `*.pages.dev` hostname. If it changes, update canonical URLs in `index.html`, `sitemap.xml`, and `robots.txt`.
 
@@ -143,23 +143,23 @@ After cutover, delete any leftover secrets/variables from **Repository → Setti
 
 - `CLOUDFLARE_API_TOKEN` (secret)
 - `CLOUDFLARE_ACCOUNT_ID` (secret)
-- `LEGACY_PAGES_PROJECT`, `POLICYWATCH_URL`, `PAGES_DEV_HOST` (variables)
+- `LEGACY_PAGES_PROJECT`, `PRIVACYWATCH_URL`, `PAGES_DEV_HOST` (variables)
 
 No API tokens should remain in GitHub for this repo.
 
-### Custom domain (`policywatch.wyrdwerk.com`)
+### Custom domain (`privacywatch.wyrdwerk.com`)
 
 `wyrdwerk.com` is on Cloudflare. Attach the subdomain via the Git-linked **`policywatch`** Pages project:
 
 1. **Workers & Pages** → **`policywatch`** → **Custom domains** → **Set up a custom domain**
-2. Enter **`policywatch.wyrdwerk.com`** → **Continue**
+2. Enter **`privacywatch.wyrdwerk.com`** → **Continue**
 3. Wait until status is **Active**
 
 If DNS is not auto-created, add under **wyrdwerk.com** → **DNS**:
 
 | Type | Name | Target | Proxy |
 |------|------|--------|-------|
-| CNAME | `policywatch` | _(your project's `*.pages.dev` hostname)_ | Proxied |
+| CNAME | `privacywatch` | _(your project's `*.pages.dev` hostname)_ | Proxied |
 
 **Important:** Link the domain in Pages first. DNS-only CNAME without Pages linking causes 522.
 
@@ -167,12 +167,12 @@ If DNS is not auto-created, add under **wyrdwerk.com** → **DNS**:
 
 #### Legacy pre-migration Pages hostname
 
-Already deployed as a 301 to `policywatch.wyrdwerk.com`. No CI needed.
+Already deployed as a 301 to `privacywatch.wyrdwerk.com`. No CI needed.
 
 To update manually: on the legacy redirect-only Pages project, deploy a `_redirects` file:
 
 ```
-/* https://policywatch.wyrdwerk.com/:splat 301
+/* https://privacywatch.wyrdwerk.com/:splat 301
 ```
 
 Or locally (requires `wrangler login` + `.env`): `npm run deploy:legacy-redirect`
@@ -183,16 +183,16 @@ One-time setup in **Cloudflare Dashboard → Bulk Redirects**:
 
 1. Create redirect list `policywatch_pages_dev_redirect`
 2. Add items (301, preserve path + query):
-   - `policywatch-8j7.pages.dev` → `https://policywatch.wyrdwerk.com`
-   - `policywatch-8j7.pages.dev/` → `https://policywatch.wyrdwerk.com/`
+   - `policywatch-8j7.pages.dev` → `https://privacywatch.wyrdwerk.com`
+   - `policywatch-8j7.pages.dev/` → `https://privacywatch.wyrdwerk.com/`
 3. Create bulk redirect rule (phase: `http_request_redirect`)
 4. Verify: `curl -sI https://policywatch-8j7.pages.dev/ | grep -i location`
 
 ### Infra notes
 
-- **GitHub:** [WyrdWerk/policywatch](https://github.com/WyrdWerk/policywatch) (public, no deploy secrets)
+- **GitHub:** [WyrdWerk/PrivacyWatch](https://github.com/WyrdWerk/PrivacyWatch) (public, no deploy secrets)
 - **Auto-deploy:** push to `main` → Cloudflare Pages Git build
-- **Production canonical:** `policywatch.wyrdwerk.com`
+- **Production canonical:** `privacywatch.wyrdwerk.com`
 - **Local emergency deploy:** `npm run deploy` (wrangler login on your machine only)
 
 ---

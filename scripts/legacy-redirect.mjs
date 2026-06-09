@@ -10,7 +10,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
 
-const TARGET = process.env.POLICYWATCH_URL || 'https://policywatch.wyrdwerk.com';
+const TARGET = process.env.PRIVACYWATCH_URL || process.env.POLICYWATCH_URL || 'https://privacywatch.wyrdwerk.com';
 const LEGACY_PAGES_PROJECT = process.env.LEGACY_PAGES_PROJECT;
 
 if (!LEGACY_PAGES_PROJECT) {

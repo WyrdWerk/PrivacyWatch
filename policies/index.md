@@ -1,6 +1,6 @@
-# PolicyWatch — Archived Policy Documents
+# PrivacyWatch — Archived Policy Documents
 
-Local snapshots of the primary source documents underlying the PolicyWatch dashboard ratings.
+Local snapshots of the primary source documents underlying the PrivacyWatch dashboard ratings.
 All files scraped and saved on **2026-05-27**.
 
 | Provider | Surface | Category | Source URL | Archived File |

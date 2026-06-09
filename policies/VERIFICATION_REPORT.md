@@ -1,4 +1,4 @@
-# PolicyWatch Dashboard Verification Report
+# PrivacyWatch Dashboard Verification Report
 
 **Date:** 2026-05-27
 **Method:** Cross-reference of `providers.json` claims against archived primary source documents in `policies/`

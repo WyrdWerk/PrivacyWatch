@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://policywatch.wyrdwerk.com/sitemap.xml
+Sitemap: https://privacywatch.wyrdwerk.com/sitemap.xml

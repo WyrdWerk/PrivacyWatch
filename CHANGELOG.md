@@ -5,6 +5,12 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 ---
 
+## v1.3.7 — 2026-06-09
+
+**PrivacyWatch rename.** Rebranded user-facing copy, public dataset metadata, SEO tags, structured data, GitHub links, and production URL references from PolicyWatch to PrivacyWatch. Public canonical now targets `privacywatch.wyrdwerk.com` while internal Cloudflare Pages slugs remain unchanged for now.
+
+---
+
 ## v1.3.6 — 2026-06-08
 
 **Migrate to Cloudflare Git integration.** Removed GitHub Actions deploy workflows and repo token requirements. Production auto-deploy now via Cloudflare Pages dashboard Git linkage; README documents one-time Direct Upload cutover and dashboard-only redirect setup.

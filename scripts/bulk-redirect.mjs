@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Configure account-level Cloudflare Bulk Redirect:
- *   PAGES_DEV_HOST/* -> POLICYWATCH_URL/:splat (301)
+ *   PAGES_DEV_HOST/* -> PRIVACYWATCH_URL/:splat (301)
  *
  * Requires API token permissions:
  *   - Account Filter Lists Edit
@@ -13,7 +13,7 @@
 const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
 const TOKEN = process.env.CLOUDFLARE_API_TOKEN;
 const PAGES_DEV_HOST = (process.env.PAGES_DEV_HOST || 'policywatch-8j7.pages.dev').replace(/^https?:\/\//, '').replace(/\/$/, '');
-const TARGET = (process.env.POLICYWATCH_URL || 'https://policywatch.wyrdwerk.com').replace(/\/$/, '');
+const TARGET = (process.env.PRIVACYWATCH_URL || process.env.POLICYWATCH_URL || 'https://privacywatch.wyrdwerk.com').replace(/\/$/, '');
 const LIST_NAME = 'policywatch_pages_dev_redirect';
 const RULE_REF = 'policywatch_pages_dev_redirect_rule';
 
@@ -63,7 +63,7 @@ async function findOrCreateList() {
     method: 'POST',
     body: JSON.stringify({
       name: LIST_NAME,
-      description: 'Redirect PolicyWatch Pages fallback hostname to custom domain',
+      description: 'Redirect PrivacyWatch Pages fallback hostname to custom domain',
       kind: 'redirect',
     }),
   });
@@ -115,7 +115,7 @@ async function ensureBulkRedirectRule() {
   const newRule = {
     ref: RULE_REF,
     expression: `http.request.full_uri in $${LIST_NAME}`,
-    description: 'PolicyWatch: redirect Pages fallback hostname to custom domain',
+    description: 'PrivacyWatch: redirect Pages fallback hostname to custom domain',
     action: 'redirect',
     enabled: true,
     action_parameters: {
@@ -130,7 +130,7 @@ async function ensureBulkRedirectRule() {
     const created = await api('/rulesets', {
       method: 'POST',
       body: JSON.stringify({
-        name: 'PolicyWatch bulk redirects',
+        name: 'PrivacyWatch bulk redirects',
         kind: 'root',
         phase: 'http_request_redirect',
         rules: [newRule],
@@ -153,13 +153,13 @@ async function ensureBulkRedirectRule() {
   const updated = await api(`/rulesets/${ruleset.id}`, {
     method: 'PUT',
     body: JSON.stringify({
-      name: ruleset.name || 'PolicyWatch bulk redirects',
+      name: ruleset.name || 'PrivacyWatch bulk redirects',
       kind: ruleset.kind || 'root',
       phase: 'http_request_redirect',
       rules: [...rules, newRule],
     }),
   });
-  console.log(`Updated http_request_redirect ruleset (${updated.id}) with PolicyWatch redirect rule`);
+  console.log(`Updated http_request_redirect ruleset (${updated.id}) with PrivacyWatch redirect rule`);
 }
 
 async function main() {

@@ -455,7 +455,7 @@ function showLoadError(message) {
   }
 }
 
-// Logo mapping — brand SVGs + generated initials as fallback
+// Logo mapping — brand PNGs from Logo.dev + generated initials as fallback
 const LOGO_MAP = {
   'OpenAI': 'openai', 'Anthropic': 'anthropic', 'Google Gemini': 'google',
   'xAI / Grok': 'xai', 'Alibaba / Qwen': 'alibaba', 'Moonshot AI / Kimi': 'moonshot',
@@ -466,9 +466,26 @@ const LOGO_MAP = {
   'Crof AI': 'crof', 'Wafer AI': 'wafer', 'Neuralwatt': 'neuralwatt',
   'CommandCode': 'commandcode',
   'Groq': 'groq', 'Cohere': 'cohere', 'Mistral': 'mistral',
-  'Perplexity': 'perplexity-ai', 'Cloudflare': 'cloudflare',
-  'Amazon Bedrock': 'amazon-bedrock', 'Azure': 'azure',
+  'Perplexity': 'perplexity', 'Cloudflare': 'cloudflare',
+  'Amazon Bedrock': 'amazon', 'Azure': 'azure',
   'AI21': 'ai21', 'Cerebras': 'cerebras', 'SambaNova': 'sambanova'
+};
+
+const LOGO_TOKEN = 'pk_fjMemQDSQp2HkYd0pVcP1Q';
+
+// Domain mapping for Logo.dev fallback (slug -> domain)
+const LOGO_DOMAINS = {
+  'openai': 'openai.com', 'anthropic': 'anthropic.com', 'google': 'google.com',
+  'xai': 'x.ai', 'alibaba': 'alibabacloud.com', 'moonshot': 'kimi.com',
+  'zhipu': 'z.ai', 'minimax': 'minimax.io', 'deepseek': 'deepseek.com',
+  'xiaomi': 'mi.com', 'fireworks': 'fireworks.ai', 'together': 'together.ai',
+  'deepinfra': 'deepinfra.com', 'nebius': 'nebius.com', 'siliconflow': 'siliconflow.cn',
+  'cursor': 'cursor.com', 'opencode': 'opencode.ai', 'hyperagent': 'hyperagent.com',
+  'crof': 'crof.ai', 'wafer': 'wafer.ai', 'neuralwatt': 'neuralwatt.com',
+  'commandcode': 'commandcode.ai', 'groq': 'groq.com', 'cohere': 'cohere.com',
+  'mistral': 'mistral.ai', 'perplexity': 'perplexity.ai', 'cloudflare': 'cloudflare.com',
+  'amazon': 'aws.amazon.com', 'azure': 'azure.microsoft.com', 'ai21': 'ai21.com',
+  'cerebras': 'cerebras.ai', 'sambanova': 'sambanova.ai'
 };
 
 // Fallback badge colors (used only when logo img fails to load)
@@ -511,9 +528,11 @@ function providerLogo(name) {
   const slug = LOGO_MAP[name];
   if (slug) {
     const b = FALLBACK_BADGES[name] || { abbr: name.slice(0,2).toUpperCase(), bg:'#6b7280', fg:'#fff' };
-    const img = `<img src="assets/logos/${slug}.svg" alt="${name} logo" width="32" height="32" style="border-radius:7px;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">`;
+    const domain = LOGO_DOMAINS[slug] || `${slug}.ai`;
+    // Try local PNG first, then Logo.dev
+    const img = `<img src="assets/logos/${slug}.png" alt="${name} logo" width="32" height="32" style="border-radius:7px;display:block;" onerror="this.src='https://img.logo.dev/${domain}?token=${LOGO_TOKEN}&size=64&format=png';">`;
     const fallback = `<div class="logo-badge" style="background:${b.bg};color:${b.fg};display:none;">${b.abbr}</div>`;
-    return `<div style="display:inline-block;position:relative;width:32px;height:32px;background:${b.bg};border-radius:7px;">${img}${fallback}</div>`;
+    return `<div style="display:inline-block;position:relative;width:32px;height:32px;">${img}${fallback}</div>`;
   }
   const b = FALLBACK_BADGES[name] || { abbr: name.slice(0,2).toUpperCase(), bg:'#6b7280', fg:'#fff' };
   return `<div class="logo-badge" style="background:${b.bg};color:${b.fg};">${b.abbr}</div>`;

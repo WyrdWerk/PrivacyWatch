@@ -5,6 +5,12 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 ---
 
+## v1.3.9 — 2026-06-28
+
+**Inference expansion + logo standardization.** Added 10 new inference providers (Groq, Cohere, Mistral, Perplexity, Cloudflare, Amazon Bedrock, Azure, AI21, Cerebras, SambaNova). Updated 15 existing providers with canonical ToS URLs from OpenRouter's curated index. Replaced all 32 provider logos with official SVGs from models.dev CDN. README updated to reflect 43 tracked surfaces across 32 provider families.
+
+---
+
 ## v1.3.9 — 2026-06-09
 
 **Public README cleanup.** Removed internal Cloudflare/DNS/deploy runbooks from the public README; replaced with a brief deployment summary. Updated GitHub repository description to reflect 33 tracked surfaces.

@@ -1,8 +1,8 @@
 {
   "meta": {
-    "lastUpdated": "2026-06-08",
-    "version": "1.3.7",
-    "description": "PrivacyWatch — LLM data privacy, retention, and model training tracker",
+    "lastUpdated": "2026-06-28",
+    "version": "1.3.9",
+    "description": "PrivacyWatch \u2014 LLM data privacy, retention, and model training tracker",
     "maintainer": "WyrdWerk (github.com/WyrdWerk/PrivacyWatch)"
   },
   "providers": [
@@ -24,18 +24,18 @@
         "detail": "API inputs/outputs auto-deleted after 30 days. Application state retention varies by endpoint."
       },
       "zdr": {
-        "label": "Yes — approval required",
+        "label": "Yes \u2014 approval required",
         "detail": "ZDR requires OpenAI approval + written amendment + 10% price uplift. EU data residency requires ZDR amendment.",
         "status": "full"
       },
       "location": {
         "label": "US + EU option",
-        "flag": "🇺🇸",
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
         "detail": "US primary. EU residency (Ireland + others) available with ZDR amendment and approval."
       },
-      "sourceUrl": "https://platform.openai.com/docs/guides/your-data",
+      "sourceUrl": "https://openai.com/policies/row-terms-of-use/",
       "sourceDate": "2026-05-27",
-      "notes": "API has been training-off by default since March 2023."
+      "notes": "API has been training-off by default since March 2023. Primary ToS via OpenRouter; API-specific data policy at platform.openai.com/docs/guides/your-data."
     },
     {
       "id": "openai-chatgpt",
@@ -48,7 +48,7 @@
       "incident": false,
       "training": {
         "label": "On by default",
-        "detail": "Free, Plus, Pro: training ON by default. Opt-out: Settings → Data Controls → toggle off. Business/Enterprise/Edu: OFF by default."
+        "detail": "Free, Plus, Pro: training ON by default. Opt-out: Settings \u2192 Data Controls \u2192 toggle off. Business/Enterprise/Edu: OFF by default."
       },
       "retention": {
         "label": "30 days after deletion",
@@ -61,7 +61,7 @@
       },
       "location": {
         "label": "US primary",
-        "flag": "🇺🇸",
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
         "detail": "US + globally via trusted service providers. EU residency not available for consumer plans."
       },
       "sourceUrl": "https://help.openai.com/en/articles/7730893",
@@ -86,18 +86,18 @@
         "detail": "Inputs/outputs auto-deleted within 30 days. ZDR = immediate post-response. Policy violations: up to 2 years."
       },
       "zdr": {
-        "label": "Yes — enterprise approval",
+        "label": "Yes \u2014 enterprise approval",
         "detail": "ZDR available for enterprise API customers. Requires Anthropic account team + per-org enablement. Eligible: Messages API, Token Counting, Prompt Caching. Not eligible: Batch, Files API.",
         "status": "full"
       },
       "location": {
         "label": "US only",
-        "flag": "🇺🇸",
-        "detail": "Workspace geo: US only. EU residency available via AWS Bedrock, GCP Vertex, or Azure Foundry — those providers' policies apply."
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
+        "detail": "Workspace geo: US only. EU residency available via AWS Bedrock, GCP Vertex, or Azure Foundry \u2014 those providers' policies apply."
       },
-      "sourceUrl": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+      "sourceUrl": "https://www.anthropic.com/legal/commercial-terms",
       "sourceDate": "2026-05-27",
-      "notes": "If using Claude via AWS Bedrock, GCP Vertex, or Azure — Anthropic's policy does not govern; cloud provider's policies apply.",
+      "notes": "If using Claude via AWS Bedrock, GCP Vertex, or Azure \u2014 Anthropic's policy does not govern; cloud provider's policies apply. Commercial ToS via OpenRouter; API data retention at platform.claude.com.",
       "relatedUrls": [
         "https://www.anthropic.com/legal/commercial-terms"
       ]
@@ -113,7 +113,7 @@
       "incident": false,
       "training": {
         "label": "Opt-in required",
-        "detail": "Training OFF by default. User must explicitly enable 'Model Improvement' toggle in Privacy Settings — the only US Frontier consumer product with opt-IN training."
+        "detail": "Training OFF by default. User must explicitly enable 'Model Improvement' toggle in Privacy Settings \u2014 the only US Frontier consumer product with opt-IN training."
       },
       "retention": {
         "label": "30 days after deletion",
@@ -126,7 +126,7 @@
       },
       "location": {
         "label": "US only",
-        "flag": "🇺🇸",
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
         "detail": "No geographic controls for consumer plans."
       },
       "sourceUrl": "https://privacy.claude.com/en/articles/10023580",
@@ -148,21 +148,21 @@
       },
       "retention": {
         "label": "Limited period (unspecified)",
-        "detail": "Abuse monitoring: 'limited period' — duration deliberately not specified. Grounding (Search/Maps): mandatory 30-day retention even under ZDR."
+        "detail": "Abuse monitoring: 'limited period' \u2014 duration deliberately not specified. Grounding (Search/Maps): mandatory 30-day retention even under ZDR."
       },
       "zdr": {
-        "label": "Yes — Vertex AI",
-        "detail": "ZDR equivalent available. Caveat: grounding with Google Search/Maps retains data for 30 days mandatory — true zero retention not achievable when grounding is used.",
+        "label": "Yes \u2014 Vertex AI",
+        "detail": "ZDR equivalent available. Caveat: grounding with Google Search/Maps retains data for 30 days mandatory \u2014 true zero retention not achievable when grounding is used.",
         "status": "full"
       },
       "location": {
         "label": "US + EU residency",
-        "flag": "🇺🇸🇪🇺",
+        "flag": "\ud83c\uddfa\ud83c\uddf8\ud83c\uddea\ud83c\uddfa",
         "detail": "Vertex AI offers EU data residency for enterprise. Regional Google Cloud options available."
       },
-      "sourceUrl": "https://cloud.google.com/vertex-ai/generative-ai/docs/data-governance",
+      "sourceUrl": "https://cloud.google.com/terms/",
       "sourceDate": "2026-05-27",
-      "notes": "'Limited period' retention is deliberately vague. Grounding creates a ZDR exception."
+      "notes": "'Limited period' retention is deliberately vague. Grounding creates a ZDR exception. Google Cloud ToS via OpenRouter; Vertex AI data governance at cloud.google.com/vertex-ai."
     },
     {
       "id": "google-gemini-app",
@@ -175,7 +175,7 @@
       "incident": false,
       "training": {
         "label": "On by default",
-        "detail": "Free Gemini App and AI Studio: training ON. Used to improve Google products and ML technologies. Paying for Gemini Advanced does NOT change this — same policy as free."
+        "detail": "Free Gemini App and AI Studio: training ON. Used to improve Google products and ML technologies. Paying for Gemini Advanced does NOT change this \u2014 same policy as free."
       },
       "retention": {
         "label": "Until deleted; 3yr post-review",
@@ -188,12 +188,12 @@
       },
       "location": {
         "label": "US",
-        "flag": "🇺🇸",
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
         "detail": "No location controls for Gemini App or free AI Studio."
       },
       "sourceUrl": "https://support.google.com/gemini/answer/13594961",
       "sourceDate": "2026-05-19",
-      "notes": "Critical: paying for Gemini Advanced does NOT improve privacy. Training is on by default regardless of subscription tier. Opt-out via 'Gemini Apps Activity' toggle — but disabling it also removes chat history. Source updated from 404 URL to Gemini Apps Privacy Hub (last updated May 19, 2026)."
+      "notes": "Critical: paying for Gemini Advanced does NOT improve privacy. Training is on by default regardless of subscription tier. Opt-out via 'Gemini Apps Activity' toggle \u2014 but disabling it also removes chat history. Source updated from 404 URL to Gemini Apps Privacy Hub (last updated May 19, 2026)."
     },
     {
       "id": "xai-api",
@@ -213,18 +213,18 @@
         "detail": "API inputs/outputs auto-deleted within 30 days. Exceptions: written agreement or policy violations/legal compliance."
       },
       "zdr": {
-        "label": "Yes — ZDR-Enabled API",
+        "label": "Yes \u2014 ZDR-Enabled API",
         "detail": "May 12, 2026 Enterprise ToS formally names this the 'ZDR-Enabled API.' User Content exists transiently only; deleted upon the earlier of: (a) one hour after inference completion, or (b) delivery of the response. No logs, backups, or durable copies retained for any purpose, including safety or legal compliance. Personal Data must be submitted exclusively through the ZDR-Enabled API. Foundation model training explicitly prohibited: 'xAI shall not use any User Content to train any foundation models, large language models, or other artificial intelligence systems.'",
         "status": "full"
       },
       "location": {
         "label": "US only",
-        "flag": "🇺🇸",
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
         "detail": "All xAI services processed in the United States. No EU data residency."
       },
-      "sourceUrl": "https://x.ai/legal/faq-enterprise",
+      "sourceUrl": "https://x.ai/legal/terms-of-service-enterprise",
       "sourceDate": "2026-06-07",
-      "notes": "Updated May 12, 2026: xAI Enterprise ToS now formally names the product 'ZDR-Enabled API' — superseding the prior 'Enterprise Vault' label. ZDR deletion: within 1 hour of inference completion or response delivery, whichever is sooner. Training prohibition explicitly stated in ToS.",
+      "notes": "Updated May 12, 2026: xAI Enterprise ToS now formally names the product 'ZDR-Enabled API' \u2014 superseding the prior 'Enterprise Vault' label. ZDR deletion: within 1 hour of inference completion or response delivery, whichever is sooner. Training prohibition explicitly stated in ToS. Enterprise ToS via OpenRouter; FAQ at x.ai/legal/faq.",
       "relatedUrls": [
         "https://x.ai/legal/terms-of-service-enterprise"
       ]
@@ -244,7 +244,7 @@
       },
       "retention": {
         "label": "Indefinite until deleted",
-        "detail": "Grok.com: conversations kept until deleted; 30-day recovery window. Grok on X: governed by X Corp policy — duration not confirmed."
+        "detail": "Grok.com: conversations kept until deleted; 30-day recovery window. Grok on X: governed by X Corp policy \u2014 duration not confirmed."
       },
       "zdr": {
         "label": "Not available",
@@ -253,12 +253,12 @@
       },
       "location": {
         "label": "US only",
-        "flag": "🇺🇸",
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
         "detail": "xAI: all processing in US. Grok on X governed by X Corp (separate legal entity)."
       },
       "sourceUrl": "https://x.ai/legal/faq",
       "sourceDate": "2026-05-27",
-      "notes": "Grok on X.com is governed by X Corp's privacy policy, NOT xAI's — legally separate entities. Opt-out is forward-looking only."
+      "notes": "Grok on X.com is governed by X Corp's privacy policy, NOT xAI's \u2014 legally separate entities. Opt-out is forward-looking only."
     },
     {
       "id": "alibaba-qwen",
@@ -270,26 +270,26 @@
       "rating": "guarded",
       "incident": false,
       "training": {
-        "label": "Off — explicit",
+        "label": "Off \u2014 explicit",
         "detail": "'Qwen Cloud does not use your API inputs or outputs to train or improve models.' Training data sourced from public data, partners, synthetic data only."
       },
       "retention": {
         "label": "ZDR baseline; 7-day (Responses API)",
-        "detail": "Standard inference: memory-only, not persisted post-response. Responses API: 7-day conversation storage. Metadata (billing): duration unspecified. CRITICAL: Model Studio assistant API retains conversation history with NO expiration date — materially different product."
+        "detail": "Standard inference: memory-only, not persisted post-response. Responses API: 7-day conversation storage. Metadata (billing): duration unspecified. CRITICAL: Model Studio assistant API retains conversation history with NO expiration date \u2014 materially different product."
       },
       "zdr": {
-        "label": "Yes — built-in baseline",
+        "label": "Yes \u2014 built-in baseline",
         "detail": "ZDR documented as baseline on Qwen Cloud. Separate regional endpoints: CN/SG/US/EU. Responses API 7-day retention is an exception.",
         "status": "full"
       },
       "location": {
         "label": "Multi-region (Frankfurt = genuine EU)",
-        "flag": "🌐",
-        "detail": "Separate endpoints: China (Beijing), Singapore, US (Virginia), EU (Frankfurt), Hong Kong. Frankfurt endpoint uses ONLY Frankfurt computing resources — genuine EU data residency with German BSI C5 + AIC4 certifications. Data stays in selected region. CAVEAT (May 29, 2026 Product ToS): Alibaba Cloud's overarching Product Terms for Model Studio use generic language — 'transferred to, stored, and processed in the country where Alibaba Cloud, its affiliates, or its sub-contractors maintain facilities' — with no specific regional binding. Specific endpoint guarantees are in Qwen Cloud ZDR docs only."
+        "flag": "\ud83c\udf10",
+        "detail": "Separate endpoints: China (Beijing), Singapore, US (Virginia), EU (Frankfurt), Hong Kong. Frankfurt endpoint uses ONLY Frankfurt computing resources \u2014 genuine EU data residency with German BSI C5 + AIC4 certifications. Data stays in selected region. CAVEAT (May 29, 2026 Product ToS): Alibaba Cloud's overarching Product Terms for Model Studio use generic language \u2014 'transferred to, stored, and processed in the country where Alibaba Cloud, its affiliates, or its sub-contractors maintain facilities' \u2014 with no specific regional binding. Specific endpoint guarantees are in Qwen Cloud ZDR docs only."
       },
-      "sourceUrl": "https://docs.qwencloud.com/developer-guides/security-compliance/zero-data-retention",
+      "sourceUrl": "https://www.alibabacloud.com/help/en/legal/latest/alibaba-cloud-international-website-product-terms-of-service-v-3-8-0",
       "sourceDate": "2026-06-07",
-      "notes": "Strongest Chinese provider on data governance. Frankfurt is genuine EU residency (not just routing). GDPR compliance via EU Standard Contractual Clauses (Implementing Decision 2021/914/EU) + UK Addendum. China-based subprocessors in transfer chain: iSoftStone, Beyondsoft, Hangzhou Xutian Technology, Accenture Enterprise Cloud Hangzhou. Model Studio assistant has indefinite retention — avoid for sensitive data. NOTE (May 29, 2026 Product ToS): Overarching Alibaba Cloud Product Terms for Model Studio use generic location language with no specific regional binding; specific endpoint guarantees are in Qwen Cloud ZDR documentation.",
+      "notes": "Strongest Chinese provider on data governance. Frankfurt is genuine EU residency (not just routing). GDPR compliance via EU Standard Contractual Clauses (Implementing Decision 2021/914/EU) + UK Addendum. China-based subprocessors in transfer chain: iSoftStone, Beyondsoft, Hangzhou Xutian Technology, Accenture Enterprise Cloud Hangzhou. Model Studio assistant has indefinite retention \u2014 avoid for sensitive data. NOTE (May 29, 2026 Product ToS): Overarching Alibaba Cloud Product Terms for Model Studio use generic location language with no specific regional binding; specific endpoint guarantees are in Qwen Cloud ZDR documentation. Alibaba Cloud Product ToS via OpenRouter; ZDR docs at docs.qwencloud.com.",
       "relatedUrls": [
         "https://www.alibabacloud.com/help/en/legal/latest/alibaba-cloud-international-website-product-terms-of-service-v-3-8-0"
       ]
@@ -304,26 +304,26 @@
       "rating": "caution",
       "incident": false,
       "training": {
-        "label": "On by default — CRITICAL",
+        "label": "On by default \u2014 CRITICAL",
         "detail": "Privacy Policy Section 2 (April 30, 2025): 'We process this information to provide and improve the Services, including training and optimizing our models.' NO legally operative document (Privacy Policy, ToS, DPA, Model Use Agreement) explicitly carves out API data from this training clause. FAQ claim of 'no training' is NOT referenced in any legal document and has no contractual force."
       },
       "retention": {
-        "label": "Vague — 'as necessary'",
+        "label": "Vague \u2014 'as necessary'",
         "detail": "No specific duration. 'As long as necessary to provide services and legitimate business purposes.' Post-account-deletion: transaction/billing records may be retained indefinitely for tax/fraud/legal."
       },
       "zdr": {
         "label": "Via 3rd party only (limited models)",
-        "detail": "ZDR via Vercel AI Gateway for K2.6 and Thinking Turbo ONLY — NOT for K2 Instruct. Not available directly from Moonshot platform.",
+        "detail": "ZDR via Vercel AI Gateway for K2.6 and Thinking Turbo ONLY \u2014 NOT for K2 Instruct. Not available directly from Moonshot platform.",
         "status": "partial"
       },
       "location": {
         "label": "Singapore entity; Beijing parent",
-        "flag": "🇸🇬",
-        "detail": "Corporate entity: Moonshot AI PTE. LTD. (Singapore). Parent: Beijing (北京月之暗面). Chinese-language policy states data stored within PRC for domestic users."
+        "flag": "\ud83c\uddf8\ud83c\uddec",
+        "detail": "Corporate entity: Moonshot AI PTE. LTD. (Singapore). Parent: Beijing (\u5317\u4eac\u6708\u4e4b\u6697\u9762). Chinese-language policy states data stored within PRC for domestic users."
       },
-      "sourceUrl": "https://platform.kimi.ai/docs/agreement/userprivacy",
+      "sourceUrl": "https://platform.moonshot.ai/docs/agreement/modeluse",
       "sourceDate": "2026-05-27",
-      "notes": "CRITICAL: Privacy Policy governs. API data CAN be used for training under current legal documentation. FAQ claim is not legally operative. English policy omits PIPL; Chinese policy includes cross-border consent requirements. OpenRouter lists Moonshot as 'zero retention, does not train' — reflects routing contract, contradicts Privacy Policy.",
+      "notes": "CRITICAL: Privacy Policy governs. API data CAN be used for training under current legal documentation. FAQ claim is not legally operative. English policy omits PIPL; Chinese policy includes cross-border consent requirements. OpenRouter lists Moonshot as 'zero retention, does not train' \u2014 reflects routing contract, contradicts Privacy Policy. Model Use Agreement via OpenRouter; Privacy Policy at platform.kimi.ai.",
       "relatedUrls": [
         "https://platform.moonshot.ai/docs/agreement/modeluse",
         "https://www.kimi.com/help/kimi-api/api-data-security"
@@ -340,10 +340,10 @@
       "incident": false,
       "training": {
         "label": "On by default",
-        "detail": "Policy: 'We process this information to...training and optimizing our models.' Opt-out via email to membership@moonshot.ai only — no in-app toggle documented."
+        "detail": "Policy: 'We process this information to...training and optimizing our models.' Opt-out via email to membership@moonshot.ai only \u2014 no in-app toggle documented."
       },
       "retention": {
-        "label": "Vague — 'as necessary'",
+        "label": "Vague \u2014 'as necessary'",
         "detail": "No specific duration."
       },
       "zdr": {
@@ -353,7 +353,7 @@
       },
       "location": {
         "label": "Singapore entity; Beijing parent",
-        "flag": "🇸🇬",
+        "flag": "\ud83c\uddf8\ud83c\uddec",
         "detail": "Singapore entity for international. PRC storage confirmed for domestic users in Chinese-language policy."
       },
       "sourceUrl": "https://www.kimi.com/user/agreement/userprivacy",
@@ -378,7 +378,7 @@
       },
       "retention": {
         "label": "30-day (batch); vague (general)",
-        "detail": "Batch API files: 30-day auto-delete. General API data: 'minimum necessary period' — no specific number."
+        "detail": "Batch API files: 30-day auto-delete. General API data: 'minimum necessary period' \u2014 no specific number."
       },
       "zdr": {
         "label": "None documented",
@@ -387,8 +387,8 @@
       },
       "location": {
         "label": "China only",
-        "flag": "🇨🇳",
-        "detail": "Policy: all data stored within PRC. No cross-border transfer currently. English policy not published — Chinese only."
+        "flag": "\ud83c\udde8\ud83c\uddf3",
+        "detail": "Policy: all data stored within PRC. No cross-border transfer currently. English policy not published \u2014 Chinese only."
       },
       "sourceUrl": "https://docs.bigmodel.cn/cn/terms/privacy-policy",
       "sourceDate": "2026-05-27",
@@ -412,21 +412,21 @@
       },
       "retention": {
         "label": "Real-time only (no storage)",
-        "detail": "DPA embedded in Privacy Policy: no storage of API content. Processed in real-time, not saved on servers. Functionally equivalent to ZDR with legal backing. Consumer policy: 'minimum necessary period' — different (and weaker) commitment."
+        "detail": "DPA embedded in Privacy Policy: no storage of API content. Processed in real-time, not saved on servers. Functionally equivalent to ZDR with legal backing. Consumer policy: 'minimum necessary period' \u2014 different (and weaker) commitment."
       },
       "zdr": {
-        "label": "Yes — legally operative",
+        "label": "Yes \u2014 legally operative",
         "detail": "DPA explicitly confirms real-time processing with no storage. This is a legally operative commitment (embedded in Privacy Policy, Additional Terms for API Services prevail in conflict). Not marketed as 'ZDR' but functionally and legally equivalent.",
         "status": "full"
       },
       "location": {
         "label": "Singapore",
-        "flag": "🇸🇬",
+        "flag": "\ud83c\uddf8\ud83c\uddec",
         "detail": "Z.ai: JINGSHENG HENGXING TECHNOLOGY PTE. LTD., Singapore. Data processed in Singapore. Separate from BigModel China entity."
       },
-      "sourceUrl": "https://docs.z.ai/legal-agreement/privacy-policy",
+      "sourceUrl": "https://chat.z.ai/legal-agreement/terms-of-service",
       "sourceDate": "2026-05-27",
-      "notes": "STRONG UPDATE: DPA in Privacy Policy explicitly states 'no storage of API content' — legally operative. API and consumer explicitly separated. Consumer policy is weaker. BigModel China has perpetual licence clause — different entity, same underlying models.",
+      "notes": "STRONG UPDATE: DPA in Privacy Policy explicitly states 'no storage of API content' \u2014 legally operative. API and consumer explicitly separated. Consumer policy is weaker. BigModel China has perpetual licence clause \u2014 different entity, same underlying models. ToS via OpenRouter; Privacy Policy at docs.z.ai.",
       "relatedUrls": [
         "https://docs.z.ai/legal-agreement/privacy-policy",
         "https://docs.z.ai/legal-agreement/dpa",
@@ -444,12 +444,12 @@
       "rating": "caution",
       "incident": false,
       "training": {
-        "label": "Ambiguous — profiling only excluded",
+        "label": "Ambiguous \u2014 profiling only excluded",
         "detail": "Privacy Policy (March 30, 2026): 'We do not use your input personal data to infer characteristics about an individual, nor use personal data for training to profile or target consumers.' This ONLY prohibits training for PROFILING/TARGETING. Completely SILENT on whether inference data can be used for general model improvement. No other document in 6 retrieved addresses this. Service Rules (governing privacy/security) require platform login to access."
       },
       "retention": {
         "label": "Vague (general); specific for audio/voice",
-        "detail": "General inference data: 'as long as necessary / as soon as reasonable' — still vague. ONLY specific durations found: audio generation URLs expire in 9 hours; temporary voice assets valid for 7 days maximum."
+        "detail": "General inference data: 'as long as necessary / as soon as reasonable' \u2014 still vague. ONLY specific durations found: audio generation URLs expire in 9 hours; temporary voice assets valid for 7 days maximum."
       },
       "zdr": {
         "label": "Undocumented officially",
@@ -458,12 +458,12 @@
       },
       "location": {
         "label": "Undisclosed (inferred US)",
-        "flag": "🇺🇸",
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
         "detail": "Privacy Policy does not specify server locations. EU-US Privacy Framework certification implies US data center for international API, but not explicitly stated. China domestic apps: stored in PRC."
       },
-      "sourceUrl": "https://platform.minimax.io/protocol/privacy-policy",
+      "sourceUrl": "https://www.minimax.io/platform/protocol/terms-of-service",
       "sourceDate": "2026-05-27",
-      "notes": "Nanonoble Pte. Ltd. (Singapore entity) for international API. Training policy gap confirmed across 6 retrieved documents — only profiling/targeting excluded, general improvement not addressed. Service Rules inaccessible without login. SOC 2 / ISO potentially available under NDA for enterprise.",
+      "notes": "Nanonoble Pte. Ltd. (Singapore entity) for international API. Training policy gap confirmed across 6 retrieved documents \u2014 only profiling/targeting excluded, general improvement not addressed. Service Rules inaccessible without login. SOC 2 / ISO potentially available under NDA for enterprise. ToS via OpenRouter; Privacy Policy at platform.minimax.io.",
       "relatedUrls": [
         "https://www.minimax.io/platform/protocol/terms-of-service"
       ]
@@ -492,12 +492,12 @@
       },
       "location": {
         "label": "China (domestic apps)",
-        "flag": "🇨🇳",
+        "flag": "\ud83c\udde8\ud83c\uddf3",
         "detail": "Chinese consumer apps stored within PRC per PIPL compliance."
       },
       "sourceUrl": "https://hailuoai.com/doc/privacy-policy.html",
       "sourceDate": "2026-05-27",
-      "notes": "Facial data explicitly non-retained post-generation — a positive specific commitment.",
+      "notes": "Facial data explicitly non-retained post-generation \u2014 a positive specific commitment.",
       "relatedUrls": [
         "https://www.minimax.io/platform/protocol/terms-of-service"
       ]
@@ -518,7 +518,7 @@
       },
       "retention": {
         "label": "Indefinite (post-deletion rights reserved)",
-        "detail": "ToS Section 2.5: 'Retain certain data as required by laws and regulations' — indefinite. Shared conversation links may be crawled despite anti-scraping measures — risk 'cannot be entirely eliminated.'"
+        "detail": "ToS Section 2.5: 'Retain certain data as required by laws and regulations' \u2014 indefinite. Shared conversation links may be crawled despite anti-scraping measures \u2014 risk 'cannot be entirely eliminated.'"
       },
       "zdr": {
         "label": "Not available",
@@ -526,9 +526,9 @@
         "status": "none"
       },
       "location": {
-        "label": "China — all users",
-        "flag": "🇨🇳",
-        "detail": "ToS Section 10.1: Governed by People's Republic of China law. Policy (explicit): 'we directly collect, process and store your Personal Data in People's Republic of China.' All global users — no separate international infrastructure."
+        "label": "China \u2014 all users",
+        "flag": "\ud83c\udde8\ud83c\uddf3",
+        "detail": "ToS Section 10.1: Governed by People's Republic of China law. Policy (explicit): 'we directly collect, process and store your Personal Data in People's Republic of China.' All global users \u2014 no separate international infrastructure."
       },
       "sourceUrl": "https://chat.deepseek.com/downloads/DeepSeek%20Terms%20of%20Use.html",
       "sourceDate": "2026-05-27",
@@ -547,7 +547,7 @@
       "categoryLabel": "Chinese",
       "rating": "high-risk",
       "incident": true,
-      "incidentDetail": "See API row — same incidents apply.",
+      "incidentDetail": "See API row \u2014 same incidents apply.",
       "training": {
         "label": "On by default",
         "detail": "Policy: 'We may use your Personal Data to...train and improve our technology, such as our machine learning models.' Opt-out toggle available in account settings."
@@ -562,8 +562,8 @@
         "status": "none"
       },
       "location": {
-        "label": "China — all users",
-        "flag": "🇨🇳",
+        "label": "China \u2014 all users",
+        "flag": "\ud83c\udde8\ud83c\uddf3",
         "detail": "Explicit China storage for all global users."
       },
       "sourceUrl": "https://deepseek-en.com/privacy-policy.html",
@@ -584,7 +584,7 @@
       "incident": false,
       "training": {
         "label": "Not stated (OpenRouter: no training)",
-        "detail": "Service Agreement does not explicitly address training. OpenRouter lists MiMo as 'Does not train.' Privacy Policy at privacy.mi.com/XiaomiMiMoPlatform/en_GB/ was inaccessible (504 timeout) — needs manual verification."
+        "detail": "Service Agreement does not explicitly address training. OpenRouter lists MiMo as 'Does not train.' Privacy Policy at privacy.mi.com/XiaomiMiMoPlatform/en_GB/ was inaccessible (504 timeout) \u2014 needs manual verification."
       },
       "retention": {
         "label": "Reasonable period",
@@ -597,12 +597,12 @@
       },
       "location": {
         "label": "EU + Singapore (international)",
-        "flag": "🇪🇺🇸🇬",
-        "detail": "CRITICAL UPDATE: Service Agreement explicitly states international user data is stored on servers in Europe and Singapore — NOT mainland China. User is Data Controller, Xiaomi is Data Processor. Domestic China users: data in PRC."
+        "flag": "\ud83c\uddea\ud83c\uddfa\ud83c\uddf8\ud83c\uddec",
+        "detail": "CRITICAL UPDATE: Service Agreement explicitly states international user data is stored on servers in Europe and Singapore \u2014 NOT mainland China. User is Data Controller, Xiaomi is Data Processor. Domestic China users: data in PRC."
       },
       "sourceUrl": "https://platform.xiaomimimo.com/docs/terms/user-agreement",
       "sourceDate": "2026-05-27",
-      "notes": "Upgraded from Unverified based on Service Agreement (April 26, 2026). Major finding: international data goes to EU/Singapore, not China. Privacy Policy still inaccessible — training policy needs confirmation. Open-source weights on HuggingFace (MIT) available for self-hosting.",
+      "notes": "Upgraded from Unverified based on Service Agreement (April 26, 2026). Major finding: international data goes to EU/Singapore, not China. Privacy Policy still inaccessible \u2014 training policy needs confirmation. Open-source weights on HuggingFace (MIT) available for self-hosting. User Agreement via OpenRouter (anchor removed for compatibility).",
       "relatedUrls": [
         "https://platform.xiaomimimo.com/#/docs/terms/user-agreement",
         "https://privacy.mi.com/XiaomiMiMoPlatform/en_GB/"
@@ -618,26 +618,26 @@
       "rating": "clean",
       "incident": false,
       "training": {
-        "label": "Off — ZDR default",
+        "label": "Off \u2014 ZDR default",
         "detail": "No training on inference data. FireOptimizer (optional) requires explicit opt-in; deleted after use, contractually enforced."
       },
       "retention": {
         "label": "ZDR default; Response API 30-day*",
-        "detail": "Standard inference: ZDR default (volatile memory only). IMPORTANT: Response API defaults to store=True (30-day retention) — set store=False to disable."
+        "detail": "Standard inference: ZDR default (volatile memory only). IMPORTANT: Response API defaults to store=True (30-day retention) \u2014 set store=False to disable."
       },
       "zdr": {
-        "label": "Default — all tiers",
+        "label": "Default \u2014 all tiers",
         "detail": "ZDR is the default for all tiers. Not an add-on. Enterprise explicitly guarantees no data retention.",
         "status": "full"
       },
       "location": {
         "label": "US + EU + APAC",
-        "flag": "🌐",
+        "flag": "\ud83c\udf10",
         "detail": "Dedicated deployments: US, EUROPE, APAC, or GLOBAL region options."
       },
-      "sourceUrl": "https://docs.fireworks.ai/guides/security_compliance/data_handling",
+      "sourceUrl": "https://fireworks.ai/terms-of-service",
       "sourceDate": "2026-05-27",
-      "notes": "ISO 27001/27701/42001, SOC 2 Type II, HIPAA. *Response API has store=True as default — must explicitly set store=False.",
+      "notes": "ISO 27001/27701/42001, SOC 2 Type II, HIPAA. *Response API has store=True as default \u2014 must explicitly set store=False. ToS via OpenRouter; Data handling at docs.fireworks.ai.",
       "relatedUrls": [
         "https://fireworks.ai/terms-of-service"
       ]
@@ -652,7 +652,7 @@
       "rating": "clean",
       "incident": false,
       "training": {
-        "label": "Off — opt-in only",
+        "label": "Off \u2014 opt-in only",
         "detail": "'We do not use any data collected from you to train our models without your explicit opt-in and consent.' Toggle in account Privacy & Security settings."
       },
       "retention": {
@@ -660,18 +660,18 @@
         "detail": "No default storage of prompts/completions. ZDR self-serve. Temporary cache duration unspecified."
       },
       "zdr": {
-        "label": "Yes — self-serve, all tiers",
-        "detail": "ZDR available via Settings → Profile → Privacy & Security. Most accessible ZDR of any inference provider — no sales call required.",
+        "label": "Yes \u2014 self-serve, all tiers",
+        "detail": "ZDR available via Settings \u2192 Profile \u2192 Privacy & Security. Most accessible ZDR of any inference provider \u2014 no sales call required.",
         "status": "full"
       },
       "location": {
         "label": "US + EU (enterprise)",
-        "flag": "🇺🇸🇪🇺",
+        "flag": "\ud83c\uddfa\ud83c\uddf8\ud83c\uddea\ud83c\uddfa",
         "detail": "Default: North America. EU data residency for enterprise (UK, Spain, France, Portugal, Iceland). SCCs in place for GDPR."
       },
-      "sourceUrl": "https://www.together.ai/privacy",
+      "sourceUrl": "https://www.together.ai/terms-of-service",
       "sourceDate": "2026-05-27",
-      "notes": "SOC 2 Type II (Jul 2025). DPA for enterprise only. HIPAA BAA available.",
+      "notes": "SOC 2 Type II (Jul 2025). DPA for enterprise only. HIPAA BAA available. ToS via OpenRouter; Privacy at www.together.ai/privacy.",
       "relatedUrls": [
         "https://www.together.ai/terms-of-service"
       ]
@@ -686,7 +686,7 @@
       "rating": "guarded",
       "incident": false,
       "training": {
-        "label": "Off — explicit",
+        "label": "Off \u2014 explicit",
         "detail": "'We do not train on your data.' Memory-only processing. Exception: Google/Anthropic models follow those providers' own policies when accessed via DeepInfra."
       },
       "retention": {
@@ -694,18 +694,18 @@
         "detail": "Standard inference: in-memory, not stored to disk. Account data: 30-day post-deletion. Bulk APIs: temporary encrypted disk during processing."
       },
       "zdr": {
-        "label": "Yes — enterprise only",
+        "label": "Yes \u2014 enterprise only",
         "detail": "ZDR available via enterprise arrangement. Not self-serve. Trust Center has formal Data Retention Policy document.",
         "status": "full"
       },
       "location": {
         "label": "US only",
-        "flag": "🇺🇸",
-        "detail": "US data centers only. No EU data residency. GDPR DPA: in progress — not yet published."
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
+        "detail": "US data centers only. No EU data residency. GDPR DPA: in progress \u2014 not yet published."
       },
-      "sourceUrl": "https://docs.deepinfra.com/account/data-privacy",
+      "sourceUrl": "https://deepinfra.com/terms",
       "sourceDate": "2026-05-27",
-      "notes": "Google/Anthropic model calls follow those providers' policies, not DeepInfra's. GDPR DPA absent — gap for EU enterprise. SOC 2, ISO 27001, HIPAA compliant.",
+      "notes": "Google/Anthropic model calls follow those providers' policies, not DeepInfra's. GDPR DPA absent \u2014 gap for EU enterprise. SOC 2, ISO 27001, HIPAA compliant. Terms via OpenRouter; Data privacy at docs.deepinfra.com.",
       "relatedUrls": [
         "https://deepinfra.com/terms"
       ]
@@ -721,25 +721,25 @@
       "incident": false,
       "training": {
         "label": "Speculative decoding only",
-        "detail": "Training ON by default — but ONLY to train small internal draft models for Speculative Decoding (inference speed optimization). Explicitly NOT for foundational LLM training. ZDR disables entirely."
+        "detail": "Training ON by default \u2014 but ONLY to train small internal draft models for Speculative Decoding (inference speed optimization). Explicitly NOT for foundational LLM training. ZDR disables entirely."
       },
       "retention": {
         "label": "Retained for Speculative Decoding",
-        "detail": "Duration: 'as long as necessary' — not numerically specified. Object Storage: deleted within 4 days of deletion request. Security logs: 24 months."
+        "detail": "Duration: 'as long as necessary' \u2014 not numerically specified. Object Storage: deleted within 4 days of deletion request. Security logs: 24 months."
       },
       "zdr": {
-        "label": "Yes — onboarding form or email",
-        "detail": "ZDR available via onboarding form or by emailing tokenfactory-support@nebius.com — not a self-serve UI toggle. Disables Speculative Decoding data collection. Required for HIPAA/BAA compliance. May impact inference latency.",
+        "label": "Yes \u2014 onboarding form or email",
+        "detail": "ZDR available via onboarding form or by emailing tokenfactory-support@nebius.com \u2014 not a self-serve UI toggle. Disables Speculative Decoding data collection. Required for HIPAA/BAA compliance. May impact inference latency.",
         "status": "full"
       },
       "location": {
         "label": "EU (Finland) + US",
-        "flag": "🇪🇺🇺🇸",
+        "flag": "\ud83c\uddea\ud83c\uddfa\ud83c\uddfa\ud83c\uddf8",
         "detail": "Token Factory: EU-North1 (Finland) primary. Both EU and US inference available. Nebius B.V. incorporated Netherlands."
       },
-      "sourceUrl": "https://docs.tokenfactory.nebius.com/legal/legal-quick-guide",
+      "sourceUrl": "https://docs.nebius.com/legal/studio/terms-of-use/",
       "sourceDate": "2026-06-07",
-      "notes": "Ex-Yandex: full divestment completed July 2024. Fully independent EU entity now. SOC 2 Type II, ISO 27001:2022. DPA published.",
+      "notes": "Ex-Yandex: full divestment completed July 2024. Fully independent EU entity now. SOC 2 Type II, ISO 27001:2022. DPA published. ToS via OpenRouter; Token Factory quick guide at docs.tokenfactory.nebius.com.",
       "relatedUrls": [
         "https://docs.nebius.com/legal/studio/terms-of-use/"
       ]
@@ -755,11 +755,11 @@
       "incident": false,
       "training": {
         "label": "Not explicitly prohibited",
-        "detail": "Terms of Service (Mar 31, 2025): 'We will not access your Interaction Data...will not use or disclose it without authorization...will only use your Interaction Data in compliance with applicable laws and solely for the purpose of providing Services to you.' This constrains use to service provision but contains no explicit training prohibition. CN Privacy Policy (.cn entity): 'we will not conduct any unauthorised use or disclosure of your Interaction Data, and will not store it' — functionally stronger but applies to Chinese entity/users."
+        "detail": "Terms of Service (Mar 31, 2025): 'We will not access your Interaction Data...will not use or disclose it without authorization...will only use your Interaction Data in compliance with applicable laws and solely for the purpose of providing Services to you.' This constrains use to service provision but contains no explicit training prohibition. CN Privacy Policy (.cn entity): 'we will not conduct any unauthorised use or disclosure of your Interaction Data, and will not store it' \u2014 functionally stronger but applies to Chinese entity/users."
       },
       "retention": {
         "label": "No storage (Interaction Data only)",
-        "detail": "Chinese-language Privacy Policy (Oct 11, 2025): Interaction Data is not stored. Account data, billing, and profile data IS retained with no specific durations. 'No data stored, ever' marketing is misleading as a blanket claim — it applies to Interaction Data specifically."
+        "detail": "Chinese-language Privacy Policy (Oct 11, 2025): Interaction Data is not stored. Account data, billing, and profile data IS retained with no specific durations. 'No data stored, ever' marketing is misleading as a blanket claim \u2014 it applies to Interaction Data specifically."
       },
       "zdr": {
         "label": "Not formally documented",
@@ -768,12 +768,12 @@
       },
       "location": {
         "label": "Undisclosed",
-        "flag": "🌐",
-        "detail": "Server locations NOT specified in any policy version. Singapore entity governed by PDPA; China entity by Chinese law. International .com product explicitly excludes China users — separate siliconflow.cn product."
+        "flag": "\ud83c\udf10",
+        "detail": "Server locations NOT specified in any policy version. Singapore entity governed by PDPA; China entity by Chinese law. International .com product explicitly excludes China users \u2014 separate siliconflow.cn product."
       },
       "sourceUrl": "https://docs.siliconflow.com/en/legals/terms-of-service",
       "sourceDate": "2026-05-27",
-      "notes": "Source updated to English Terms of Service (Mar 31, 2025), which explicitly restricts Interaction Data use: 'will not access your Interaction Data...will not use or disclose it without authorization...solely for the purpose of providing Services to you.' CN Privacy Policy (.cn entity, Oct 2025) has stronger language: 'will not conduct any unauthorised use or disclosure of your Interaction Data, and will not store it.' No explicit training prohibition in any version — constraint is 'solely for purpose of providing Services.' No SOC 2, ISO 27001, DPA, or sub-processor list.",
+      "notes": "Source updated to English Terms of Service (Mar 31, 2025), which explicitly restricts Interaction Data use: 'will not access your Interaction Data...will not use or disclose it without authorization...solely for the purpose of providing Services to you.' CN Privacy Policy (.cn entity, Oct 2025) has stronger language: 'will not conduct any unauthorised use or disclosure of your Interaction Data, and will not store it.' No explicit training prohibition in any version \u2014 constraint is 'solely for purpose of providing Services.' No SOC 2, ISO 27001, DPA, or sub-processor list.",
       "relatedUrls": [
         "https://docs.siliconflow.com/en/legals/privacy-policy",
         "https://docs.siliconflow.cn/en/legals/privacy-policy",
@@ -791,7 +791,7 @@
       "rating": "clean",
       "incident": false,
       "training": {
-        "label": "Off — contractual ZDR",
+        "label": "Off \u2014 contractual ZDR",
         "detail": "Privacy Mode: contractual ZDR with OpenAI, Anthropic, Google Vertex, xAI. Cursor's own models also excluded. ToS: 'ANYSPHERE WILL NOT USE CONTENT TO TRAIN... UNLESS YOU'VE EXPLICITLY AGREED.'"
       },
       "retention": {
@@ -799,13 +799,13 @@
         "detail": "Plaintext code not retained. Embeddings metadata (hashes, filenames) retained for codebase indexing feature. Volatile memory for AI requests."
       },
       "zdr": {
-        "label": "Yes — Privacy Mode = functional ZDR",
+        "label": "Yes \u2014 Privacy Mode = functional ZDR",
         "detail": "Privacy Mode provides ZDR-equivalent guarantees via contracts with all model providers. Default for Teams/Enterprise (admin-enforced).",
         "status": "full"
       },
       "location": {
         "label": "US only",
-        "flag": "🇺🇸",
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
         "detail": "All processing on US AWS infrastructure. No EU data residency on any plan."
       },
       "sourceUrl": "https://cursor.com/data-use",
@@ -829,17 +829,17 @@
         "detail": "Without Privacy Mode: code, prompts, editor actions may be stored and used 'to improve our AI features and train our models.' Must manually enable Privacy Mode to stop."
       },
       "retention": {
-        "label": "Variable — code may be stored",
+        "label": "Variable \u2014 code may be stored",
         "detail": "Code and context may be stored without Privacy Mode. Codebase indexing: embeddings and file metadata retained."
       },
       "zdr": {
         "label": "Not active",
-        "detail": "Privacy Mode must be manually enabled: Settings → General (Cmd/Ctrl+Shift+J). Free and Pro users start with it OFF.",
+        "detail": "Privacy Mode must be manually enabled: Settings \u2192 General (Cmd/Ctrl+Shift+J). Free and Pro users start with it OFF.",
         "status": "none"
       },
       "location": {
         "label": "US only",
-        "flag": "🇺🇸",
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
         "detail": "US AWS only."
       },
       "sourceUrl": "https://cursor.com/data-use",
@@ -859,7 +859,7 @@
       "rating": "clean",
       "incident": false,
       "training": {
-        "label": "Off — zero-retention",
+        "label": "Off \u2014 zero-retention",
         "detail": "Go tier: zero-retention policy from providers. No training on user data."
       },
       "retention": {
@@ -873,12 +873,12 @@
       },
       "location": {
         "label": "US, EU, Singapore",
-        "flag": "🌐",
-        "detail": "Go models in US, EU, and Singapore. Note: some models may be proxied through 3rd-party APIs (Alibaba DashScope, Moonshot) — ZDR scope for proxied calls undocumented."
+        "flag": "\ud83c\udf10",
+        "detail": "Go models in US, EU, and Singapore. Note: some models may be proxied through 3rd-party APIs (Alibaba DashScope, Moonshot) \u2014 ZDR scope for proxied calls undocumented."
       },
       "sourceUrl": "https://dev.opencode.ai/docs/go/",
       "sourceDate": "2026-05-27",
-      "notes": "Infrastructure may proxy through Alibaba/Moonshot — ZDR scope for those calls unclear."
+      "notes": "Infrastructure may proxy through Alibaba/Moonshot \u2014 ZDR scope for those calls unclear."
     },
     {
       "id": "opencode-zen",
@@ -904,12 +904,12 @@
       },
       "location": {
         "label": "Cloudflare R2 (region unknown)",
-        "flag": "🌐",
+        "flag": "\ud83c\udf10",
         "detail": "Storage location not explicitly stated."
       },
       "sourceUrl": "https://opencode.ai/legal/privacy-policy",
       "sourceDate": "2026-05-27",
-      "notes": "Homepage states 'does not store code' — contradicted by free tier ToS and documented storage."
+      "notes": "Homepage states 'does not store code' \u2014 contradicted by free tier ToS and documented storage."
     },
     {
       "id": "hyperagent",
@@ -921,7 +921,7 @@
       "rating": "guarded",
       "incident": false,
       "training": {
-        "label": "Off — express consent required",
+        "label": "Off \u2014 express consent required",
         "detail": "'We will not use, or permit others to use, Input or Output to train the generative artificial intelligence models used to provide the Services, without your express consent.'"
       },
       "retention": {
@@ -935,7 +935,7 @@
       },
       "location": {
         "label": "Global (unspecified)",
-        "flag": "🌐",
+        "flag": "\ud83c\udf10",
         "detail": "Data may be transferred outside user's jurisdiction. EU/UK/Swiss: SCCs or adequacy decisions. Specific data centers not disclosed."
       },
       "sourceUrl": "https://hyperagent.com/privacy",
@@ -956,7 +956,7 @@
       "incident": false,
       "training": {
         "label": "Never collected",
-        "detail": "'We do NOT use your data for training AI models.' Prompts/completions never stored — real-time processing only."
+        "detail": "'We do NOT use your data for training AI models.' Prompts/completions never stored \u2014 real-time processing only."
       },
       "retention": {
         "label": "Never stored",
@@ -964,12 +964,12 @@
       },
       "zdr": {
         "label": "De facto (no collection)",
-        "detail": "ZDR by design — data never collected. Strongest guarantee without requiring a formal ZDR agreement.",
+        "detail": "ZDR by design \u2014 data never collected. Strongest guarantee without requiring a formal ZDR agreement.",
         "status": "full"
       },
       "location": {
         "label": "US",
-        "flag": "🇺🇸",
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
         "detail": "Data processed in the United States."
       },
       "sourceUrl": "https://crof.ai/privacy",
@@ -994,18 +994,18 @@
         "detail": "Prompts/completions NOT written to durable storage. Operational metadata only (token counts, timestamps, request IDs)."
       },
       "zdr": {
-        "label": "Yes — Privacy tier",
+        "label": "Yes \u2014 Privacy tier",
         "detail": "Wafer Pass Privacy ($25/week): Zero Data Retention explicitly documented. DPA available.",
         "status": "full"
       },
       "location": {
         "label": "US",
-        "flag": "🇺🇸",
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
         "detail": "Inference served from US data centers."
       },
-      "sourceUrl": "https://www.wafer.ai/privacy-policy",
+      "sourceUrl": "https://www.wafer.ai/terms",
       "sourceDate": "2026-05-27",
-      "notes": "Y Combinator-backed. DPA available. GDPR rights acknowledged. Policy updated May 4, 2026.",
+      "notes": "Y Combinator-backed. DPA available. GDPR rights acknowledged. Policy updated May 4, 2026. Terms via OpenRouter; Privacy Policy at www.wafer.ai/privacy-policy.",
       "relatedUrls": [
         "https://www.wafer.ai/dpa"
       ]
@@ -1034,12 +1034,12 @@
       },
       "location": {
         "label": "US",
-        "flag": "🇺🇸",
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
         "detail": "US data centers."
       },
-      "sourceUrl": "https://www.wafer.ai/privacy-policy",
+      "sourceUrl": "https://www.wafer.ai/terms",
       "sourceDate": "2026-05-27",
-      "notes": "Speculative decoding training is disclosed and limited to internal inference optimization. Transparent approach.",
+      "notes": "Speculative decoding training is disclosed and limited to internal inference optimization. Transparent approach. Terms via OpenRouter; Privacy Policy at www.wafer.ai/privacy-policy.",
       "relatedUrls": [
         "https://www.wafer.ai/dpa"
       ]
@@ -1054,7 +1054,7 @@
       "rating": "guarded",
       "incident": false,
       "training": {
-        "label": "Off — explicit",
+        "label": "Off \u2014 explicit",
         "detail": "'We do not use your API inputs or outputs to train, fine-tune, or improve any machine learning models. Your inference data is yours.'"
       },
       "retention": {
@@ -1068,7 +1068,7 @@
       },
       "location": {
         "label": "Unknown",
-        "flag": "❓",
+        "flag": "\u2753",
         "detail": "Data center location not disclosed. On-prem deployment via Neuralwatt Deploy available for enterprises."
       },
       "sourceUrl": "https://portal.neuralwatt.com/privacy",
@@ -1085,7 +1085,7 @@
       "rating": "guarded",
       "incident": false,
       "training": {
-        "label": "Off — local-first",
+        "label": "Off \u2014 local-first",
         "detail": "'Command Code never trains on it. Never stores it.' Code stays on user's device. Taste learning generates structured local rules, not cloud training data."
       },
       "retention": {
@@ -1094,17 +1094,327 @@
       },
       "zdr": {
         "label": "Structural (local-first)",
-        "detail": "ZDR is architectural — code never leaves the device. LLM API calls (Anthropic, OpenAI etc.) still go to those providers; CommandCode adds no additional storage layer.",
+        "detail": "ZDR is architectural \u2014 code never leaves the device. LLM API calls (Anthropic, OpenAI etc.) still go to those providers; CommandCode adds no additional storage layer.",
         "status": "full"
       },
       "location": {
         "label": "Code local; cloud unknown",
-        "flag": "💻",
+        "flag": "\ud83d\udcbb",
         "detail": "User code stays on device. Account/telemetry cloud location not disclosed. Enterprise self-hosted option available."
       },
       "sourceUrl": "https://commandcode.ai/docs/resources/security",
       "sourceDate": "2026-05-27",
-      "notes": "Local-first is structurally differentiated — privacy is architectural, not just policy. No compliance certifications documented."
+      "notes": "Local-first is structurally differentiated \u2014 privacy is architectural, not just policy. No compliance certifications documented."
+    },
+    {
+      "id": "groq",
+      "name": "Groq",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "guarded",
+      "incident": false,
+      "training": {
+        "label": "Off \u2014 explicit",
+        "detail": "ToS: 'We do not use your Input or Output data to train, improve, or develop our models or any other models.' Memory-only processing for inference."
+      },
+      "retention": {
+        "label": "Memory only",
+        "detail": "Inference data processed in memory, not persisted. Account data retained per standard business practices."
+      },
+      "zdr": {
+        "label": "Yes \u2014 by design",
+        "detail": "ZDR is the default architecture \u2014 data is not stored post-inference. No separate ZDR agreement needed.",
+        "status": "full"
+      },
+      "location": {
+        "label": "US",
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
+        "detail": "US data centers. No EU data residency documented."
+      },
+      "sourceUrl": "https://groq.com/terms-of-use/",
+      "sourceDate": "2026-06-28",
+      "notes": "Added via OpenRouter ToS cross-reference. Hardware-focused inference provider (LPUs). Strong no-training commitment."
+    },
+    {
+      "id": "cohere",
+      "name": "Cohere",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "clean",
+      "incident": false,
+      "training": {
+        "label": "Off by default",
+        "detail": "ToS: Customer data not used for training. Opt-in available for model improvement via separate agreement."
+      },
+      "retention": {
+        "label": "Per agreement",
+        "detail": "Retention duration defined in customer agreement. Standard endpoint: not stored post-processing unless agreed."
+      },
+      "zdr": {
+        "label": "Yes \u2014 via agreement",
+        "detail": "ZDR available through enterprise/customer agreement. Not self-serve \u2014 requires sales engagement.",
+        "status": "full"
+      },
+      "location": {
+        "label": "US + EU",
+        "flag": "\ud83c\uddfa\ud83c\uddf8\ud83c\uddea\ud83c\uddfa",
+        "detail": "Headquartered in Toronto, but serves US and EU. Data residency options available for enterprise."
+      },
+      "sourceUrl": "https://cohere.com/terms-of-use",
+      "sourceDate": "2026-06-28",
+      "notes": "Added via OpenRouter ToS cross-reference. Canadian AI company with strong privacy stance."
+    },
+    {
+      "id": "mistral",
+      "name": "Mistral",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "clean",
+      "incident": false,
+      "training": {
+        "label": "Off by default",
+        "detail": "ToS: Customer data not used to train models without consent. Explicit opt-in required for any training use."
+      },
+      "retention": {
+        "label": "Limited period",
+        "detail": "Data retained only as long as necessary for service provision. Deletion upon request per GDPR."
+      },
+      "zdr": {
+        "label": "Yes \u2014 GDPR by design",
+        "detail": "EU company (Paris) with GDPR compliance. ZDR achievable via data deletion requests. No permanent storage of inference data.",
+        "status": "full"
+      },
+      "location": {
+        "label": "EU (France)",
+        "flag": "\ud83c\uddea\ud83c\uddfa",
+        "detail": "Headquartered in Paris, France. GDPR jurisdiction. Data processed in EU."
+      },
+      "sourceUrl": "https://mistral.ai/terms/#terms-of-use",
+      "sourceDate": "2026-06-28",
+      "notes": "Added via OpenRouter ToS cross-reference. Major European open-weight model provider."
+    },
+    {
+      "id": "perplexity-api",
+      "name": "Perplexity",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "guarded",
+      "incident": false,
+      "training": {
+        "label": "Off \u2014 explicit",
+        "detail": "API ToS: 'We do not use your API data to train our models.' Consumer product has different policy."
+      },
+      "retention": {
+        "label": "Not stored",
+        "detail": "API inputs/outputs not persisted. Metadata (usage, billing) retained per standard practices."
+      },
+      "zdr": {
+        "label": "Yes \u2014 by design",
+        "detail": "ZDR is the default for API. No separate agreement needed \u2014 data is not stored post-inference.",
+        "status": "full"
+      },
+      "location": {
+        "label": "US",
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
+        "detail": "Headquartered in San Francisco. US data centers."
+      },
+      "sourceUrl": "https://www.perplexity.ai/hub/legal/perplexity-api-terms-of-service",
+      "sourceDate": "2026-06-28",
+      "notes": "Added via OpenRouter ToS cross-reference. Search-focused AI with separate API product."
+    },
+    {
+      "id": "cloudflare-r2",
+      "name": "Cloudflare",
+      "surface": "API (Workers AI)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "clean",
+      "incident": false,
+      "training": {
+        "label": "Off \u2014 explicit",
+        "detail": "ToS: Customer content not used for training. Workers AI inference data processed ephemerally."
+      },
+      "retention": {
+        "label": "Ephemeral",
+        "detail": "Inference data not persisted. R2 storage retention per customer configuration."
+      },
+      "zdr": {
+        "label": "Yes \u2014 by design",
+        "detail": "ZDR is default for Workers AI. No storage of inference data post-processing.",
+        "status": "full"
+      },
+      "location": {
+        "label": "Global (300+ locations)",
+        "flag": "\ud83c\udf10",
+        "detail": "Edge network spans 300+ cities. Data processed in region of request. No single data center dependency."
+      },
+      "sourceUrl": "https://www.cloudflare.com/service-specific-terms-developer-platform/#developer-platform-terms",
+      "sourceDate": "2026-06-28",
+      "notes": "Added via OpenRouter ToS cross-reference. Infrastructure provider with edge inference capabilities."
+    },
+    {
+      "id": "amazon-bedrock",
+      "name": "Amazon Bedrock",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "clean",
+      "incident": false,
+      "training": {
+        "label": "Off by default",
+        "detail": "AWS treats customer data as customer data. No training on customer data without explicit consent. Governed by AWS service terms."
+      },
+      "retention": {
+        "label": "Per AWS controls",
+        "detail": "Data retention controlled by customer via Bedrock settings. Applications can configure retention periods."
+      },
+      "zdr": {
+        "label": "Yes \u2014 configurable",
+        "detail": "ZDR available via Bedrock configuration. Customers can set data to not persist beyond inference.",
+        "status": "full"
+      },
+      "location": {
+        "label": "US + Global",
+        "flag": "\ud83c\uddfa\ud83c\uddf8\ud83c\udf10",
+        "detail": "AWS regions worldwide. Data processed in selected region. No cross-region transfer without configuration."
+      },
+      "sourceUrl": "https://aws.amazon.com/service-terms/",
+      "sourceDate": "2026-06-28",
+      "notes": "Added via OpenRouter ToS cross-reference. AWS managed service for foundation models."
+    },
+    {
+      "id": "azure",
+      "name": "Azure",
+      "surface": "API (OpenAI Service)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "clean",
+      "incident": false,
+      "training": {
+        "label": "Off by default",
+        "detail": "Azure OpenAI Service: No training on customer data. Governed by Microsoft Trusted AI principles and Azure ToS."
+      },
+      "retention": {
+        "label": "Limited period",
+        "detail": "Data retained only as long as necessary. Customer controls retention via Azure settings."
+      },
+      "zdr": {
+        "label": "Yes \u2014 enterprise",
+        "detail": "ZDR available for enterprise customers. Requires agreement with Microsoft. Data not persisted post-inference.",
+        "status": "full"
+      },
+      "location": {
+        "label": "Global (35+ regions)",
+        "flag": "\ud83c\udf10",
+        "detail": "Azure regions worldwide. Data residency controls available. Customer can select specific regions."
+      },
+      "sourceUrl": "https://www.microsoft.com/en-us/legal/terms-of-use?oneroute=true",
+      "sourceDate": "2026-06-28",
+      "notes": "Added via OpenRouter ToS cross-reference. Microsoft's cloud AI inference service."
+    },
+    {
+      "id": "ai21",
+      "name": "AI21",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "guarded",
+      "incident": false,
+      "training": {
+        "label": "Off \u2014 explicit",
+        "detail": "ToS: Customer data not used for training without consent. Jurassic models trained on public data only."
+      },
+      "retention": {
+        "label": "Not stored",
+        "detail": "API inputs/outputs not persisted. Processing is ephemeral."
+      },
+      "zdr": {
+        "label": "Yes \u2014 by design",
+        "detail": "ZDR is default architecture. No storage of inference data post-processing.",
+        "status": "full"
+      },
+      "location": {
+        "label": "Israel + US",
+        "flag": "\ud83c\uddee\ud83c\uddf1\ud83c\uddfa\ud83c\uddf8",
+        "detail": "Headquartered in Jerusalem. US operations. Data processed in selected regions."
+      },
+      "sourceUrl": "https://www.ai21.com/terms-of-service/",
+      "sourceDate": "2026-06-28",
+      "notes": "Added via OpenRouter ToS cross-reference. Israeli AI company known for Jurassic models."
+    },
+    {
+      "id": "cerebras",
+      "name": "Cerebras",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "clean",
+      "incident": false,
+      "training": {
+        "label": "Off \u2014 explicit",
+        "detail": "ToS: Customer data not used for training. Inference-only service with no data retention."
+      },
+      "retention": {
+        "label": "Not stored",
+        "detail": "Inference data processed in memory only. No persistence of prompts or completions."
+      },
+      "zdr": {
+        "label": "Yes \u2014 by design",
+        "detail": "ZDR is architecture default. No storage of inference data.",
+        "status": "full"
+      },
+      "location": {
+        "label": "US",
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
+        "detail": "Headquartered in Mountain View, CA. US data centers."
+      },
+      "sourceUrl": "https://www.cerebras.ai/terms-of-service",
+      "sourceDate": "2026-06-28",
+      "notes": "Added via OpenRouter ToS cross-reference. Hardware-focused inference (Wafer Scale Engines)."
+    },
+    {
+      "id": "sambanova",
+      "name": "SambaNova",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "clean",
+      "incident": false,
+      "training": {
+        "label": "Off \u2014 explicit",
+        "detail": "ToS: Customer data not used for training. Enterprise-focused with strong privacy commitments."
+      },
+      "retention": {
+        "label": "Per agreement",
+        "detail": "Retention duration defined in enterprise agreement. Standard: no persistence beyond inference."
+      },
+      "zdr": {
+        "label": "Yes \u2014 enterprise",
+        "detail": "ZDR available through enterprise agreement. Data not persisted post-inference.",
+        "status": "full"
+      },
+      "location": {
+        "label": "US",
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
+        "detail": "Headquartered in San Mateo, CA. US data centers."
+      },
+      "sourceUrl": "https://sambanova.ai/terms-and-conditions",
+      "sourceDate": "2026-06-28",
+      "notes": "Added via OpenRouter ToS cross-reference. Enterprise AI infrastructure provider."
     }
   ]
 }

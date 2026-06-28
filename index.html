@@ -464,7 +464,11 @@ const LOGO_MAP = {
   'DeepInfra': 'deepinfra', 'Nebius AI': 'nebius', 'SiliconFlow': 'siliconflow',
   'Cursor': 'cursor', 'OpenCode': 'opencode', 'HyperAgent': 'hyperagent',
   'Crof AI': 'crof', 'Wafer AI': 'wafer', 'Neuralwatt': 'neuralwatt',
-  'CommandCode': 'commandcode'
+  'CommandCode': 'commandcode',
+  'Groq': 'groq', 'Cohere': 'cohere', 'Mistral': 'mistral',
+  'Perplexity': 'perplexity-ai', 'Cloudflare': 'cloudflare',
+  'Amazon Bedrock': 'amazon-bedrock', 'Azure': 'azure',
+  'AI21': 'ai21', 'Cerebras': 'cerebras', 'SambaNova': 'sambanova'
 };
 
 // Fallback badge colors (used only when logo img fails to load)
@@ -490,21 +494,23 @@ const FALLBACK_BADGES = {
   'Crof AI':          { abbr:'CR',   bg:'#e11d48', fg:'#fff' },
   'Wafer AI':         { abbr:'WF',   bg:'#d97706', fg:'#fff' },
   'Neuralwatt':       { abbr:'NW',   bg:'#16a34a', fg:'#fff' },
-  'CommandCode':      { abbr:'CMD',  bg:'#0f172a', fg:'#fff' }
-};
-
-// Extension map: which logos are PNG vs SVG
-const LOGO_EXT = {
-  'anthropic': 'png', 'fireworks': 'png', 'hyperagent': 'png',
-  'moonshot': 'png', 'neuralwatt': 'png', 'opencode': 'png',
-  'siliconflow': 'png', 'wafer': 'png', 'xai': 'png',
-  // everything else defaults to svg
+  'CommandCode':      { abbr:'CMD',  bg:'#0f172a', fg:'#fff' },
+  'Groq':             { abbr:'GRO',  bg:'#f97316', fg:'#fff' },
+  'Cohere':           { abbr:'COH',  bg:'#8b5cf6', fg:'#fff' },
+  'Mistral':          { abbr:'MIS',  bg:'#3b82f6', fg:'#fff' },
+  'Perplexity':       { abbr:'PER',  bg:'#10b981', fg:'#fff' },
+  'Cloudflare':       { abbr:'CF',   bg:'#f38020', fg:'#fff' },
+  'Amazon Bedrock':   { abbr:'AWS',  bg:'#ff9900', fg:'#fff' },
+  'Azure':            { abbr:'AZR',  bg:'#0078d4', fg:'#fff' },
+  'AI21':             { abbr:'AI2',  bg:'#6366f1', fg:'#fff' },
+  'Cerebras':         { abbr:'CER',  bg:'#ef4444', fg:'#fff' },
+  'SambaNova':        { abbr:'SAM',  bg:'#059669', fg:'#fff' }
 };
 
 function providerLogo(name) {
   const slug = LOGO_MAP[name];
   if (slug) {
-    const ext = LOGO_EXT[slug] || 'svg';
+    const ext = 'svg';
     const img = `<img src="assets/logos/${slug}.${ext}" alt="${name} logo" width="32" height="32" style="border-radius:7px;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">`;
     const b = FALLBACK_BADGES[name] || { abbr: name.slice(0,2).toUpperCase(), bg:'#6b7280', fg:'#fff' };
     const fallback = `<div class="logo-badge" style="background:${b.bg};color:${b.fg};display:none;">${b.abbr}</div>`;

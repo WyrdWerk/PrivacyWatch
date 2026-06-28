@@ -120,7 +120,7 @@
     td .zdr-yes, td .zdr-partial, td .zdr-no { white-space: normal; word-break: break-word; }
 
     .provider-cell { display: flex; align-items: center; gap: 10px; }
-    .provider-icon { width: 32px; height: 32px; border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; background: #fafaf8; }
+    .provider-icon { width: 32px; height: 32px; border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
     .logo-badge { width: 32px; height: 32px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 9.5px; font-weight: 800; letter-spacing: -0.2px; line-height: 1; flex-shrink: 0; }
     .provider-info { min-width: 0; }
     .provider-name { font-weight: 600; font-size: 13px; color: var(--text-primary); line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
@@ -510,11 +510,10 @@ const FALLBACK_BADGES = {
 function providerLogo(name) {
   const slug = LOGO_MAP[name];
   if (slug) {
-    const ext = 'svg';
-    const img = `<img src="assets/logos/${slug}.${ext}" alt="${name} logo" width="32" height="32" style="border-radius:7px;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">`;
     const b = FALLBACK_BADGES[name] || { abbr: name.slice(0,2).toUpperCase(), bg:'#6b7280', fg:'#fff' };
+    const img = `<img src="assets/logos/${slug}.svg" alt="${name} logo" width="32" height="32" style="border-radius:7px;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">`;
     const fallback = `<div class="logo-badge" style="background:${b.bg};color:${b.fg};display:none;">${b.abbr}</div>`;
-    return `<div style="display:inline-block;position:relative;width:32px;height:32px;">${img}${fallback}</div>`;
+    return `<div style="display:inline-block;position:relative;width:32px;height:32px;background:${b.bg};border-radius:7px;">${img}${fallback}</div>`;
   }
   const b = FALLBACK_BADGES[name] || { abbr: name.slice(0,2).toUpperCase(), bg:'#6b7280', fg:'#fff' };
   return `<div class="logo-badge" style="background:${b.bg};color:${b.fg};">${b.abbr}</div>`;

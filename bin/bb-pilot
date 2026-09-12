@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+# Launch one isolated bb-app instance for the current Amp thread.
+set -euo pipefail
+
+umask 077
+
+readonly BB_VERSION="0.43.0"
+readonly STATE_ROOT="$HOME/.local/share/bb-pilot"
+readonly RUNTIME_DIR="$STATE_ROOT/runtime"
+readonly BB_APP="$RUNTIME_DIR/node_modules/bb-app/dist/bb-app.js"
+readonly MARKER="$RUNTIME_DIR/.bb-pilot-managed"
+readonly NODE_BIN="$(command -v node || true)"
+
+if [[ -z "${AMP_THREAD_ID:-}" ]]; then
+  printf 'bb-pilot requires AMP_THREAD_ID\n' >&2
+  exit 64
+fi
+case "$AMP_THREAD_ID" in
+  ''|'.'|'..'|*[!A-Za-z0-9._-]*)
+    printf 'invalid AMP_THREAD_ID for bb data isolation\n' >&2
+    exit 64
+    ;;
+esac
+if (( ${#AMP_THREAD_ID} > 128 )); then
+  printf 'invalid AMP_THREAD_ID for bb data isolation\n' >&2
+  exit 64
+fi
+
+case "${PORT:-}" in
+  ''|*[!0-9]*)
+    printf 'invalid supervised service port\n' >&2
+    exit 64
+    ;;
+esac
+if (( PORT < 1 || PORT > 65535 )); then
+  printf 'invalid supervised service port\n' >&2
+  exit 64
+fi
+
+if [[ ! -f "$MARKER" || ! -f "$BB_APP" || -z "$NODE_BIN" ]]; then
+  printf 'bb-app %s is not installed; run .agents/setup first\n' "$BB_VERSION" >&2
+  exit 78
+fi
+installed_version="$(node -p "require('$RUNTIME_DIR/node_modules/bb-app/package.json').version" 2>/dev/null || true)"
+if [[ "$installed_version" != "$BB_VERSION" ]]; then
+  printf 'bb-app %s is not installed; run .agents/setup first\n' "$BB_VERSION" >&2
+  exit 78
+fi
+
+daemon_port="$(PORT="$PORT" python3 - <<'PY'
+import os
+import socket
+
+app_port = int(os.environ["PORT"])
+candidate = app_port + 10000
+if candidate > 65535:
+    candidate = app_port - 10000
+if candidate < 1:
+    candidate = 1
+
+for offset in range(2048):
+    port = candidate + offset
+    if port > 65535:
+        port -= 65535
+    if port == app_port or port < 1:
+        continue
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        sock.bind(("127.0.0.1", port))
+    except OSError:
+        sock.close()
+        continue
+    sock.close()
+    print(port)
+    break
+else:
+    raise SystemExit("no free loopback port for bb host daemon")
+PY
+)"
+
+readonly DATA_DIR="$STATE_ROOT/data/$AMP_THREAD_ID"
+readonly LOCK_DIR="$STATE_ROOT/locks"
+readonly LOCK_FILE="$LOCK_DIR/$AMP_THREAD_ID.lock"
+readonly CURATED_PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin"
+provider_env=()
+# Let the already-authenticated Pi provider use credentials for this process
+# only. Nothing is copied into bb data, runtime files, or project settings.
+[[ -n "${ZRO_API_KEY:-}" ]] && provider_env+=("ZRO_API_KEY=$ZRO_API_KEY")
+[[ -n "${NEURALWATT_API_KEY:-}" ]] && provider_env+=("NEURALWATT_API_KEY=$NEURALWATT_API_KEY")
+
+install -d -m 700 "$STATE_ROOT" "$STATE_ROOT/data" "$DATA_DIR" "$LOCK_DIR"
+chmod 700 "$DATA_DIR"
+exec 9>"$LOCK_FILE"
+chmod 600 "$LOCK_FILE"
+if ! flock -n 9; then
+  printf 'bb-pilot already running for this AMP_THREAD_ID\n' >&2
+  exit 73
+fi
+
+exec env -i \
+  HOME="$HOME" \
+  PATH="$CURATED_PATH" \
+  LANG="${LANG:-C.UTF-8}" \
+  AMP_THREAD_ID="$AMP_THREAD_ID" \
+  PORT="$PORT" \
+  BB_DATA_DIR="$DATA_DIR" \
+  BB_SERVER_BIND_HOST=127.0.0.1 \
+  BB_SERVER_PORT="$PORT" \
+  BB_HOST_DAEMON_PORT="$daemon_port" \
+  BB_TELEMETRY=false \
+  "${provider_env[@]}" \
+  "$NODE_BIN" "$BB_APP" \
+  --data-dir "$DATA_DIR" \
+  --server-bind-host 127.0.0.1 \
+  --server-port "$PORT" \
+  --host-daemon-port "$daemon_port"

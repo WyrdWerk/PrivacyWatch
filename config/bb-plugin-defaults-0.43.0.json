@@ -1,0 +1,18 @@
+{
+  "bbAppVersion": "0.43.0",
+  "source": "bb-app@0.43.0 clean data-dir bb plugin list --json",
+  "note": "Reference inventory only. Startup does not force plugin state.",
+  "bundled": 27,
+  "defaultEnabledCount": 20,
+  "defaultDisabledCount": 7,
+  "defaultDisabled": [
+    "account-pool",
+    "ask-user-question",
+    "monaco-editor",
+    "plugin-api-docs",
+    "plugin-api-tester",
+    "provider-usage",
+    "workflows"
+  ],
+  "notInCleanInventory": ["tasks"]
+}

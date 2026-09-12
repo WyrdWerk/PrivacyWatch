@@ -1,0 +1,10 @@
+services:
+  bb-pilot:
+    command: bash bin/bb-pilot
+    health: /health
+    review: false
+    agent: off
+    portal:
+      url: /
+      title: bb-pilot
+      description: Private bb workspace for this Amp thread.

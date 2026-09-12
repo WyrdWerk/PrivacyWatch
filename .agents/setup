@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+# Install and verify the project-owned bb runtime. This hook never starts it.
+set -euo pipefail
+
+umask 077
+
+readonly BB_VERSION="0.43.0"
+readonly STATE_DIR="$HOME/.local/share/bb-pilot"
+readonly RUNTIME_DIR="$STATE_DIR/runtime"
+readonly LOCK_DIR="$HOME/.cache/bb-pilot"
+readonly MARKER="$RUNTIME_DIR/.bb-pilot-managed"
+
+mkdir -p "$LOCK_DIR"
+chmod 700 "$LOCK_DIR"
+exec 9>"$LOCK_DIR/setup.lock"
+chmod 600 "$LOCK_DIR/setup.lock"
+flock 9
+
+if [[ "${BB_INSTALL:-true}" == "false" ]]; then
+  printf '[bb-setup] BB_INSTALL=false; skipping bb installation.\n'
+  exit 0
+fi
+
+if [[ -e "$RUNTIME_DIR" && ! -d "$RUNTIME_DIR" ]]; then
+  printf '[bb-setup] refusing non-directory runtime path: %s\n' "$RUNTIME_DIR" >&2
+  exit 1
+fi
+
+if [[ -e "$RUNTIME_DIR" && ! -f "$MARKER" ]]; then
+  printf '[bb-setup] refusing to replace an unowned runtime at %s\n' "$RUNTIME_DIR" >&2
+  exit 1
+fi
+
+if [[ -f "$RUNTIME_DIR/node_modules/bb-app/package.json" && -f "$RUNTIME_DIR/node_modules/bb-app/dist/bb-app.js" ]]; then
+  installed_version="$(node -p "require('$RUNTIME_DIR/node_modules/bb-app/package.json').version" 2>/dev/null || true)"
+  native_database_ok=false
+  if node -e "const Database=require('$RUNTIME_DIR/node_modules/better-sqlite3'); const db=new Database(':memory:'); db.close()" >/dev/null 2>&1; then
+    native_database_ok=true
+  fi
+  if [[ "$installed_version" == "$BB_VERSION" && -f "$MARKER" && "$native_database_ok" == true ]]; then
+    chmod -R u+rwX,go-rwx "$RUNTIME_DIR"
+    printf '[bb-setup] verified bb-app %s at %s\n' "$BB_VERSION" "$RUNTIME_DIR"
+    exit 0
+  fi
+fi
+
+mkdir -p "$STATE_DIR"
+chmod 700 "$STATE_DIR"
+stage_dir="$(mktemp -d "$STATE_DIR/.runtime.XXXXXX")"
+trap 'rm -rf "$stage_dir"' EXIT
+chmod 700 "$stage_dir"
+
+printf '[bb-setup] installing bb-app %s\n' "$BB_VERSION"
+npm install \
+  --prefix "$stage_dir" \
+  --no-save \
+  --package-lock=false \
+  --omit=dev \
+  --no-audit \
+  --no-fund \
+  "bb-app@$BB_VERSION"
+
+package_json="$stage_dir/node_modules/bb-app/package.json"
+entrypoint="$stage_dir/node_modules/bb-app/dist/bb-app.js"
+[[ -f "$package_json" && -f "$entrypoint" ]] || {
+  printf '[bb-setup] bb-app installation is incomplete\n' >&2
+  exit 1
+}
+[[ "$(node -p "require('$package_json').name")" == "bb-app" ]] || {
+  printf '[bb-setup] installed package identity is not bb-app\n' >&2
+  exit 1
+}
+[[ "$(node -p "require('$package_json').version")" == "$BB_VERSION" ]] || {
+  printf '[bb-setup] installed package is not bb-app %s\n' "$BB_VERSION" >&2
+  exit 1
+}
+node -e "const Database=require('$stage_dir/node_modules/better-sqlite3'); const db=new Database(':memory:'); db.close()" || {
+  printf '[bb-setup] better-sqlite3 native binding is unavailable\n' >&2
+  exit 1
+}
+
+printf 'bb-pilot managed runtime; bb-app %s\n' "$BB_VERSION" >"$stage_dir/.bb-pilot-managed"
+chmod 600 "$stage_dir/.bb-pilot-managed"
+chmod -R u+rwX,go-rwx "$stage_dir"
+
+if [[ -e "$RUNTIME_DIR" ]]; then
+  rm -rf "$RUNTIME_DIR"
+fi
+mv "$stage_dir" "$RUNTIME_DIR"
+trap - EXIT
+chmod -R u+rwX,go-rwx "$RUNTIME_DIR"
+printf '[bb-setup] installed bb-app %s at %s\n' "$BB_VERSION" "$RUNTIME_DIR"

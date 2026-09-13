@@ -1,0 +1,50 @@
+name: Watcher deploy
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'worker/**'
+      - 'scripts/lib/**'
+      - 'scripts/build.mjs'
+      - 'scripts/validate.mjs'
+      - 'scripts/render-worker-config.mjs'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tests/**'
+      - '.github/workflows/watcher-deploy.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: watcher-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # Armed by the maintainer once KV/R2 exist and the KV_NAMESPACE_ID / R2_BUCKET
+    # variables are set — prevents a red deploy before resources exist.
+    if: vars.WATCHER_READY == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: node --test tests/*.test.mjs
+      - run: npm run validate
+      - name: Render worker config from Actions variables
+        env:
+          KV_NAMESPACE_ID: ${{ vars.KV_NAMESPACE_ID }}
+          R2_BUCKET: ${{ vars.R2_BUCKET }}
+        run: node scripts/render-worker-config.mjs
+      - name: Validate rendered config
+        run: npx wrangler deploy -c worker/wrangler.jsonc --dry-run --outdir .wrangler-dry
+      - uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.131.1'
+          command: 'deploy -c worker/wrangler.jsonc'

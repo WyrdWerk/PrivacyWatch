@@ -10,7 +10,7 @@
   "d1_databases": [{ "binding": "DB", "database_name": "privacywatch-index", "database_id": "d8926a4a-d674-4de0-a854-af869fa8125b", "migrations_dir": "migrations" }],
   "ai": { "binding": "AI" },
   "triggers": {
-    "crons": ["0 3 * * *", "0 15 * * *"]
+    "crons": ["0 3 * * *", "0 11 * * *", "0 15 * * *"]
   },
   "vars": {
     "MANIFEST_URL": "https://privacywatch.wyrdwerk.com/watch-urls.json",

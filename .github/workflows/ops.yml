@@ -82,12 +82,19 @@ jobs:
           KV_NAMESPACE_ID: ${{ vars.KV_NAMESPACE_ID }}
           R2_BUCKET: ${{ vars.R2_BUCKET }}
         run: node scripts/render-worker-config.mjs
-      - name: Provision GH_REPORT_TOKEN as a Worker secret
+      - name: Provision Worker secrets (GH_REPORT_TOKEN, OPS_TOKEN)
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           GH_REPORT_TOKEN: ${{ secrets.GH_REPORT_TOKEN }}
-        run: printf '%s' "$GH_REPORT_TOKEN" | npx wrangler secret put GH_REPORT_TOKEN -c worker/wrangler.jsonc
+          OPS_TOKEN: ${{ secrets.OPS_TOKEN }}
+        run: |
+          printf '%s' "$GH_REPORT_TOKEN" | npx wrangler secret put GH_REPORT_TOKEN -c worker/wrangler.jsonc
+          if [ -n "$OPS_TOKEN" ]; then
+            printf '%s' "$OPS_TOKEN" | npx wrangler secret put OPS_TOKEN -c worker/wrangler.jsonc
+          else
+            echo "::notice::OPS_TOKEN not set as an Actions secret — skipping /__ops route auth provisioning"
+          fi
 
   d1-migrate:
     if: github.event.inputs.task == 'd1-migrate'

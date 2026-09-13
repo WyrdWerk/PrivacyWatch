@@ -51,6 +51,8 @@ Source: OpenRouter provider-selection docs list, deduplicated against
 
 ## Batch 4 — discount / community compute (20)
 
+**DONE — researched and landed in v1.6.0 (2026-09-13), 20 rows: chutes, venice, mancer, nextbit, akashml, phala-redpill, inference-net, novitai, friendli, parasail, openinference, ionstream, darkbloom, sail-research, perceptron, inceptron, dekallm, streamlake, aionlabs, mara.** Research notes in `policies/<id>--2026-09-13.md`.
+
 | Provider | ToS URL |
 |---|---|
 | Chutes | https://chutes.ai/tos |
@@ -75,6 +77,8 @@ Source: OpenRouter provider-selection docs list, deduplicated against
 | MARA | https://www.mara.com/mara-legals/ai-policies#cloud-toc |
 
 ## Batch 5 — misc (3)
+
+**DONE — researched and landed in v1.6.0 (2026-09-13), 3 rows: nex-agi, modelrun-modular, morph.** Research notes in `policies/<id>--2026-09-13.md`.
 
 | Provider | ToS URL |
 |---|---|

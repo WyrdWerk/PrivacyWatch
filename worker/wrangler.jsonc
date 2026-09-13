@@ -3,17 +3,19 @@
   "name": "privacywatch-watcher",
   "main": "src/index.js",
   "compatibility_date": "2026-05-27",
-  "migrations_dir": "migrations",
   // Placeholders are rendered by scripts/render-worker-config.mjs at deploy time
   // from the KV_NAMESPACE_ID and R2_BUCKET Actions variables. Never commit real IDs.
   "kv_namespaces": [{ "binding": "WATCH_STATE", "id": "__KV_NAMESPACE_ID__" }],
   "r2_buckets": [{ "binding": "SNAPSHOTS", "bucket_name": "__R2_BUCKET__" }],
+  "d1_databases": [{ "binding": "DB", "database_name": "privacywatch-index", "database_id": "d8926a4a-d674-4de0-a854-af869fa8125b", "migrations_dir": "migrations" }],
+  "ai": { "binding": "AI" },
   "triggers": {
-    "crons": ["0 3 * * *", "0 15 * * *"]
+    "crons": ["0 3 * * *", "0 11 * * *", "0 15 * * *"]
   },
   "vars": {
     "MANIFEST_URL": "https://privacywatch.wyrdwerk.com/watch-urls.json",
-    "SHARD_SIZE": "20",
+    "SHARD_SIZE": "10",
+    "MAX_HASHED_BODIES": "4",
     "ISSUE_REPO": "WyrdWerk/PrivacyWatch",
     "ISSUE_NUMBER": "2"
   }

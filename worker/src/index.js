@@ -7,6 +7,15 @@ const SOFT_SUBREQUEST_LIMIT = 44;
 const HASH_SLICE_BYTES = 65536;
 const FETCH_TIMEOUT_MS = 15000;
 const MAX_EVENTS = 50;
+// Measured (independent review benchmark): capped normalize+hash costs ~1.4-1.6 ms
+// per 64 KiB body in a V8-shaped runtime. Free cron triggers allow 10 ms CPU, so a
+// run that hashes every fetched body at shard 20 would exceed it (~29-33 ms).
+// This caps bodies actually hashed per invocation; 200-responses beyond the cap are
+// deferred (state untouched) and retried on later runs. 304s and errors cost no CPU.
+// Changed bodies cost the same as baselined ones (one normalize + one hash — the old
+// text is never re-read). Cap 4 keeps worst-case hashing at ~5.8-6.5 ms, ~35%
+// headroom under 10 ms; raise only after reading real cpuTime from production logs.
+const DEFAULT_MAX_HASHED_BODIES = 4;
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data, null, 2), {
@@ -102,7 +111,13 @@ async function runCheck(env) {
   };
   count(); // state get
   if (state.manifestHash !== manifestHash) {
-    state = { manifestHash, cursor: 0, entries: state.entries ?? {}, events: state.events ?? [] };
+    state = {
+      manifestHash,
+      cursor: 0,
+      entries: state.entries ?? {},
+      events: state.events ?? [],
+      deferred: state.deferred ?? [],
+    };
   }
   state.entries = state.entries ?? {};
   state.events = state.events ?? [];
@@ -126,11 +141,35 @@ async function runCheck(env) {
 
   const now = new Date().toISOString();
   let changes = 0;
-  for (const item of slice) {
-    if (subrequests >= SOFT_SUBREQUEST_LIMIT - 1) break; // defer the rest to the next invocation
-    const url = item.url;
+  const maxHashed = parseInt(env.MAX_HASHED_BODIES || String(DEFAULT_MAX_HASHED_BODIES), 10);
+  let hashedBodies = 0;
+
+  // Deferred-first worklist: URLs queued by earlier runs' body-budget are retried
+  // before fresh shard URLs, so CPU deferral can never stall coverage — a deferred
+  // baseline completes on a later run instead of waiting for the cursor to wrap.
+  state.deferred = state.deferred ?? [];
+  const queued = state.deferred.splice(0);
+  const queuedSet = new Set(queued);
+  const providerByUrl = new Map(urls.map((u) => [u.url, u.providers]));
+  const worklist = [
+    ...queued.map((url) => ({ url, providers: providerByUrl.get(url) ?? [], fromQueue: true })),
+    ...slice.filter((item) => !queuedSet.has(item.url)).map((item) => ({ ...item, fromQueue: false })),
+  ];
+  const stillQueued = [];
+
+  for (const w of worklist) {
+    const url = w.url;
     const entry = state.entries[url] ?? { seen: false };
     entry.checkedAt = now;
+    if (w.fromQueue && !known.has(url)) continue; // page left the manifest — drop from queue
+    // Subrequest/CPU budget exhausted: queued items re-queue, fresh items queue for
+    // the next run without fetching (a fetch here would waste a subrequest).
+    if (subrequests >= SOFT_SUBREQUEST_LIMIT - 1 || hashedBodies >= maxHashed) {
+      entry.lastStatus = 'deferred:body-budget';
+      state.entries[url] = entry;
+      if (!stillQueued.includes(url)) stillQueued.push(url);
+      continue;
+    }
 
     const headers = {};
     if (entry.etag) headers['If-None-Match'] = entry.etag;
@@ -138,8 +177,8 @@ async function runCheck(env) {
 
     let res;
     try {
+      count(); // count the attempt: failed/timed-out fetches still consumed the call
       res = await fetch(url, { headers, redirect: 'follow', signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
-      count();
     } catch (err) {
       entry.lastStatus = `inconclusive:fetch-error:${err.message ?? 'unknown'}`;
       state.entries[url] = entry;
@@ -158,6 +197,8 @@ async function runCheck(env) {
       state.entries[url] = entry;
       continue;
     }
+
+    hashedBodies++;
 
     entry.etag = res.headers.get('etag') ?? entry.etag ?? null;
     entry.lastModified = res.headers.get('last-modified') ?? entry.lastModified ?? null;
@@ -201,7 +242,7 @@ async function runCheck(env) {
     state.events.push({
       eventId,
       url,
-      providers: item.providers,
+      providers: w.providers,
       oldHash,
       newHash,
       oldSnapshotKey: entry.lastSnapshotKey ?? null,
@@ -215,6 +256,7 @@ async function runCheck(env) {
     entry.lastSnapshotKey = newSnapshotKey ?? entry.lastSnapshotKey;
     state.entries[url] = entry;
   }
+  state.deferred = stillQueued;
 
   // Durable reporting: pending events are retried on every subsequent run until
   // GitHub acknowledges; eventId dedupe keeps comments identifiable on retries.
@@ -268,6 +310,8 @@ async function runCheck(env) {
     cursor: state.cursor,
     checked: slice.length,
     changes,
+    hashed: hashedBodies,
+    deferredForCpu: slice.filter((u) => state.entries[u.url]?.lastStatus === 'deferred:body-budget').length,
     pendingEvents: state.events.filter((e) => !e.reported).length,
     reportStatus,
     subrequests,
@@ -278,6 +322,7 @@ export default {
   async scheduled(controller, env, ctx) {
     const result = await runCheck(env);
     console.log('[watcher]', JSON.stringify(result));
+    return result; // returned so tests (and tail logs) can assert run outcomes
   },
 
   async fetch(request, env) {

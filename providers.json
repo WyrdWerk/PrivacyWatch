@@ -1168,6 +1168,7 @@
       },
       "sourceUrl": "https://groq.com/terms-of-use/",
       "privacyUrl": "https://groq.com/privacy-policy/",
+      "relatedUrls": ["https://console.groq.com/docs/legal/customer-data-processing-addendum"],
       "sourceDate": "2026-06-28",
       "notes": "Added via OpenRouter ToS cross-reference. Hardware-focused inference provider (LPUs). Strong no-training commitment."
     },
@@ -1769,7 +1770,7 @@
       "category": "inference",
       "categoryLabel": "Inference",
       "rating": "guarded",
-      "incident": true,
+      "incident": false,
       "training": {
         "label": "Off by default",
         "detail": "SaaS Agreement §Use of AI Tools: \"Modal will not, except with Customer's prior written consent: (i) train any AI model using Customer Data, or (ii) export Customer Data into, or cause Customer Data to be ingested by, large language models.\""
@@ -1834,6 +1835,7 @@
         "https://www.strix.ai/blog/baseten-harbor-github-pat-takeover"
       ],
       "sourceDate": "2026-09-13",
+      "incidentDetail": "September 2026: security firm Strix disclosed an exposed GitHub personal access token permitting admin-level takeover of a Baseten organization; Baseten confirmed the finding as critical and rotated the credential.",
       "notes": "Rated unverified: training posture is undocumented in all three published documents. September 2026: security firm Strix disclosed a GitHub PAT-takeover that yielded admin access to Baseten's GitHub organization (researcher disclosure, not reported as customer-data exfiltration). Privacy policy is TermsFeed boilerplate with no API-data specifics."
     },
     {
@@ -1880,6 +1882,7 @@
       "categoryLabel": "Inference",
       "rating": "unverified",
       "incident": true,
+      "incidentDetail": "April 2021: a confirmed breach exposed customer billing-profile data (TechCrunch/BleepingComputer). Predates the GenAI platform and is not specific to it — retained as a company-level confirmed incident.",
       "training": {
         "label": "Unclear — usage data only",
         "detail": "General cloud ToS §4.4: \"We may use Usage Data and other information about how you use and interact with the Services to provide, maintain, and improve our Services\" — scoped to Usage Data; no clause addresses training on Services Content (customer inputs/outputs)."
@@ -1952,6 +1955,7 @@
       "categoryLabel": "Inference",
       "rating": "unverified",
       "incident": true,
+      "incidentDetail": "April 2024: 'GPU metadata attack' — attackers spoofed GPU metadata on the DePIN network through API and authentication flaws; io.net published its own incident report. Hardware and customer workloads remained secure.",
       "training": {
         "label": "Silent",
         "detail": "Neither the site ToS nor the privacy policy addresses training models on user inputs/outputs; the ToS grants broad content licenses (\"royalty-free, perpetual, sublicensable, irrevocable, and worldwide\") without naming training."

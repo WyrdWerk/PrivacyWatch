@@ -313,6 +313,7 @@ async function runCheck(env) {
   // Stale-URL chunk deletion: budgeted as D1 queries (not fetch subrequests) and
   // retry-safe — a failed DELETE retries on later runs while the URL stays stale.
   const staleD1Budget = { remaining: 24 };
+  let staleD1Queries = 0;
   for (const key of Object.keys(state.entries)) {
     if (!known.has(key)) {
       const se = state.entries[key];
@@ -325,6 +326,7 @@ async function runCheck(env) {
         // Reserve the D1 statement before the attempt: a failed call consumes
         // the query, bounding stale-delete attempts per invocation.
         staleD1Budget.remaining -= 1;
+        staleD1Queries += 1;
         try {
           await env.DB.prepare('DELETE FROM chunks WHERE url = ?1').bind(key).run();
           se.chunksDeleted = true;
@@ -580,14 +582,12 @@ async function runCheck(env) {
     hashed: hashedBodies,
     deferredForCpu: slice.filter((u) => state.entries[u.url]?.lastStatus === 'deferred:body-budget').length,
     indexed,
-    d1Queries,
+    d1Queries: d1Queries + staleD1Queries,
     aiCalls,
     indexErrors: Object.values(state.entries).filter((e) => e.indexError).length,
     pendingEvents: state.events.filter((e) => !e.reported).length,
     reportStatus,
     subrequests,
-    d1Queries,
-    aiCalls,
   };
 }
 

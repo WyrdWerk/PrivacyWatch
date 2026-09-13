@@ -129,8 +129,8 @@ test('worst case: an all-changed batch hashes at most the cap and defers the res
   }
 });
 
-test('production shape: 59 URLs, shard 10, cap 4 — full baseline within 16 runs, no re-hash', async () => {
-  const COUNT = 59;
+test('production shape: 176 URLs, shard 10, cap 4 — full baseline within 45 runs, no re-hash', async () => {
+  const COUNT = 176;
   const prodManifest = {
     urls: Array.from({ length: COUNT }, (_, i) => ({
       url: `https://s${i}.example/terms`,
@@ -162,7 +162,7 @@ test('production shape: 59 URLs, shard 10, cap 4 — full baseline within 16 run
   try {
     let runs = 0;
     let seen = 0;
-    while (runs < 40) {
+    while (runs < 50) {
       runs++;
       const result = await watcher.scheduled({}, env, {});
       assert.ok(result.hashed <= 4, `run ${runs} hashed ${result.hashed} bodies — cap exceeded`);
@@ -170,7 +170,7 @@ test('production shape: 59 URLs, shard 10, cap 4 — full baseline within 16 run
       if (seen === COUNT) break;
     }
     assert.equal(seen, COUNT, `all ${COUNT} URLs baselined`);
-    assert.ok(runs <= 16, `expected ≤ 16 runs at 4 hashes/run, took ${runs}`);
+    assert.ok(runs <= 45, `expected ≤ 45 runs at 4 hashes/run (ceil(176/4)), took ${runs}`);
     assert.equal(snapshots.length, COUNT, 'each URL snapshotted exactly once — no re-hashing');
     assert.equal(storedState.events.length, 0);
   } finally {

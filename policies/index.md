@@ -1,6 +1,7 @@
 # PrivacyWatch — Archived Policy Documents
 
 Local snapshots of the primary source documents underlying the PrivacyWatch dashboard ratings.
+Archived snapshots scraped and saved on **2026-05-27**. Later-dated research notes are listed at the bottom.
 All files scraped and saved on **2026-05-27**.
 
 | Provider | Surface | Category | Source URL | Archived File |
@@ -42,3 +43,20 @@ All files scraped and saved on **2026-05-27**.
 - Content is extracted from the live URL as of the archived date.
 - **deepseek-consumer** (`deepseek-en.com/privacy-policy.html`) was unreachable during scraping and is not yet archived.
 - For verification, always compare against the current live source URL.
+
+> **Research notes (2026-09-13, OpenRouter batch 1):** the files below are source-
+> verified research notes (not full page snapshots) supporting the v1.4.0 rows.
+> Quotes in each note are attributed to the specific document listed in the row's
+> `relatedUrls` / `privacyUrl`.
+
+| Provider | Surface | Category | Primary Source | Research Note |
+| --- | --- | --- | --- | --- |
+| **StepFun** | API | Inference | [userservice agreement](https://platform.stepfun.ai/docs/en/agreement/userservice) | [stepfun--2026-09-13.md](./stepfun--2026-09-13.md) |
+| **Baidu** | Qianfan / API | Inference | [Qianfan terms](https://intl.cloud.baidu.com/en/doc/Agreements/s/bmesahnjh-intl-en) | [baidu-qianfan--2026-09-13.md](./baidu-qianfan--2026-09-13.md) |
+| **ByteDance** | Seed / BytePlus ModelArk | Inference | [BytePlus ToS + ModelArk data processing](https://docs.byteplus.com/en/docs/ModelArk/BytePlus_ModelArk_Data_Processing) | [seed-byteplus--2026-09-13.md](./seed-byteplus--2026-09-13.md) |
+| **Tencent Cloud** | API (TokenHub) | Inference | [TokenHub terms / DPSA](https://www.tencentcloud.com/document/product/1300/78953) | [tencent-cloud--2026-09-13.md](./tencent-cloud--2026-09-13.md) |
+| **Upstage** | API (Solar) | Inference | [Upstage terms](https://www.upstage.ai/terms-of-service) | [upstage--2026-09-13.md](./upstage--2026-09-13.md) |
+| **Meta** | API (Llama / Model API) | Inference | [Model API terms](https://ai.developer.meta.com/legal/terms-of-service) | [meta-llama-api--2026-09-13.md](./meta-llama-api--2026-09-13.md) |
+| **Deepgram** | API (Speech) | Inference | [Deepgram terms](https://deepgram.com/terms) | [deepgram--2026-09-13.md](./deepgram--2026-09-13.md) |
+| **Voyage AI** | API (Embeddings) | Inference | [Voyage ToS](https://www.voyageai.com/tos) | [voyage-ai--2026-09-13.md](./voyage-ai--2026-09-13.md) |
+| **Black Forest Labs** | API (FLUX) | Inference | [FLUX API service terms](https://bfl.ai/legal/flux-api-service-terms) | [black-forest-labs--2026-09-13.md](./black-forest-labs--2026-09-13.md) |

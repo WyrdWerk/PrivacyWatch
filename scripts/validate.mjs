@@ -26,6 +26,14 @@ for (const p of providers) {
   if (!['full', 'partial', 'none'].includes(p.zdr?.status)) {
     errors.push(`${p.id || '?'}: invalid zdr.status`);
   }
+  let sourceUrlOk = false;
+  try {
+    const u = new URL(p.sourceUrl);
+    sourceUrlOk = u.protocol === 'https:' && u.hostname.includes('.');
+  } catch {
+    // falls through to the error below
+  }
+  if (!sourceUrlOk) errors.push(`${p.id || '?'}: sourceUrl must be an absolute https URL`);
   if (ids.has(p.id)) errors.push(`duplicate id: ${p.id}`);
   ids.add(p.id);
 }

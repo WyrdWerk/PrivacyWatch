@@ -3,6 +3,10 @@
 All policy changes, new providers, and corrections are logged here.
 Format: `[YYYY-MM-DD] Provider — what changed — source`
 
+## v1.5.0 — 2026-09-13
+
+**OpenRouter batches 2+3: 22 new providers.** Added Modal, Baseten, CoreWeave, DigitalOcean (GenAI), Crusoe (Managed Inference), io.net, GMICloud, AtlasCloud, NVIDIA (API Catalog), Reka AI, Thinking Machines (free research API), Inception Labs, Sakana AI, Poolside, Relace, Decart, Liquid AI, Runway, Krea, HeyGen, Fish Audio, and Sourceful — researched from primary terms and privacy documents with quotes. Highlights: Crusoe's OpenRouter Managed Inference ToS and Decart's Cogito API terms are training-off by default with no-disk-storage/no-retention defaults (rated Clean); Modal is training-off by default with customer-selectable processing regions (Guarded — a July 2026 customer-account compromise by an OpenAI-operated rogue agent affected one customer's public endpoint, not Modal's platform, so it stays below the incident flag). Thinking Machines' free research tier, Liquid AI, Runway, and Fish Audio grant training rights with no documented opt-out (High Risk). Reka AI and Sourceful are training-off only on paid tiers; Inception Labs, Sakana AI, Poolside, Relace, and HeyGen are training-on by default with opt-outs (Caution). Baseten, CoreWeave, DigitalOcean GenAI, io.net, GMICloud, AtlasCloud, NVIDIA API Catalog, and Krea leave training undocumented (Unverified). Confirmed incidents recorded for Baseten (GitHub PAT-takeover researcher disclosure), DigitalOcean (2021 billing-data breach), and io.net (April 2024 GPU metadata attack) — Modal's July 2026 rogue-agent event is documented in notes but stayed below the confirmed-incident bar. 52 → 74 surfaces across 41 → 63 families.
+
 ---
 
 ## v1.4.0 — 2026-09-13

@@ -293,18 +293,26 @@ async function runCheck(env) {
 
   // URL removals: mark stale, keep last snapshot reference per retention policy (cleanup happens on report).
   const known = new Set(urls.map((u) => u.url));
+  // Stale-URL chunk deletion: budgeted as D1 queries (not fetch subrequests) and
+  // retry-safe — a failed DELETE retries on later runs while the URL stays stale.
+  const d1Budget = { remaining: 24 };
+  let d1Queries = 0;
   for (const key of Object.keys(state.entries)) {
-    if (!known.has(key) && !state.entries[key].stale) {
-      state.entries[key].stale = true;
-      state.entries[key].checkedAt = new Date().toISOString();
-      state.entries[key].lastStatus = 'removed-from-manifest';
-      // Remove a stale URL's chunks so removed pages never stay searchable.
-      if (env.DB && !dryRun) {
+    if (!known.has(key)) {
+      const se = state.entries[key];
+      if (!se.stale) {
+        se.stale = true;
+        se.checkedAt = new Date().toISOString();
+        se.lastStatus = 'removed-from-manifest';
+      }
+      if (env.DB && !dryRun && !se.chunksDeleted && d1Budget.remaining >= 1) {
         try {
           await env.DB.prepare('DELETE FROM chunks WHERE url = ?1').bind(key).run();
-          count();
+          se.chunksDeleted = true;
+          d1Budget.remaining -= 1;
+          d1Queries += 1;
         } catch (err) {
-          state.entries[key].chunkDeleteError = String(err.message ?? err).slice(0, 120);
+          se.chunkDeleteError = String(err.message ?? err).slice(0, 120);
         }
       }
     }
@@ -320,14 +328,9 @@ async function runCheck(env) {
   const now = new Date().toISOString();
   let changes = 0;
   let indexed = 0;
-  let d1Queries = 0;
   let aiCalls = 0;
   const maxHashed = parseInt(env.MAX_HASHED_BODIES || String(DEFAULT_MAX_HASHED_BODIES), 10);
   let hashedBodies = 0;
-  // D1 statement budget per invocation: each indexed URL costs 1 DELETE +
-  // ceil(chunks/14) INSERTs; 24 keeps a 4-URL run well under the free plan's
-  // 50-queries-per-invocation D1 limit with margin.
-  const d1Budget = { remaining: 24 };
 
   // Deferred-first worklist: URLs queued by earlier runs' body-budget are retried
   // before fresh shard URLs, so CPU deferral can never stall coverage — a deferred

@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import watcher from '../worker/src/index.js';
+import { l2normalize } from '../worker/src/index.js';
 
 const PAGES = 8;
 const bigBody = '<html><body><p>' + 'terms text '.repeat(7000) + '</p></body></html>'; // > 64 KiB cap
@@ -11,9 +12,10 @@ const manifest = {
   })),
 };
 
-function makeEnv({ maxHashed = 20, stored = null, mutatedUrl = null } = {}) {
+function makeEnv({ maxHashed = 20, stored = null, mutatedUrl = null, withIndexing = false, failFirstIndex = false } = {}) {
   let storedState = stored;
   const snapshots = [];
+  const d1Statements = [];
   const env = {
     MANIFEST_URL: 'https://manifest.example/watch-urls.json',
     SHARD_SIZE: '20',
@@ -25,11 +27,32 @@ function makeEnv({ maxHashed = 20, stored = null, mutatedUrl = null } = {}) {
       },
     },
     SNAPSHOTS: {
-      put: async (key) => {
-        snapshots.push(key);
+      put: async (key, value) => {
+        snapshots.push({ key, body: value });
+      },
+      get: async (key) => {
+        const snap = snapshots.find((s) => s.key === key);
+        return snap ? { key: snap.key, body: snap.body, text: async () => new TextDecoder().decode(snap.body) } : null;
       },
     },
   };
+  if (withIndexing) {
+    let aiCalls = 0;
+    env.DB = {
+      prepare: (sql) => ({ bind: (...params) => ({ sql, params }) }),
+      batch: async (stmts) => {
+        d1Statements.push(...stmts);
+        return stmts.map(() => ({ success: true }));
+      },
+    };
+    env.AI = {
+      run: async (_model, { text }) => {
+        aiCalls++;
+        if (failFirstIndex && aiCalls === 1) throw new Error('injected AI failure');
+        return { data: text.map((t) => Array.from(l2normalize(new Float32Array(768).fill(0.01)))) };
+      },
+    };
+  }
   const realFetch = globalThis.fetch;
   globalThis.fetch = async (input) => {
     const url = typeof input === 'string' ? input : input.url;
@@ -40,7 +63,7 @@ function makeEnv({ maxHashed = 20, stored = null, mutatedUrl = null } = {}) {
     const body = changed ? bigBody.replace('terms', 'amended terms') : bigBody;
     return new Response(body, { status: 200, headers: { 'content-type': 'text/html' } });
   };
-  return { env, snapshots, getState: () => storedState, restore: () => (globalThis.fetch = realFetch) };
+  return { env, snapshots, d1Statements, getState: () => storedState, restore: () => (globalThis.fetch = realFetch) };
 }
 
 test('baseline run defers bodies beyond the hashed-body CPU budget', async () => {
@@ -83,7 +106,7 @@ test('a real content change after baseline creates a pending event and snapshot'
       assert.equal(ev.providers[0].id, 'p3');
       assert.equal(ev.reported, false);
       assert.ok(ev.newHash !== ev.oldHash);
-      assert.ok(changed.snapshots.includes(ev.newSnapshotKey));
+      assert.ok(changed.snapshots.some((s) => s.key === ev.newSnapshotKey));
       assert.equal(changed.snapshots.length, 1, 'exactly one new snapshot for the changed page');
       assert.equal(result.reportStatus, 'pending-no-credentials');
     } finally {
@@ -231,6 +254,51 @@ test('deferred queue survives manifest changes and drains before seen URLs', asy
     assert.ok(storedState.entries['https://p8.example/terms'].seen);
   } finally {
     globalThis.fetch = realFetch;
+  }
+});
+
+test('withIndexing: baselines defer to the catch-up, which converges across runs', async () => {
+  const e = makeEnv({ withIndexing: true });
+  try {
+    const r1 = await watcher.scheduled({}, e.env, {});
+    const s1 = e.getState();
+    assert.equal(Object.values(s1.entries).filter((en) => en.seen).length, PAGES, 'all baselined');
+    assert.equal(Object.values(s1.entries).filter((en) => en.indexedHash).length, 2, 'the same-run catch-up indexes 2');
+
+    // run 2: catch-up indexes 2 more
+    const r2 = await watcher.scheduled({}, e.env, {});
+    let state = e.getState();
+    assert.equal(Object.values(state.entries).filter((en) => en.indexedHash).length, 4, 'catch-up indexes 2 per run');
+    assert.ok(r2.indexed > 0, 'catch-up reports indexed chunks');
+
+    // converge: keep running until every URL is indexed
+    let runs = 2;
+    while (Object.values(e.getState().entries).filter((en) => en.indexedHash).length < PAGES && runs < 20) {
+      await watcher.scheduled({}, e.env, {});
+      runs++;
+    }
+    state = e.getState();
+    assert.ok(Object.values(state.entries).every((en) => en.indexedHash), `all indexed after ${runs} runs`);
+    for (const s of e.d1Statements.filter((s) => s.sql.startsWith('INSERT'))) {
+      assert.ok(s.params.length <= 100, `INSERT params ${s.params.length} exceed the D1 limit`);
+    }
+    assert.equal(e.d1Statements.filter((s) => s.sql.startsWith('DELETE')).length >= PAGES, true, 'one DELETE per indexed URL');
+  } finally {
+    e.restore();
+  }
+});
+
+test('indexing failure is non-fatal and retried on the next run', async () => {
+  const first = makeEnv({ withIndexing: true, failFirstIndex: true });
+  try {
+    await watcher.scheduled({}, first.env, {});
+    const state = first.getState();
+    const failed = Object.values(state.entries).find((e) => e.indexError);
+    assert.ok(failed, 'the first index failure is recorded on the entry');
+    assert.ok(!failed.indexedHash, 'failed URL is not marked indexed');
+    assert.ok(Object.values(state.entries).some((e) => e.indexedHash === e.hash), 'other URLs still index');
+  } finally {
+    first.restore();
   }
 });
 

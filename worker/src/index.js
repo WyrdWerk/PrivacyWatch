@@ -12,7 +12,10 @@ const MAX_EVENTS = 50;
 // run that hashes every fetched body at shard 20 would exceed it (~29-33 ms).
 // This caps bodies actually hashed per invocation; 200-responses beyond the cap are
 // deferred (state untouched) and retried on later runs. 304s and errors cost no CPU.
-const DEFAULT_MAX_HASHED_BODIES = 6;
+// Changed bodies cost the same as baselined ones (one normalize + one hash — the old
+// text is never re-read). Cap 4 keeps worst-case hashing at ~5.8-6.5 ms, ~35%
+// headroom under 10 ms; raise only after reading real cpuTime from production logs.
+const DEFAULT_MAX_HASHED_BODIES = 4;
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data, null, 2), {
@@ -291,6 +294,8 @@ async function runCheck(env) {
     cursor: state.cursor,
     checked: slice.length,
     changes,
+    hashed: hashedBodies,
+    deferredForCpu: slice.filter((u) => state.entries[u.url]?.lastStatus === 'deferred:body-budget').length,
     pendingEvents: state.events.filter((e) => !e.reported).length,
     reportStatus,
     subrequests,

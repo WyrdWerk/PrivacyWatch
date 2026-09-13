@@ -36,7 +36,8 @@ function makeEnv({ maxHashed = 20, stored = null, mutatedUrl = null } = {}) {
     if (url === env.MANIFEST_URL) {
       return new Response(JSON.stringify(manifest), { headers: { 'content-type': 'application/json' } });
     }
-    const body = mutatedUrl && url === mutatedUrl ? bigBody.replace('terms', 'amended terms') : bigBody;
+    const changed = mutatedUrl === 'all' || (mutatedUrl && url === mutatedUrl);
+    const body = changed ? bigBody.replace('terms', 'amended terms') : bigBody;
     return new Response(body, { status: 200, headers: { 'content-type': 'text/html' } });
   };
   return { env, snapshots, getState: () => storedState, restore: () => (globalThis.fetch = realFetch) };
@@ -85,6 +86,41 @@ test('a real content change after baseline creates a pending event and snapshot'
       assert.ok(changed.snapshots.includes(ev.newSnapshotKey));
       assert.equal(changed.snapshots.length, 1, 'exactly one new snapshot for the changed page');
       assert.equal(result.reportStatus, 'pending-no-credentials');
+    } finally {
+      changed.restore();
+    }
+  } finally {
+    baseline.restore();
+  }
+});
+
+test('worst case: an all-changed batch hashes at most the cap and defers the rest', async () => {
+  const baseline = makeEnv({ maxHashed: 20 });
+  try {
+    await watcher.scheduled({}, baseline.env, {});
+    const afterBaseline = baseline.getState();
+    assert.equal(afterBaseline.events.length, 0);
+
+    // every page changes on the next run, with the cap at 4 — the worst case the
+    // reviewer flagged: 4 full normalize+hash cycles plus deferred remainder
+    const changed = makeEnv({
+      maxHashed: 4,
+      stored: afterBaseline,
+      mutatedUrl: 'all',
+    });
+    try {
+      const result = await watcher.scheduled({}, changed.env, {});
+      const state = changed.getState();
+      assert.equal(result.changes, 4);
+      assert.equal(result.hashed, 4);
+      assert.equal(state.events.length, 4, 'one event per hashed change');
+      const deferred = Object.values(state.entries).filter((e) => e.lastStatus === 'deferred:body-budget');
+      assert.equal(deferred.length, PAGES - 4);
+      assert.equal(changed.snapshots.length, 4, 'one snapshot per hashed change');
+      assert.equal(state.events.every((e) => e.reported === false), true);
+      assert.equal(result.reportStatus, 'pending-no-credentials');
+      // deferred URLs keep their previous hash so the next run re-checks them
+      for (const entry of deferred) assert.ok(entry.hash, 'deferred entries retain known-good state');
     } finally {
       changed.restore();
     }

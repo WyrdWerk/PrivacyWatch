@@ -108,3 +108,42 @@ test('AI failure returns 502 with bench telemetry and a generic public error', a
   assert.ok(body.bench, 'bench present on the failure response');
   assert.match(body.bench.stage, /error/);
 });
+
+test('malformed stored rows (wrong dims / bad bytes) are skipped, not scored', async () => {
+  const good = {
+    provider_id: 'openai-api',
+    url: 'https://openai.example/terms',
+    text: 'training off by default for api customers',
+    embedding: new Uint8Array(new Float32Array(vecFor('training')).buffer),
+  };
+  const wrongDims = {
+    provider_id: 'bad-dims',
+    url: 'https://bad.example/terms',
+    text: 'row with a 4-float embedding',
+    embedding: new Uint8Array(new Float32Array(4).buffer),
+  };
+  const badBytes = {
+    provider_id: 'bad-bytes',
+    url: 'https://bad2.example/terms',
+    text: 'row whose embedding is not a multiple of 4 bytes',
+    embedding: new Uint8Array(7),
+  };
+  const { env } = makeEnv({ chunks: [good, wrongDims, badBytes] });
+  const res = await onRequestGet({ request: request('https://site.example/api/search?q=training%20policy'), env });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.bench.rowsScanned, 3, 'all rows scanned');
+  assert.equal(body.count, 1, 'malformed rows excluded from scoring');
+  assert.equal(body.results[0].providerIds.join(','), 'openai-api', 'only the well-formed row is returned');
+});
+
+test('q is truncated to 512 chars before embedding and in the echoed query', async () => {
+  const { env, aiCalls } = makeEnv({ chunks: [] });
+  const longQ = 'x'.repeat(600);
+  const res = await onRequestGet({ request: request(`https://site.example/api/search?q=${longQ}`), env });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.query.length, 512, 'response echoes the truncated query');
+  assert.equal(aiCalls.length, 1);
+  assert.equal(aiCalls[0].text[0].length, 512, 'the embedding model receives the truncated query');
+});

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import watcher from '../worker/src/index.js';
-import { l2normalize } from '../worker/src/index.js';
+import { l2normalize, indexUrl } from '../worker/src/index.js';
 
 const PAGES = 8;
 const bigBody = '<html><body><p>' + 'terms text '.repeat(7000) + '</p></body></html>'; // > 64 KiB cap
@@ -12,10 +12,13 @@ const manifest = {
   })),
 };
 
-function makeEnv({ maxHashed = 20, stored = null, mutatedUrl = null, withIndexing = false, failFirstIndex = false, opsToken = null } = {}) {
+function makeEnv({ maxHashed = 20, stored = null, mutatedUrl = null, withIndexing = false, failFirstIndex = false, opsToken = null, failSnapshotPut = false, failStaleDelete = false, bodyOverrides = null } = {}) {
   let storedState = stored;
   const snapshots = [];
   const d1Statements = [];
+  let snapshotPutsFail = failSnapshotPut;
+  let staleDeletesFail = failStaleDelete;
+  let currentManifest = manifest;
   const env = {
     MANIFEST_URL: 'https://manifest.example/watch-urls.json',
     SHARD_SIZE: '20',
@@ -28,6 +31,7 @@ function makeEnv({ maxHashed = 20, stored = null, mutatedUrl = null, withIndexin
     },
     SNAPSHOTS: {
       put: async (key, value) => {
+        if (snapshotPutsFail) throw new Error('injected R2 failure');
         snapshots.push({ key, body: value });
       },
       get: async (key) => {
@@ -39,7 +43,16 @@ function makeEnv({ maxHashed = 20, stored = null, mutatedUrl = null, withIndexin
   if (withIndexing) {
     let aiCalls = 0;
     env.DB = {
-      prepare: (sql) => ({ bind: (...params) => ({ sql, params }) }),
+      prepare: (sql) => ({
+        bind: (...params) => ({
+          sql,
+          params,
+          run: async () => {
+            if (staleDeletesFail) throw new Error('injected stale DELETE failure');
+            return { success: true };
+          },
+        }),
+      }),
       batch: async (stmts) => {
         d1Statements.push(...stmts);
         return stmts.map(() => ({ success: true }));
@@ -58,13 +71,24 @@ function makeEnv({ maxHashed = 20, stored = null, mutatedUrl = null, withIndexin
   globalThis.fetch = async (input) => {
     const url = typeof input === 'string' ? input : input.url;
     if (url === env.MANIFEST_URL) {
-      return new Response(JSON.stringify(manifest), { headers: { 'content-type': 'application/json' } });
+      return new Response(JSON.stringify(currentManifest), { headers: { 'content-type': 'application/json' } });
     }
     const changed = mutatedUrl === 'all' || (mutatedUrl && url === mutatedUrl);
-    const body = changed ? bigBody.replace('terms', 'amended terms') : bigBody;
+    const overridden = bodyOverrides && Object.prototype.hasOwnProperty.call(bodyOverrides, url) ? bodyOverrides[url] : null;
+    const body = changed ? bigBody.replace('terms', 'amended terms') : (overridden ?? bigBody);
     return new Response(body, { status: 200, headers: { 'content-type': 'text/html' } });
   };
-  return { env, snapshots, d1Statements, getState: () => storedState, restore: () => (globalThis.fetch = realFetch) };
+  return {
+    env,
+    snapshots,
+    d1Statements,
+    getState: () => storedState,
+    restore: () => (globalThis.fetch = realFetch),
+    setFailSnapshotPut: (v) => (snapshotPutsFail = v),
+    setFailStaleDelete: (v) => (staleDeletesFail = v),
+    setMutatedUrl: (u) => (mutatedUrl = u),
+    setManifest: (m) => (currentManifest = m),
+  };
 }
 
 test('baseline run defers bodies beyond the hashed-body CPU budget', async () => {
@@ -289,10 +313,16 @@ test('withIndexing: baselines defer to the catch-up, which converges across runs
   }
 });
 
-test('indexing failure is non-fatal and retried on the next run', async () => {
+test('indexing failure is non-fatal and telemetry reports attempted calls, not planned work', async () => {
   const first = makeEnv({ withIndexing: true, failFirstIndex: true });
   try {
-    await watcher.scheduled({}, first.env, {});
+    const run1 = await watcher.scheduled({}, first.env, {});
+    // Two ~35-chunk URLs selected. p0's FIRST AI invocation throws before any D1
+    // statement; p1 completes (4 D1 statements, 5 AI invocations). Truthful
+    // telemetry: 4 attempted D1 statements (not the planned 8) and 6 AI
+    // invocations including the failed one (not the planned 10).
+    assert.equal(run1.d1Queries, 4, 'd1Queries = statements actually attempted');
+    assert.equal(run1.aiCalls, 6, 'aiCalls = failed + successful invocations');
     const state = first.getState();
     const failed = Object.values(state.entries).find((e) => e.indexError);
     assert.ok(failed, 'the first index failure is recorded on the entry');
@@ -301,6 +331,55 @@ test('indexing failure is non-fatal and retried on the next run', async () => {
   } finally {
     first.restore();
   }
+});
+
+test('DB failure is non-fatal; attempted D1 statements and AI calls are counted', async () => {
+  const e = makeEnv({ withIndexing: true });
+  e.env.DB.batch = async () => { throw new Error('injected DB failure'); };
+  try {
+    const result = await watcher.scheduled({}, e.env, {});
+    // Both catch-up URLs embedded fully (2×5 AI invocations) and attempted their
+    // 2×4 statements — the failed batch still consumed the queries.
+    assert.equal(result.aiCalls, 10);
+    assert.equal(result.d1Queries, 8);
+    assert.equal(result.indexErrors, 2, 'failures recorded on the entries');
+    const state = e.getState();
+    assert.ok(Object.values(state.entries).every((en) => !en.indexedHash), 'nothing marked indexed on DB failure');
+  } finally {
+    e.restore();
+  }
+});
+
+test('empty page content indexes a single DELETE with zero AI calls', async () => {
+  const e = makeEnv({ withIndexing: true, bodyOverrides: { 'https://p0.example/terms': '<html><body>  </body></html>' } });
+  try {
+    // run 1 baselines all pages and its catch-up indexes p0 (empty) + p1:
+    // p0 → DELETE only (1 statement, 0 AI); p1 → 4 statements, 5 AI calls.
+    const run1 = await watcher.scheduled({}, e.env, {});
+    assert.equal(run1.aiCalls, 5, 'empty page makes no AI calls');
+    assert.equal(run1.d1Queries, 5, 'empty page contributes exactly the DELETE');
+    const state = e.getState();
+    assert.ok(state.entries['https://p0.example/terms'].indexedHash, 'empty page indexed');
+    assert.ok(e.d1Statements[0].sql.startsWith('DELETE'), 'empty page emitted the DELETE');
+  } finally {
+    e.restore();
+  }
+});
+
+test('indexUrl defers before any AI call when the D1 budget cannot fit the planned statements', async () => {
+  const env = {
+    AI: { run: async () => { throw new Error('AI must not be called on deferral'); } },
+    DB: { batch: async () => { throw new Error('DB must not be called on deferral'); } },
+  };
+  const telemetry = { aiCalls: 0 };
+  // bigBody normalizes to ~35 chunks → 1 + ceil(35/14) = 4 planned statements;
+  // a budget of 3 cannot fit them.
+  const normalized = 'terms text '.repeat(7000);
+  const r = await indexUrl(env, 'https://x.example/terms', [], normalized, 'hash', 'urlhash', { remaining: 3 }, telemetry);
+  assert.equal(r.deferred, true);
+  assert.equal(r.statements, 0, 'no D1 statement attempted on pre-AI deferral');
+  assert.equal(r.aiCalls, 0, 'no AI call attempted on pre-AI deferral');
+  assert.equal(telemetry.aiCalls, 0);
 });
 
 test('backfill route: auth-gated, processes queued URLs, daily cap enforced', async () => {
@@ -357,6 +436,137 @@ test('INSERT-shape matrix: 1/14/15/40 chunks produce correct statement counts an
       assert.ok(s.params.length <= 100, `${n} chunks: INSERT params ${s.params.length} exceed 100`);
     }
     assert.equal(remainingRows, 0, 'all chunks inserted');
+  }
+});
+
+test('baseline R2 failure re-queues without hash; recovery on retry', async () => {
+  const e = makeEnv({ failSnapshotPut: true });
+  try {
+    await watcher.scheduled({}, e.env, {});
+    const s1 = e.getState();
+    const p0 = s1.entries['https://p0.example/terms'];
+    assert.ok(!p0.hash, 'no hash persisted on snapshot failure');
+    assert.match(p0.lastStatus, /snapshot-error/, 'inconclusive status recorded');
+    assert.equal(Object.values(s1.entries).filter((en) => en.hash).length, 0, 'nothing baselined');
+
+    e.setFailSnapshotPut(false);
+    await watcher.scheduled({}, e.env, {});
+    const s2 = e.getState();
+    assert.equal(Object.values(s2.entries).filter((en) => en.hash).length, 8, 'all URLs baselined on retry');
+    const p0after = s2.entries['https://p0.example/terms'];
+    assert.ok(p0after.hash, 'previously failed URL baselined after recovery');
+  } finally {
+    e.restore();
+  }
+});
+
+test('changed-page R2 exception defers the change; recovery on the next run', async () => {
+  const e = makeEnv({ withIndexing: true });
+  try {
+    await watcher.scheduled({}, e.env, {}); // baseline
+    const before = e.getState();
+    const p3 = before.entries['https://p3.example/terms'];
+    const oldHash = p3.hash;
+    e.setMutatedUrl('https://p3.example/terms');
+    e.setFailSnapshotPut(true);
+    await watcher.scheduled({}, e.env, {});
+    const s1 = e.getState();
+    const after = s1.entries['https://p3.example/terms'];
+    assert.equal(after.hash, oldHash, 'old hash retained on snapshot failure');
+    assert.match(after.lastStatus, /snapshot-error/, 'inconclusive status recorded');
+    assert.equal(s1.events.filter((ev) => ev.url === 'https://p3.example/terms').length, 0, 'no event on failure');
+
+    e.setFailSnapshotPut(false);
+    await watcher.scheduled({}, e.env, {});
+    const s2 = e.getState();
+    assert.notEqual(s2.entries['https://p3.example/terms'].hash, oldHash, 'change recorded on retry');
+    assert.equal(s2.events.filter((ev) => ev.url === 'https://p3.example/terms').length, 1, 'event created after recovery');
+  } finally {
+    e.restore();
+  }
+});
+
+test('persistent first-entry index failure does not starve later entries', async () => {
+  const e = makeEnv({ withIndexing: true, failFirstIndex: true });
+  try {
+    // run 1: the first AI call fails → the first catch-up entry fails; the second still indexes
+    await watcher.scheduled({}, e.env, {});
+    const s1 = e.getState();
+    const failedUrl = Object.keys(s1.entries).find((k) => s1.entries[k].indexError);
+    assert.ok(failedUrl, 'failure recorded on the entry');
+    assert.ok(Object.values(s1.entries).filter((en) => en.indexedHash).length >= 1, 'a later entry indexed despite the failure');
+
+    // run 2: selection prefers never-attempted URLs, so the queue advances while
+    // the failed entry waits for its retry slot — one broken page cannot stall the rest
+    await watcher.scheduled({}, e.env, {});
+    const s2 = e.getState();
+    assert.ok(Object.values(s2.entries).filter((en) => en.indexedHash).length >= 3, 'later entries keep indexing after the failure');
+    assert.ok(s2.entries[failedUrl].indexError, 'failed entry kept for retry, not silently dropped');
+
+    // the failed entry is retried in attempt order and converges
+    for (let run = 0; run < 6; run++) {
+      if (e.getState().entries[failedUrl].indexedHash) break;
+      await watcher.scheduled({}, e.env, {});
+    }
+    const sFinal = e.getState();
+    assert.ok(sFinal.entries[failedUrl].indexedHash, 'the previously failed URL indexed on retry — retried, not dropped');
+    assert.equal(sFinal.entries[failedUrl].indexError, null, 'index error cleared on success');
+    assert.equal(sFinal.entries[failedUrl].indexAttempts, 0, 'attempt counter reset on success');
+  } finally {
+    e.restore();
+  }
+});
+
+test('daily backfill cap survives a manifest change', async () => {
+  const e = makeEnv({ withIndexing: true, opsToken: 'test-ops-token' });
+  try {
+    await watcher.scheduled({}, e.env, {}); // baseline + first 2 indexed by cron catch-up
+    const req = (n) => new Request('https://worker.example/__ops/backfill', {
+      method: 'POST',
+      headers: { 'x-ops-token': 'test-ops-token', 'content-type': 'application/json' },
+      body: JSON.stringify({ limit: n }),
+    });
+    const res1 = await watcher.fetch(req(20), e.env);
+    assert.equal(res1.status, 200);
+    assert.equal(e.getState().backfillCount, 6, 'dispatch charged its 6 attempted URLs');
+
+    // manifest reorder → new manifestHash → the runCheck reset must preserve the
+    // same-day cap state instead of granting a fresh allowance
+    e.setManifest({ urls: [...manifest.urls].reverse() });
+    await watcher.scheduled({}, e.env, {});
+    const res2 = await watcher.fetch(req(20), e.env);
+    const body2 = await res2.json();
+    assert.equal(e.getState().backfillCount, 6, 'cap state survives the manifest-change reset');
+    assert.equal(body2.dailyRemaining, 14, 'same-day allowance not reset');
+  } finally {
+    e.restore();
+  }
+});
+
+test('stale-URL deletion: attempted queries counted, retry-safe on failure', async () => {
+  const e = makeEnv({ withIndexing: true, failStaleDelete: true });
+  try {
+    for (let run = 0; run < 6; run++) await watcher.scheduled({}, e.env, {}); // baseline + full catch-up
+    const pre = e.getState();
+    assert.equal(Object.values(pre.entries).filter((en) => en.indexedHash).length, PAGES, 'fully indexed before the stale phase');
+
+    // drop p7 from the manifest → marked stale; the DELETE attempt fails but the
+    // attempted query is still counted (quota was consumed)
+    e.setManifest({ urls: manifest.urls.slice(0, PAGES - 1) });
+    const run1 = await watcher.scheduled({}, e.env, {});
+    assert.equal(run1.d1Queries, 1, 'the failed stale DELETE is counted as an attempted query');
+    const stale1 = e.getState().entries['https://p7.example/terms'];
+    assert.ok(stale1.stale, 'marked stale');
+    assert.ok(!stale1.chunksDeleted, 'not marked deleted after the failed attempt');
+    assert.ok(stale1.chunkDeleteError, 'failure recorded on the entry');
+
+    // next run retries the DELETE (retry-safe) and succeeds
+    e.setFailStaleDelete(false);
+    const run2 = await watcher.scheduled({}, e.env, {});
+    assert.equal(run2.d1Queries, 1, 'the retried DELETE is counted');
+    assert.ok(e.getState().entries['https://p7.example/terms'].chunksDeleted, 'deleted on retry');
+  } finally {
+    e.restore();
   }
 });
 

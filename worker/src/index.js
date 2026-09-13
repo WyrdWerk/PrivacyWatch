@@ -100,29 +100,34 @@ export function insertChunkStatements(env, url, providerId, chunks, vectors, con
   return stmts;
 }
 
-async function indexUrl(env, url, providerIds, normalized, contentHash, urlHash, d1Budget, telemetry) {
+export async function indexUrl(env, url, providerIds, normalized, contentHash, urlHash, d1Budget, telemetry) {
   const chunks = chunkText(normalized);
   // Always emit the DELETE: an empty/failed re-index must still remove obsolete
-  // chunks so stale content never stays searchable.
-  const statements = 1 + Math.ceil(chunks.length / 14);
-  const aiCalls = chunks.length ? Math.ceil(chunks.length / 8) : 0;
+  // chunks so stale content never stays searchable. The budget reserves the
+  // PLANNED statement count (conservative), but the returned telemetry reports
+  // only what was actually attempted, so d1Queries/aiCalls are truthful
+  // consumption evidence, never an upper bound of work that never ran.
+  const plannedStatements = 1 + Math.ceil(chunks.length / 14);
   if (d1Budget) {
-    if (d1Budget.remaining < statements) {
-      // Pre-AI deferral: no AI call attempted.
-      return { deferred: true, statements, aiCalls: 0 };
+    if (d1Budget.remaining < plannedStatements) {
+      // Pre-AI deferral: no AI call, no D1 statement attempted.
+      return { deferred: true, statements: 0, aiCalls: 0 };
     }
-    d1Budget.remaining -= statements;
+    d1Budget.remaining -= plannedStatements;
   }
+  let d1Attempted = 0;
   try {
     const vectors = chunks.length ? await embedTexts(env, chunks, telemetry) : [];
     const now = new Date().toISOString();
     const providerId = providerIds.map((p) => p.id).join(',');
     const stmts = insertChunkStatements(env, url, providerId, chunks, vectors, contentHash, urlHash, now);
+    d1Attempted = stmts.length;
     await env.DB.batch(stmts);
-    return { chunks: chunks.length, statements, aiCalls: telemetry.aiCalls };
+    return { chunks: chunks.length, statements: d1Attempted, aiCalls: telemetry.aiCalls };
   } catch (err) {
-    // The attempted AI invocation(s) consumed quota; the D1 statements were charged.
-    return { error: String(err.message ?? err).slice(0, 160), statements, aiCalls: telemetry.aiCalls };
+    // Attempted AI invocation(s) consumed quota; the batch's statements count
+    // only if the batch was actually attempted (insertChunkStatements succeeded).
+    return { error: String(err.message ?? err).slice(0, 160), statements: d1Attempted, aiCalls: telemetry.aiCalls };
   }
 }
 

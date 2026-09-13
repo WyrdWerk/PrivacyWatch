@@ -22,13 +22,13 @@ For each provider surface, we research and document:
 
 ## Providers covered
 
-**43 tracked surfaces** across 32 provider families in 4 categories:
+**52 tracked surfaces** across 41 provider families in 4 categories:
 
 **US Frontier:** OpenAI · Anthropic · Google Gemini · xAI / Grok
 
 **Chinese:** Alibaba/Qwen · Moonshot AI/Kimi · Zhipu AI/GLM · MiniMax · DeepSeek · Xiaomi MiMo
 
-**Inference:** Fireworks AI · Together AI · DeepInfra · Nebius AI · SiliconFlow · Groq · Cohere · Mistral · Perplexity · Cloudflare · Amazon Bedrock · Azure · AI21 · Cerebras · SambaNova
+**Inference:** Fireworks AI · Together AI · DeepInfra · Nebius AI · SiliconFlow · Groq · Cohere · Mistral · Perplexity · Cloudflare · Amazon Bedrock · Azure · AI21 · Cerebras · SambaNova · StepFun · Baidu Qianfan · ByteDance Seed · Tencent Cloud · Upstage · Meta · Deepgram · Voyage AI · Black Forest Labs
 
 **Coding Tools:** Cursor · OpenCode · HyperAgent · Crof AI · Wafer AI · Neuralwatt · CommandCode
 

@@ -333,6 +333,33 @@ test('backfill route: auth-gated, processes queued URLs, daily cap enforced', as
   }
 });
 
+test('INSERT-shape matrix: 1/14/15/40 chunks produce correct statement counts and param limits', async () => {
+  const { insertChunkStatements } = await import('../worker/src/index.js');
+  const env = { DB: { prepare: (sql) => ({ bind: (...params) => ({ sql, params }) }) } };
+  const mk = (n) => ({
+    chunks: Array.from({ length: n }, (_, i) => `chunk ${i} `.repeat(1)),
+    vectors: Array.from({ length: n }, (_, i) => l2normalize(new Float32Array([i + 1, 0, 0, 0]))),
+  });
+  const cases = [1, 14, 15, 40];
+  for (const n of cases) {
+    const { chunks, vectors } = mk(n);
+    const now = '2026-09-13T00:00:00Z';
+    const stmts = insertChunkStatements(env, 'https://x.example/terms', 'prov', chunks, vectors, 'hash', 'urlhash', now);
+    const deletes = stmts.filter((s) => s.sql.startsWith('DELETE'));
+    const inserts = stmts.filter((s) => s.sql.startsWith('INSERT'));
+    assert.equal(deletes.length, 1, `${n} chunks: exactly one DELETE`);
+    assert.equal(inserts.length, Math.ceil(n / 14), `${n} chunks: ${Math.ceil(n / 14)} INSERT statements`);
+    let remainingRows = n;
+    for (const s of inserts) {
+      const rowsInThis = Math.min(14, remainingRows);
+      remainingRows -= rowsInThis;
+      assert.equal(s.params.length, rowsInThis * 7, `${n} chunks: INSERT param count matches 7 params/row`);
+      assert.ok(s.params.length <= 100, `${n} chunks: INSERT params ${s.params.length} exceed 100`);
+    }
+    assert.equal(remainingRows, 0, 'all chunks inserted');
+  }
+});
+
 test('304 responses cost no body hashing', async () => {
   const baseline = makeEnv({ maxHashed: 20 });
   try {

@@ -83,7 +83,7 @@ async function embedTexts(env, texts) {
 // count, and charges each statement against the caller's D1 statement budget.
 const INSERT_CHUNK_SQL_BASE = 'INSERT INTO chunks (id, provider_id, url, text, embedding, revision, updated_at) VALUES ';
 
-function insertChunkStatements(env, url, providerId, chunks, vectors, contentHash, urlHash, now) {
+export function insertChunkStatements(env, url, providerId, chunks, vectors, contentHash, urlHash, now) {
   const stmts = [env.DB.prepare('DELETE FROM chunks WHERE url = ?1').bind(url)];
   for (let start = 0; start < chunks.length; start += 14) {
     const rows = Math.min(14, chunks.length - start);

@@ -102,18 +102,24 @@ async function indexUrl(env, url, providerIds, normalized, contentHash, urlHash,
   // Always emit the DELETE: an empty/failed re-index must still remove obsolete
   // chunks so stale content never stays searchable.
   const statements = 1 + Math.ceil(Math.max(chunks.length, 1) / 14);
+  const aiCalls = Math.ceil(chunks.length / 8);
   if (d1Budget) {
     if (d1Budget.remaining < statements) {
-      return { deferred: true, statements, aiCalls: 0 };
+      return { deferred: true, statements, aiCalls };
     }
     d1Budget.remaining -= statements;
   }
-  const vectors = await embedTexts(env, chunks);
-  const now = new Date().toISOString();
-  const providerId = providerIds.map((p) => p.id).join(',');
-  const stmts = insertChunkStatements(env, url, providerId, chunks, vectors, contentHash, urlHash, now);
-  await env.DB.batch(stmts);
-  return { chunks: chunks.length, statements, aiCalls: Math.ceil(Math.max(chunks.length, 1) / 8) };
+  try {
+    const vectors = chunks.length ? await embedTexts(env, chunks) : [];
+    const now = new Date().toISOString();
+    const providerId = providerIds.map((p) => p.id).join(',');
+    const stmts = insertChunkStatements(env, url, providerId, chunks, vectors, contentHash, urlHash, now);
+    await env.DB.batch(stmts);
+    return { chunks: chunks.length, statements, aiCalls };
+  } catch (err) {
+    // Attempted work is accounted even on failure (AI + D1 queries consumed).
+    return { error: String(err.message ?? err).slice(0, 160), statements, aiCalls };
+  }
 }
 
 function normalizeHtml(html) {
@@ -206,6 +212,11 @@ async function indexCatchUp(env, state, providerByUrl, limit, count, d1Budget) {
       aiCalls += r.aiCalls;
       if (r.deferred) {
         e.indexError = 'index deferred: D1 statement budget';
+        continue;
+      }
+      if (r.error) {
+        e.indexError = r.error;
+        errors.push(u);
         continue;
       }
       e.indexedHash = e.hash;
@@ -311,10 +322,12 @@ async function runCheck(env) {
         se.lastStatus = 'removed-from-manifest';
       }
       if (env.DB && !dryRun && !se.chunksDeleted && staleD1Budget.remaining >= 1) {
+        // Reserve the D1 statement before the attempt: a failed call consumes
+        // the query, bounding stale-delete attempts per invocation.
+        staleD1Budget.remaining -= 1;
         try {
           await env.DB.prepare('DELETE FROM chunks WHERE url = ?1').bind(key).run();
           se.chunksDeleted = true;
-          staleD1Budget.remaining -= 1;
         } catch (err) {
           se.chunkDeleteError = String(err.message ?? err).slice(0, 120);
         }
@@ -462,6 +475,7 @@ async function runCheck(env) {
       } catch (err) {
         entry.lastStatus = `inconclusive:snapshot-error:${err.message ?? 'unknown'}`;
         state.entries[url] = entry;
+        if (!stillQueued.includes(url)) stillQueued.push(url);
         continue;
       }
     }

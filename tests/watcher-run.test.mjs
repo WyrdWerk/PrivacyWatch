@@ -1,0 +1,124 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import watcher from '../worker/src/index.js';
+
+const PAGES = 8;
+const bigBody = '<html><body><p>' + 'terms text '.repeat(7000) + '</p></body></html>'; // > 64 KiB cap
+const manifest = {
+  urls: Array.from({ length: PAGES }, (_, i) => ({
+    url: `https://p${i}.example/terms`,
+    providers: [{ id: `p${i}`, name: `P${i}`, surface: 'API' }],
+  })),
+};
+
+function makeEnv({ maxHashed = 20, stored = null, mutatedUrl = null } = {}) {
+  let storedState = stored;
+  const snapshots = [];
+  const env = {
+    MANIFEST_URL: 'https://manifest.example/watch-urls.json',
+    SHARD_SIZE: '20',
+    MAX_HASHED_BODIES: String(maxHashed),
+    WATCH_STATE: {
+      get: async () => storedState,
+      put: async (_key, value) => {
+        storedState = JSON.parse(value);
+      },
+    },
+    SNAPSHOTS: {
+      put: async (key) => {
+        snapshots.push(key);
+      },
+    },
+  };
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (input) => {
+    const url = typeof input === 'string' ? input : input.url;
+    if (url === env.MANIFEST_URL) {
+      return new Response(JSON.stringify(manifest), { headers: { 'content-type': 'application/json' } });
+    }
+    const body = mutatedUrl && url === mutatedUrl ? bigBody.replace('terms', 'amended terms') : bigBody;
+    return new Response(body, { status: 200, headers: { 'content-type': 'text/html' } });
+  };
+  return { env, snapshots, getState: () => storedState, restore: () => (globalThis.fetch = realFetch) };
+}
+
+test('baseline run defers bodies beyond the hashed-body CPU budget', async () => {
+  const { env, snapshots, getState, restore } = makeEnv({ maxHashed: 3 });
+  try {
+    const result = await watcher.scheduled({}, env, {});
+    const state = getState();
+    assert.equal(result.ok, true);
+    assert.equal(result.checked, PAGES);
+    const baselined = Object.values(state.entries).filter((e) => e.seen);
+    assert.equal(baselined.length, 3, 'only 3 bodies hashed');
+    const deferred = Object.values(state.entries).filter((e) => e.lastStatus === 'deferred:body-budget');
+    assert.equal(deferred.length, PAGES - 3);
+    assert.equal(snapshots.length, 3);
+    assert.equal(state.events.length, 0, 'baselines are never reported as changes');
+    assert.equal(result.reportStatus, 'skipped');
+  } finally {
+    restore();
+  }
+});
+
+test('a real content change after baseline creates a pending event and snapshot', async () => {
+  const baseline = makeEnv({ maxHashed: 20 });
+  try {
+    await watcher.scheduled({}, baseline.env, {});
+    const afterBaseline = baseline.getState();
+    assert.equal(Object.values(afterBaseline.entries).every((e) => e.seen), true);
+
+    const changed = makeEnv({
+      maxHashed: 20,
+      stored: afterBaseline,
+      mutatedUrl: manifest.urls[3].url,
+    });
+    try {
+      const result = await watcher.scheduled({}, changed.env, {});
+      const state = changed.getState();
+      assert.equal(result.changes, 1);
+      assert.equal(state.events.length, 1);
+      const ev = state.events[0];
+      assert.equal(ev.providers[0].id, 'p3');
+      assert.equal(ev.reported, false);
+      assert.ok(ev.newHash !== ev.oldHash);
+      assert.ok(changed.snapshots.includes(ev.newSnapshotKey));
+      assert.equal(changed.snapshots.length, 1, 'exactly one new snapshot for the changed page');
+      assert.equal(result.reportStatus, 'pending-no-credentials');
+    } finally {
+      changed.restore();
+    }
+  } finally {
+    baseline.restore();
+  }
+});
+
+test('304 responses cost no body hashing', async () => {
+  const baseline = makeEnv({ maxHashed: 20 });
+  try {
+    await watcher.scheduled({}, baseline.env, {});
+    const stored = baseline.getState();
+
+    const fresh = makeEnv({ maxHashed: 20, stored });
+    try {
+      // all pages now send 304 via the mock (conditional request with etag stored)
+      globalThis.fetch = async (input, init = {}) => {
+        const url = typeof input === 'string' ? input : input.url;
+        if (url === fresh.env.MANIFEST_URL) {
+          return new Response(JSON.stringify(manifest), { headers: { 'content-type': 'application/json' } });
+        }
+        return new Response(null, { status: 304 });
+      };
+      const result = await watcher.scheduled({}, fresh.env, {});
+      const state = fresh.getState();
+      const notModified = Object.values(state.entries).filter((e) => e.lastStatus === 'not-modified').length;
+      assert.equal(notModified, PAGES);
+      assert.equal(result.changes, 0);
+      assert.equal(fresh.snapshots.length, 0, '304s write no snapshots');
+    } finally {
+      fresh.restore();
+    }
+  } finally {
+    baseline.restore();
+  }
+});

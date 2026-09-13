@@ -7,6 +7,12 @@ const SOFT_SUBREQUEST_LIMIT = 44;
 const HASH_SLICE_BYTES = 65536;
 const FETCH_TIMEOUT_MS = 15000;
 const MAX_EVENTS = 50;
+// Measured (independent review benchmark): capped normalize+hash costs ~1.4-1.6 ms
+// per 64 KiB body in a V8-shaped runtime. Free cron triggers allow 10 ms CPU, so a
+// run that hashes every fetched body at shard 20 would exceed it (~29-33 ms).
+// This caps bodies actually hashed per invocation; 200-responses beyond the cap are
+// deferred (state untouched) and retried on later runs. 304s and errors cost no CPU.
+const DEFAULT_MAX_HASHED_BODIES = 6;
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data, null, 2), {
@@ -126,6 +132,8 @@ async function runCheck(env) {
 
   const now = new Date().toISOString();
   let changes = 0;
+  const maxHashed = parseInt(env.MAX_HASHED_BODIES || String(DEFAULT_MAX_HASHED_BODIES), 10);
+  let hashedBodies = 0;
   for (const item of slice) {
     if (subrequests >= SOFT_SUBREQUEST_LIMIT - 1) break; // defer the rest to the next invocation
     const url = item.url;
@@ -138,8 +146,8 @@ async function runCheck(env) {
 
     let res;
     try {
+      count(); // count the attempt: failed/timed-out fetches still consumed the call
       res = await fetch(url, { headers, redirect: 'follow', signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
-      count();
     } catch (err) {
       entry.lastStatus = `inconclusive:fetch-error:${err.message ?? 'unknown'}`;
       state.entries[url] = entry;
@@ -158,6 +166,21 @@ async function runCheck(env) {
       state.entries[url] = entry;
       continue;
     }
+
+    // CPU guard: hashing bodies is the dominant CPU cost. Deferred URLs keep their
+    // previous etag/lastModified (so they retry with the same conditional request)
+    // and are retried on later runs.
+    if (hashedBodies >= maxHashed) {
+      try {
+        if (res.body) await res.body.cancel();
+      } catch {
+        // nothing to cancel
+      }
+      entry.lastStatus = 'deferred:body-budget';
+      state.entries[url] = entry;
+      continue;
+    }
+    hashedBodies++;
 
     entry.etag = res.headers.get('etag') ?? entry.etag ?? null;
     entry.lastModified = res.headers.get('last-modified') ?? entry.lastModified ?? null;
@@ -278,6 +301,7 @@ export default {
   async scheduled(controller, env, ctx) {
     const result = await runCheck(env);
     console.log('[watcher]', JSON.stringify(result));
+    return result; // returned so tests (and tail logs) can assert run outcomes
   },
 
   async fetch(request, env) {

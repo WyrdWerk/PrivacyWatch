@@ -1,0 +1,20 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "privacywatch-watcher",
+  "main": "src/index.js",
+  "compatibility_date": "2026-05-27",
+  "migrations_dir": "migrations",
+  // Placeholders are rendered by scripts/render-worker-config.mjs at deploy time
+  // from the KV_NAMESPACE_ID and R2_BUCKET Actions variables. Never commit real IDs.
+  "kv_namespaces": [{ "binding": "WATCH_STATE", "id": "__KV_NAMESPACE_ID__" }],
+  "r2_buckets": [{ "binding": "SNAPSHOTS", "bucket_name": "__R2_BUCKET__" }],
+  "triggers": {
+    "crons": ["0 3 * * *", "0 15 * * *"]
+  },
+  "vars": {
+    "MANIFEST_URL": "https://privacywatch.wyrdwerk.com/watch-urls.json",
+    "SHARD_SIZE": "10",
+    "ISSUE_REPO": "WyrdWerk/PrivacyWatch",
+    "ISSUE_NUMBER": "2"
+  }
+}

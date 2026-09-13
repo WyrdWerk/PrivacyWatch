@@ -1638,7 +1638,11 @@
       "sourceUrl": "https://deepgram.com/terms",
       "sourceDate": "2026-09-13",
       "notes": "Model Improvement Partnership Program documents the opt-out parameter. General privacy policy: customer-data retention governed by the business agreement.",
-      "relatedUrls": ["https://deepgram.com/privacy", "https://developers.deepgram.com/docs/the-deepgram-model-improvement-partnership-program"]
+      "relatedUrls": [
+        "https://deepgram.com/privacy",
+        "https://developers.deepgram.com/docs/the-deepgram-model-improvement-partnership-program"
+      ],
+      "privacyUrl": "https://deepgram.com/privacy"
     },
     {
       "id": "voyage-ai",
@@ -1670,7 +1674,12 @@
       "sourceUrl": "https://www.voyageai.com/tos",
       "sourceDate": "2026-09-13",
       "notes": "DPA requires prompt deletion of Customer Personal Data at termination but specifies no default request auto-deletion period.",
-      "relatedUrls": ["https://www.voyageai.com/privacy", "https://www.voyageai.com/dpa", "https://docs.voyageai.com/docs/faq"]
+      "relatedUrls": [
+        "https://www.voyageai.com/privacy",
+        "https://www.voyageai.com/dpa",
+        "https://docs.voyageai.com/docs/faq"
+      ],
+      "privacyUrl": "https://www.voyageai.com/privacy"
     },
     {
       "id": "black-forest-labs",
@@ -1702,7 +1711,12 @@
       "sourceUrl": "https://bfl.ai/legal/flux-api-service-terms",
       "sourceDate": "2026-09-13",
       "notes": "API-specific terms control over the general ToS for API use and describe the training license as irrevocable. EU users are subject to separate EU API/developer terms. General ToS: bfl.ai/legal/terms-of-service.",
-      "relatedUrls": ["https://bfl.ai/legal/privacy-policy", "https://bfl.ai/legal/terms-of-service", "https://bfl.ai/legal/developer-terms-of-service"]
+      "relatedUrls": [
+        "https://bfl.ai/legal/privacy-policy",
+        "https://bfl.ai/legal/terms-of-service",
+        "https://bfl.ai/legal/developer-terms-of-service"
+      ],
+      "privacyUrl": "https://bfl.ai/legal/privacy-policy"
     }
   ]
 }

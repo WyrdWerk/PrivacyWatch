@@ -1424,7 +1424,7 @@
       "category": "inference",
       "categoryLabel": "Inference",
       "rating": "caution",
-      "incident": true,
+      "incident": false,
       "training": {
         "label": "On in certain programs",
         "detail": "Ordinary API terms grant a broad license to use prompts/outputs/logs \"for any purpose\"; training/fine-tuning is expressly identified for early-access and startup programs. Opt-out: avoid the program or contact StepFun for alternatives."

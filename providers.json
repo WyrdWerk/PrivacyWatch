@@ -772,6 +772,7 @@
         "detail": "Server locations NOT specified in any policy version. Singapore entity governed by PDPA; China entity by Chinese law. International .com product explicitly excludes China users — separate siliconflow.cn product."
       },
       "sourceUrl": "https://docs.siliconflow.com/en/legals/terms-of-service",
+      "privacyUrl": "https://docs.siliconflow.com/en/legals/privacy-policy",
       "sourceDate": "2026-05-27",
       "notes": "Source updated to English Terms of Service (Mar 31, 2025), which explicitly restricts Interaction Data use: 'will not access your Interaction Data...will not use or disclose it without authorization...solely for the purpose of providing Services to you.' CN Privacy Policy (.cn entity, Oct 2025) has stronger language: 'will not conduct any unauthorised use or disclosure of your Interaction Data, and will not store it.' No explicit training prohibition in any version — constraint is 'solely for purpose of providing Services.' No SOC 2, ISO 27001, DPA, or sub-processor list.",
       "relatedUrls": [
@@ -809,6 +810,7 @@
         "detail": "All processing on US AWS infrastructure. No EU data residency on any plan."
       },
       "sourceUrl": "https://cursor.com/data-use",
+      "privacyUrl": "https://cursor.com/privacy",
       "sourceDate": "2026-05-27",
       "notes": "Default for Teams/Enterprise. SOC 2 Type II. HIPAA BAA and DPA available for enterprise only.",
       "relatedUrls": [
@@ -843,6 +845,7 @@
         "detail": "US AWS only."
       },
       "sourceUrl": "https://cursor.com/data-use",
+      "privacyUrl": "https://cursor.com/privacy",
       "sourceDate": "2026-05-27",
       "notes": "Critical: most Free/Pro users have Privacy Mode OFF without knowing it. This is the default state for the majority of individual Cursor users.",
       "relatedUrls": [
@@ -877,6 +880,7 @@
         "detail": "Go models in US, EU, and Singapore. Note: some models may be proxied through 3rd-party APIs (Alibaba DashScope, Moonshot) — ZDR scope for proxied calls undocumented."
       },
       "sourceUrl": "https://dev.opencode.ai/docs/go/",
+      "privacyUrl": "https://opencode.ai/legal/privacy-policy",
       "sourceDate": "2026-05-27",
       "notes": "Infrastructure may proxy through Alibaba/Moonshot — ZDR scope for those calls unclear."
     },
@@ -908,6 +912,7 @@
         "detail": "Storage location not explicitly stated."
       },
       "sourceUrl": "https://opencode.ai/legal/privacy-policy",
+      "privacyUrl": "https://opencode.ai/legal/privacy-policy",
       "sourceDate": "2026-05-27",
       "notes": "Homepage states 'does not store code' — contradicted by free tier ToS and documented storage."
     },
@@ -939,6 +944,7 @@
         "detail": "Data may be transferred outside user's jurisdiction. EU/UK/Swiss: SCCs or adequacy decisions. Specific data centers not disclosed."
       },
       "sourceUrl": "https://hyperagent.com/privacy",
+      "privacyUrl": "https://hyperagent.com/privacy",
       "sourceDate": "2026-05-27",
       "notes": "No compliance certifications disclosed. Security page returns 404. Strong no-training commitment. Metadata (usage data) used for analytics/product improvement.",
       "relatedUrls": [
@@ -973,6 +979,7 @@
         "detail": "Data processed in the United States."
       },
       "sourceUrl": "https://crof.ai/privacy",
+      "privacyUrl": "https://crof.ai/privacy",
       "sourceDate": "2026-05-27",
       "notes": "Clearest, most explicit privacy policy in this entire research. CCPA compliant."
     },
@@ -1004,6 +1011,7 @@
         "detail": "Inference served from US data centers."
       },
       "sourceUrl": "https://www.wafer.ai/terms",
+      "privacyUrl": "https://compliance.wafer.ai/en/documents/privacy-policy",
       "sourceDate": "2026-05-27",
       "notes": "Y Combinator-backed. DPA available. GDPR rights acknowledged. Policy updated May 4, 2026. Terms via OpenRouter; Privacy Policy at www.wafer.ai/privacy-policy.",
       "relatedUrls": [
@@ -1038,6 +1046,7 @@
         "detail": "US data centers."
       },
       "sourceUrl": "https://www.wafer.ai/terms",
+      "privacyUrl": "https://compliance.wafer.ai/en/documents/privacy-policy",
       "sourceDate": "2026-05-27",
       "notes": "Speculative decoding training is disclosed and limited to internal inference optimization. Transparent approach. Terms via OpenRouter; Privacy Policy at www.wafer.ai/privacy-policy.",
       "relatedUrls": [
@@ -1072,6 +1081,7 @@
         "detail": "Data center location not disclosed. On-prem deployment via Neuralwatt Deploy available for enterprises."
       },
       "sourceUrl": "https://portal.neuralwatt.com/privacy",
+      "privacyUrl": "https://portal.neuralwatt.com/privacy",
       "sourceDate": "2026-05-27",
       "notes": "Unique energy-based billing (kWh). No compliance certifications documented. Good policy intent with documentation gaps."
     },
@@ -1103,6 +1113,7 @@
         "detail": "User code stays on device. Account/telemetry cloud location not disclosed. Enterprise self-hosted option available."
       },
       "sourceUrl": "https://commandcode.ai/docs/resources/security",
+      "privacyUrl": "https://commandcode.ai/privacy",
       "sourceDate": "2026-05-27",
       "notes": "Local-first is structurally differentiated — privacy is architectural, not just policy. No compliance certifications documented."
     },
@@ -1134,6 +1145,7 @@
         "detail": "US data centers. No EU data residency documented."
       },
       "sourceUrl": "https://groq.com/terms-of-use/",
+      "privacyUrl": "https://groq.com/privacy-policy/",
       "sourceDate": "2026-06-28",
       "notes": "Added via OpenRouter ToS cross-reference. Hardware-focused inference provider (LPUs). Strong no-training commitment."
     },
@@ -1165,6 +1177,7 @@
         "detail": "Headquartered in Toronto, but serves US and EU. Data residency options available for enterprise."
       },
       "sourceUrl": "https://cohere.com/terms-of-use",
+      "privacyUrl": "https://cohere.com/privacy",
       "sourceDate": "2026-06-28",
       "notes": "Added via OpenRouter ToS cross-reference. Canadian AI company with strong privacy stance."
     },
@@ -1196,6 +1209,7 @@
         "detail": "Headquartered in Paris, France. GDPR jurisdiction. Data processed in EU."
       },
       "sourceUrl": "https://mistral.ai/terms/#terms-of-use",
+      "privacyUrl": "https://legal.mistral.ai/terms/privacy-policy",
       "sourceDate": "2026-06-28",
       "notes": "Added via OpenRouter ToS cross-reference. Major European open-weight model provider."
     },
@@ -1227,6 +1241,7 @@
         "detail": "Headquartered in San Francisco. US data centers."
       },
       "sourceUrl": "https://www.perplexity.ai/hub/legal/perplexity-api-terms-of-service",
+      "privacyUrl": "https://www.perplexity.ai/hub/legal/dpa",
       "sourceDate": "2026-06-28",
       "notes": "Added via OpenRouter ToS cross-reference. Search-focused AI with separate API product."
     },
@@ -1258,6 +1273,7 @@
         "detail": "Edge network spans 300+ cities. Data processed in region of request. No single data center dependency."
       },
       "sourceUrl": "https://www.cloudflare.com/service-specific-terms-developer-platform/#developer-platform-terms",
+      "privacyUrl": "https://www.cloudflare.com/service-specific-terms-developer-platform/#developer-platform-terms",
       "sourceDate": "2026-06-28",
       "notes": "Added via OpenRouter ToS cross-reference. Infrastructure provider with edge inference capabilities."
     },
@@ -1289,6 +1305,7 @@
         "detail": "AWS regions worldwide. Data processed in selected region. No cross-region transfer without configuration."
       },
       "sourceUrl": "https://aws.amazon.com/service-terms/",
+      "privacyUrl": "https://aws.amazon.com/privacy/",
       "sourceDate": "2026-06-28",
       "notes": "Added via OpenRouter ToS cross-reference. AWS managed service for foundation models."
     },
@@ -1320,6 +1337,7 @@
         "detail": "Azure regions worldwide. Data residency controls available. Customer can select specific regions."
       },
       "sourceUrl": "https://www.microsoft.com/en-us/legal/terms-of-use?oneroute=true",
+      "privacyUrl": "https://privacy.microsoft.com/en-us/privacystatement",
       "sourceDate": "2026-06-28",
       "notes": "Added via OpenRouter ToS cross-reference. Microsoft's cloud AI inference service."
     },
@@ -1351,6 +1369,7 @@
         "detail": "Headquartered in Jerusalem. US operations. Data processed in selected regions."
       },
       "sourceUrl": "https://www.ai21.com/terms-of-service/",
+      "privacyUrl": "https://www.ai21.com/privacy-policy/",
       "sourceDate": "2026-06-28",
       "notes": "Added via OpenRouter ToS cross-reference. Israeli AI company known for Jurassic models."
     },
@@ -1382,6 +1401,7 @@
         "detail": "Headquartered in Mountain View, CA. US data centers."
       },
       "sourceUrl": "https://www.cerebras.ai/terms-of-service",
+      "privacyUrl": "https://www.cerebras.ai/privacy-policy",
       "sourceDate": "2026-06-28",
       "notes": "Added via OpenRouter ToS cross-reference. Hardware-focused inference (Wafer Scale Engines)."
     },
@@ -1413,6 +1433,7 @@
         "detail": "Headquartered in San Mateo, CA. US data centers."
       },
       "sourceUrl": "https://sambanova.ai/terms-and-conditions",
+      "privacyUrl": "https://sambanova.ai/privacy-policy",
       "sourceDate": "2026-06-28",
       "notes": "Added via OpenRouter ToS cross-reference. Enterprise AI infrastructure provider."
     },

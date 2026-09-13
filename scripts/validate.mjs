@@ -34,6 +34,15 @@ for (const p of providers) {
     // falls through to the error below
   }
   if (!sourceUrlOk) errors.push(`${p.id || '?'}: sourceUrl must be an absolute https URL`);
+  if (p.privacyUrl != null && p.privacyUrl !== '') {
+    let privacyOk = false;
+    try {
+      privacyOk = new URL(p.privacyUrl).protocol === 'https:';
+    } catch {
+      // falls through to the error below
+    }
+    if (!privacyOk) errors.push(`${p.id || '?'}: privacyUrl, when present, must be an absolute https URL`);
+  }
   if (ids.has(p.id)) errors.push(`duplicate id: ${p.id}`);
   ids.add(p.id);
 }

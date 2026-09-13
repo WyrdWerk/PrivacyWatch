@@ -1445,7 +1445,8 @@
       },
       "sourceUrl": "https://platform.stepfun.ai/docs/en/agreement/userservice",
       "sourceDate": "2026-09-13",
-      "notes": "⚠ CISA/NSA/FBI joint advisory AA26-251A (2026-09-08) alleges high-volume unauthorized model-distillation campaigns — a government advisory, not a confirmed breach. Data-processing agreement: platform.stepfun.ai/docs/en/agreement/dataprocess."
+      "notes": "⚠ CISA/NSA/FBI joint advisory AA26-251A (2026-09-08) alleges high-volume unauthorized model-distillation campaigns — a government advisory, not a confirmed breach. Data-processing agreement: platform.stepfun.ai/docs/en/agreement/dataprocess.",
+      "privacyUrl": "https://platform.stepfun.ai/docs/en/agreement/dataprocess"
     },
     {
       "id": "baidu-qianfan",
@@ -1476,7 +1477,8 @@
       },
       "sourceUrl": "https://intl.cloud.baidu.com/en/doc/Agreements/s/bmesahnjh-intl-en",
       "sourceDate": "2026-09-13",
-      "notes": "Qianfan user agreement (stated to prevail over general policies): inference inputs/outputs are customer data and \"we will not conduct any unauthorized use and disclosure\". See intl.cloud.baidu.com/en/doc/qianfan/s/Cmn5zc5tn."
+      "notes": "Qianfan user agreement (stated to prevail over general policies): inference inputs/outputs are customer data and \"we will not conduct any unauthorized use and disclosure\". See intl.cloud.baidu.com/en/doc/qianfan/s/Cmn5zc5tn.",
+      "privacyUrl": "https://intl.cloud.baidu.com/en/doc/qianfan/s/Cmn5zc5tn"
     },
     {
       "id": "seed-byteplus",
@@ -1507,7 +1509,8 @@
       },
       "sourceUrl": "https://docs.byteplus.com/en/docs/legal/docs-terms-of-service",
       "sourceDate": "2026-09-13",
-      "notes": "ModelArk-specific data-processing page: docs.byteplus.com/en/docs/ModelArk/BytePlus_ModelArk_Data_Processing. Consumer Starter/Playground surfaces are training-on — treat as a separate consumer surface if tracked later."
+      "notes": "ModelArk-specific data-processing page: docs.byteplus.com/en/docs/ModelArk/BytePlus_ModelArk_Data_Processing. Consumer Starter/Playground surfaces are training-on — treat as a separate consumer surface if tracked later.",
+      "privacyUrl": "https://docs.byteplus.com/en/docs/ModelArk/BytePlus_ModelArk_Data_Processing"
     },
     {
       "id": "tencent-cloud",
@@ -1538,7 +1541,8 @@
       },
       "sourceUrl": "https://www.tencentcloud.com/en/document/product/301/78869",
       "sourceDate": "2026-09-13",
-      "notes": "AI/LLM rules live in separate docs (AI Service Terms, TokenHub DPSA). A 2025 Cybernews report on exposed subdomains was disputed by Tencent (\"no user data was exposed\"; claimed honeypot) — not an established customer-data breach."
+      "notes": "AI/LLM rules live in separate docs (AI Service Terms, TokenHub DPSA). A 2025 Cybernews report on exposed subdomains was disputed by Tencent (\"no user data was exposed\"; claimed honeypot) — not an established customer-data breach.",
+      "privacyUrl": "https://www.tencentcloud.com/document/product/1300/78953"
     },
     {
       "id": "upstage",
@@ -1569,7 +1573,8 @@
       },
       "sourceUrl": "https://www.upstage.ai/terms-of-service",
       "sourceDate": "2026-09-13",
-      "notes": "AI input/output rules in Article 22 of the Terms. Revised terms effective 2026-09-21 carry materially the same training language."
+      "notes": "AI input/output rules in Article 22 of the Terms. Revised terms effective 2026-09-21 carry materially the same training language.",
+      "privacyUrl": "https://upstage.ai/privacy-policy/updated-aug-26-2026"
     },
     {
       "id": "meta-llama-api",
@@ -1600,7 +1605,8 @@
       },
       "sourceUrl": "https://ai.developer.meta.com/legal/terms-of-service",
       "sourceDate": "2026-09-13",
-      "notes": "Supplied URL now serves \"Meta Model API Terms\" (Muse-model framing) rather than Llama-specific terms. Aug 2026 Muse Spark 1.1 evaluation incident (exploited a third-party vuln) was not a Model API customer-data breach."
+      "notes": "Supplied URL now serves \"Meta Model API Terms\" (Muse-model framing) rather than Llama-specific terms. Aug 2026 Muse Spark 1.1 evaluation incident (exploited a third-party vuln) was not a Model API customer-data breach.",
+      "privacyUrl": "https://dev.meta.ai/legal/commitments"
     },
     {
       "id": "deepgram",
@@ -1632,7 +1638,11 @@
       "sourceUrl": "https://deepgram.com/terms",
       "sourceDate": "2026-09-13",
       "notes": "Model Improvement Partnership Program documents the opt-out parameter. General privacy policy: customer-data retention governed by the business agreement.",
-      "relatedUrls": ["https://deepgram.com/privacy", "https://developers.deepgram.com/docs/the-deepgram-model-improvement-partnership-program"]
+      "relatedUrls": [
+        "https://deepgram.com/privacy",
+        "https://developers.deepgram.com/docs/the-deepgram-model-improvement-partnership-program"
+      ],
+      "privacyUrl": "https://deepgram.com/privacy"
     },
     {
       "id": "voyage-ai",
@@ -1664,7 +1674,12 @@
       "sourceUrl": "https://www.voyageai.com/tos",
       "sourceDate": "2026-09-13",
       "notes": "DPA requires prompt deletion of Customer Personal Data at termination but specifies no default request auto-deletion period.",
-      "relatedUrls": ["https://www.voyageai.com/privacy", "https://www.voyageai.com/dpa", "https://docs.voyageai.com/docs/faq"]
+      "relatedUrls": [
+        "https://www.voyageai.com/privacy",
+        "https://www.voyageai.com/dpa",
+        "https://docs.voyageai.com/docs/faq"
+      ],
+      "privacyUrl": "https://www.voyageai.com/privacy"
     },
     {
       "id": "black-forest-labs",
@@ -1696,7 +1711,12 @@
       "sourceUrl": "https://bfl.ai/legal/flux-api-service-terms",
       "sourceDate": "2026-09-13",
       "notes": "API-specific terms control over the general ToS for API use and describe the training license as irrevocable. EU users are subject to separate EU API/developer terms. General ToS: bfl.ai/legal/terms-of-service.",
-      "relatedUrls": ["https://bfl.ai/legal/privacy-policy", "https://bfl.ai/legal/terms-of-service", "https://bfl.ai/legal/developer-terms-of-service"]
+      "relatedUrls": [
+        "https://bfl.ai/legal/privacy-policy",
+        "https://bfl.ai/legal/terms-of-service",
+        "https://bfl.ai/legal/developer-terms-of-service"
+      ],
+      "privacyUrl": "https://bfl.ai/legal/privacy-policy"
     }
   ]
 }

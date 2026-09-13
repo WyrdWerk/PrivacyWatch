@@ -95,10 +95,11 @@ function insertChunkStatements(env, url, providerId, chunks, vectors, contentHas
 
 async function indexUrl(env, url, providerIds, normalized, contentHash, urlHash, d1Budget) {
   const chunks = chunkText(normalized);
-  if (!chunks.length) return 0;
-  const statements = 1 + Math.ceil(chunks.length / 14);
+  // Always emit the DELETE: an empty/failed re-index must still remove obsolete
+  // chunks so stale content never stays searchable.
+  const statements = 1 + Math.ceil(Math.max(chunks.length, 1) / 14);
   if (d1Budget) {
-    if (d1Budget.remaining < statements) return -statements; // negative = deferred, retry with budget
+    if (d1Budget.remaining < statements) return { deferred: true, statements };
     d1Budget.remaining -= statements;
   }
   const vectors = await embedTexts(env, chunks);
@@ -106,7 +107,7 @@ async function indexUrl(env, url, providerIds, normalized, contentHash, urlHash,
   const providerId = providerIds.map((p) => p.id).join(',');
   const stmts = insertChunkStatements(env, url, providerId, chunks, vectors, contentHash, urlHash, now);
   await env.DB.batch(stmts);
-  return chunks.length;
+  return { chunks: chunks.length, statements, aiCalls: Math.ceil(Math.max(chunks.length, 1) / 8) };
 }
 
 function normalizeHtml(html) {
@@ -178,6 +179,8 @@ const MAX_INDEX_ATTEMPTS = 5;
 async function indexCatchUp(env, state, providerByUrl, limit, count, d1Budget) {
   let processed = 0;
   let chunksIndexed = 0;
+  let d1Queries = 0;
+  let aiCalls = 0;
   const errors = [];
   const indexPending = Object.entries(state.entries)
     .filter(([, e]) => e.seen && e.hash && e.lastSnapshotKey && e.indexedHash !== e.hash && (e.indexAttempts ?? 0) < MAX_INDEX_ATTEMPTS)
@@ -192,21 +195,24 @@ async function indexCatchUp(env, state, providerByUrl, limit, count, d1Budget) {
       const raw = await snap.text();
       const normalized = normalizeHtml(raw);
       const urlHash = await sha256Hex(u);
-      const n = await indexUrl(env, u, providerByUrl.get(u) ?? [], normalized, e.hash, urlHash, d1Budget);
-      if (n >= 0) {
-        e.indexedHash = e.hash;
-        e.indexError = null;
-        chunksIndexed += n;
-        processed++;
-      } else {
+      const r = await indexUrl(env, u, providerByUrl.get(u) ?? [], normalized, e.hash, urlHash, d1Budget);
+      d1Queries += r.statements;
+      aiCalls += r.aiCalls;
+      if (r.deferred) {
         e.indexError = 'index deferred: D1 statement budget';
+        continue;
       }
+      e.indexedHash = e.hash;
+      e.indexAttempts = 0;
+      e.indexError = null;
+      chunksIndexed += r.chunks;
+      processed++;
     } catch (err) {
       e.indexError = String(err.message ?? err).slice(0, 160);
       errors.push(u);
     }
   }
-  return { processed, chunksIndexed, errors };
+  return { processed, chunksIndexed, d1Queries, aiCalls, errors };
 }
 
 // Ops-route backfill: catches up the semantic index on demand (bounded by the
@@ -226,7 +232,7 @@ async function runBackfill(env, limit) {
   await env.WATCH_STATE.put('watcher', JSON.stringify(state));
   const remaining = Object.values(state.entries)
     .filter((e) => e.seen && e.hash && e.lastSnapshotKey && e.indexedHash !== e.hash).length;
-  return { ok: true, processed: cu.processed, chunksIndexed: cu.chunksIndexed, errors: cu.errors, remaining };
+  return { ok: true, processed: cu.processed, chunksIndexed: cu.chunksIndexed, d1Queries: cu.d1Queries, aiCalls: cu.aiCalls, errors: cu.errors, remaining };
 }
 
 async function runCheck(env) {
@@ -270,6 +276,15 @@ async function runCheck(env) {
       state.entries[key].stale = true;
       state.entries[key].checkedAt = new Date().toISOString();
       state.entries[key].lastStatus = 'removed-from-manifest';
+      // Remove a stale URL's chunks so removed pages never stay searchable.
+      if (env.DB && !dryRun) {
+        try {
+          await env.DB.prepare('DELETE FROM chunks WHERE url = ?1').bind(key).run();
+          count();
+        } catch (err) {
+          state.entries[key].chunkDeleteError = String(err.message ?? err).slice(0, 120);
+        }
+      }
     }
   }
 
@@ -283,6 +298,8 @@ async function runCheck(env) {
   const now = new Date().toISOString();
   let changes = 0;
   let indexed = 0;
+  let d1Queries = 0;
+  let aiCalls = 0;
   const maxHashed = parseInt(env.MAX_HASHED_BODIES || String(DEFAULT_MAX_HASHED_BODIES), 10);
   let hashedBodies = 0;
   // D1 statement budget per invocation: each indexed URL costs 1 DELETE +
@@ -355,32 +372,35 @@ async function runCheck(env) {
     const oldHash = entry.hash ?? null;
 
     if (oldHash === null) {
-      // Baseline: first sighting, never reported as a change.
-      entry.hash = newHash;
-      entry.seen = true;
-      entry.lastStatus = truncated ? 'baseline-capped' : 'baseline';
-      entry.lastSnapshotKey = `snapshots/${urlHash}/${newHash}.html`;
+      // Baseline: all-or-nothing — hash/seen/lastSnapshotKey are committed only
+      // after the snapshot is durably stored; on failure the URL re-queues with
+      // no hash, so a missing snapshot can never 304-freeze the entry.
+      const snapshotKey = `snapshots/${urlHash}/${newHash}.html`;
+      let stored = false;
       if (!dryRun && subrequests < SOFT_SUBREQUEST_LIMIT - 1) {
         try {
-          await env.SNAPSHOTS.put(entry.lastSnapshotKey, new TextEncoder().encode(text));
+          await env.SNAPSHOTS.put(snapshotKey, new TextEncoder().encode(text));
           count();
+          stored = true;
         } catch (err) {
           entry.lastStatus = `inconclusive:snapshot-error:${err.message ?? 'unknown'}`;
           state.entries[url] = entry;
+          if (!stillQueued.includes(url)) stillQueued.push(url);
           continue;
         }
+      } else {
+        // Dry-run or subrequest budget: nothing durably changed; retry next run.
+        entry.lastStatus = 'inconclusive:deferred';
+        state.entries[url] = entry;
+        if (!stillQueued.includes(url)) stillQueued.push(url);
+        continue;
       }
-      if (!dryRun && env.DB && env.AI && subrequests < SOFT_SUBREQUEST_LIMIT - 2) {
-        try {
-          const upserted = await indexUrl(env, url, w.providers, normalized, newHash, urlHash, d1Budget);
-          if (upserted >= 0) {
-            entry.indexedHash = newHash;
-            indexed += upserted;
-          } else entry.indexError = 'index deferred: D1 statement budget';
-        } catch (err) {
-          entry.indexError = String(err.message ?? err).slice(0, 160);
-        }
-      }
+      entry.hash = newHash;
+      entry.seen = true;
+      entry.lastStatus = truncated ? 'baseline-capped' : 'baseline';
+      entry.lastSnapshotKey = stored ? snapshotKey : null;
+      entry.indexedHash = null;
+      entry.indexAttempts = 0;
       state.entries[url] = entry;
       continue;
     }
@@ -500,6 +520,8 @@ async function runCheck(env) {
     hashed: hashedBodies,
     deferredForCpu: slice.filter((u) => state.entries[u.url]?.lastStatus === 'deferred:body-budget').length,
     indexed,
+    d1Queries,
+    aiCalls,
     indexErrors: Object.values(state.entries).filter((e) => e.indexError).length,
     pendingEvents: state.events.filter((e) => !e.reported).length,
     reportStatus,

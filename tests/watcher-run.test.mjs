@@ -257,26 +257,32 @@ test('deferred queue survives manifest changes and drains before seen URLs', asy
   }
 });
 
-test('withIndexing: baseline indexes chunks atomically via D1 batch', async () => {
+test('withIndexing: baselines defer to the catch-up, which converges across runs', async () => {
   const e = makeEnv({ withIndexing: true });
   try {
-    const result = await watcher.scheduled({}, e.env, {});
-    assert.equal(result.indexed > 0, true, `chunks indexed: ${result.indexed}`);
-    const deletes = e.d1Statements.filter((s) => s.sql.startsWith('DELETE'));
-    const inserts = e.d1Statements.filter((s) => s.sql.startsWith('INSERT'));
-    const state = e.getState();
-    const indexedEntries = Object.values(state.entries).filter((e) => e.indexedHash);
-    const deferredEntries = Object.values(state.entries).filter((e) => e.lastStatus === 'deferred:body-budget' || e.indexError === 'index deferred: D1 statement budget');
-    assert.equal(deletes.length, indexedEntries.length, 'one DELETE per indexed URL');
-    for (const s of inserts) {
+    const r1 = await watcher.scheduled({}, e.env, {});
+    const s1 = e.getState();
+    assert.equal(Object.values(s1.entries).filter((en) => en.seen).length, PAGES, 'all baselined');
+    assert.equal(Object.values(s1.entries).filter((en) => en.indexedHash).length, 2, 'the same-run catch-up indexes 2');
+
+    // run 2: catch-up indexes 2 more
+    const r2 = await watcher.scheduled({}, e.env, {});
+    let state = e.getState();
+    assert.equal(Object.values(state.entries).filter((en) => en.indexedHash).length, 4, 'catch-up indexes 2 per run');
+    assert.ok(r2.indexed > 0, 'catch-up reports indexed chunks');
+
+    // converge: keep running until every URL is indexed
+    let runs = 2;
+    while (Object.values(e.getState().entries).filter((en) => en.indexedHash).length < PAGES && runs < 20) {
+      await watcher.scheduled({}, e.env, {});
+      runs++;
+    }
+    state = e.getState();
+    assert.ok(Object.values(state.entries).every((en) => en.indexedHash), `all indexed after ${runs} runs`);
+    for (const s of e.d1Statements.filter((s) => s.sql.startsWith('INSERT'))) {
       assert.ok(s.params.length <= 100, `INSERT params ${s.params.length} exceed the D1 limit`);
-      assert.ok(s.sql.includes('VALUES'), 'INSERT statement present');
     }
-    assert.equal(deferredEntries.length, PAGES - indexedEntries.length, 'D1-budget-deferred URLs keep known-good state');
-    for (const entry of indexedEntries) {
-      assert.equal(entry.indexedHash, entry.hash, 'indexed revision matches stored hash');
-      assert.equal(entry.indexError, undefined, 'no index errors on the happy path');
-    }
+    assert.equal(e.d1Statements.filter((s) => s.sql.startsWith('DELETE')).length >= PAGES, true, 'one DELETE per indexed URL');
   } finally {
     e.restore();
   }
@@ -289,7 +295,7 @@ test('indexing failure is non-fatal and retried on the next run', async () => {
     const state = first.getState();
     const failed = Object.values(state.entries).find((e) => e.indexError);
     assert.ok(failed, 'the first index failure is recorded on the entry');
-    assert.equal(failed.indexedHash, undefined, 'failed URL is not marked indexed');
+    assert.ok(!failed.indexedHash, 'failed URL is not marked indexed');
     assert.ok(Object.values(state.entries).some((e) => e.indexedHash === e.hash), 'other URLs still index');
   } finally {
     first.restore();

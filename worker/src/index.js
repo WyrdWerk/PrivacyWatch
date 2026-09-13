@@ -61,10 +61,13 @@ async function sha256Hex(text) {
 }
 
 // Embed a batch of texts with the Workers AI binding. Returns L2-normalized
-// Float32Array vectors in input order.
-async function embedTexts(env, texts) {
+// Float32Array vectors in input order. `telemetry.aiCalls` counts every
+// attempted AI invocation — including the one that throws — so quota
+// accounting reflects actual consumption.
+async function embedTexts(env, texts, telemetry) {
   const out = [];
   for (let i = 0; i < texts.length; i += 8) {
+    telemetry.aiCalls += 1;
     const res = await env.AI.run(EMBED_MODEL, { text: texts.slice(i, i + 8) });
     const data = res?.data ?? [];
     for (const d of data) {
@@ -97,28 +100,29 @@ export function insertChunkStatements(env, url, providerId, chunks, vectors, con
   return stmts;
 }
 
-async function indexUrl(env, url, providerIds, normalized, contentHash, urlHash, d1Budget) {
+async function indexUrl(env, url, providerIds, normalized, contentHash, urlHash, d1Budget, telemetry) {
   const chunks = chunkText(normalized);
   // Always emit the DELETE: an empty/failed re-index must still remove obsolete
   // chunks so stale content never stays searchable.
-  const statements = 1 + Math.ceil(Math.max(chunks.length, 1) / 14);
-  const aiCalls = Math.ceil(chunks.length / 8);
+  const statements = 1 + Math.ceil(chunks.length / 14);
+  const aiCalls = chunks.length ? Math.ceil(chunks.length / 8) : 0;
   if (d1Budget) {
     if (d1Budget.remaining < statements) {
-      return { deferred: true, statements, aiCalls };
+      // Pre-AI deferral: no AI call attempted.
+      return { deferred: true, statements, aiCalls: 0 };
     }
     d1Budget.remaining -= statements;
   }
   try {
-    const vectors = chunks.length ? await embedTexts(env, chunks) : [];
+    const vectors = chunks.length ? await embedTexts(env, chunks, telemetry) : [];
     const now = new Date().toISOString();
     const providerId = providerIds.map((p) => p.id).join(',');
     const stmts = insertChunkStatements(env, url, providerId, chunks, vectors, contentHash, urlHash, now);
     await env.DB.batch(stmts);
-    return { chunks: chunks.length, statements, aiCalls };
+    return { chunks: chunks.length, statements, aiCalls: telemetry.aiCalls };
   } catch (err) {
-    // Attempted work is accounted even on failure (AI + D1 queries consumed).
-    return { error: String(err.message ?? err).slice(0, 160), statements, aiCalls };
+    // The attempted AI invocation(s) consumed quota; the D1 statements were charged.
+    return { error: String(err.message ?? err).slice(0, 160), statements, aiCalls: telemetry.aiCalls };
   }
 }
 
@@ -201,15 +205,16 @@ async function indexCatchUp(env, state, providerByUrl, limit, count, d1Budget) {
   for (const [u, e] of indexPending) {
     if (count() > SOFT_SUBREQUEST_LIMIT - 2) break;
     e.indexAttempts = (e.indexAttempts ?? 0) + 1;
+    const telemetry = { aiCalls: 0 };
     try {
       const snap = await env.SNAPSHOTS.get(e.lastSnapshotKey);
       if (!snap) { e.indexError = 'snapshot missing'; continue; }
       const raw = await snap.text();
       const normalized = normalizeHtml(raw);
       const urlHash = await sha256Hex(u);
-      const r = await indexUrl(env, u, providerByUrl.get(u) ?? [], normalized, e.hash, urlHash, d1Budget);
+      const r = await indexUrl(env, u, providerByUrl.get(u) ?? [], normalized, e.hash, urlHash, d1Budget, telemetry);
       d1Queries += r.statements;
-      aiCalls += r.aiCalls;
+      aiCalls += telemetry.aiCalls;
       if (r.deferred) {
         e.indexError = 'index deferred: D1 statement budget';
         continue;

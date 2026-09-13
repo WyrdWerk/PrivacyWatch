@@ -1,5 +1,11 @@
 # Provider backlog — OpenRouter curated ToS list (2026-09-13)
 
+
+> Manually reconciled snapshot (not script output): the dedupe script at PR head
+> reports 34 covered / 47 new because it does not model URL aliases — Xiaomi's
+> listed URL is a variant of the existing `xiaomi-mimo` row, and BFL's list URL
+> differs from the API-terms URL actually cited in the row. Final arithmetic is
+> unaffected: 45 remaining after batch 1.
 Source: OpenRouter provider-selection docs list, deduplicated against
 `providers.json` by sourceUrl (`scripts/dedupe-openrouter-list.mjs`).
 

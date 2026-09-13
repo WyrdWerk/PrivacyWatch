@@ -54,13 +54,17 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          if ! grep -q 'D1 Edit' <(npx wrangler whoami 2>&1); then echo "::notice::Token scope check skipped — relying on deployment result"; fi
-          npx wrangler d1 create privacywatch-index --json > d1-create-output.json 2>&1 || true
-          cat d1-create-output.json
-          if grep -q 'already exists' d1-create-output.json; then
-            echo "::notice::Database already exists — safe to continue"
+          set -o pipefail
+          if npx wrangler d1 create privacywatch-index --json 2>&1 | tee d1-create-output.json; then
+            echo "::notice::D1 database created"
             exit 0
           fi
+          if grep -qi 'already exists' d1-create-output.json; then
+            echo "::notice::D1 database already exists — safe to continue"
+            exit 0
+          fi
+          echo "::error::D1 database creation failed for a reason other than already-exists"
+          exit 1
 
   secret-put:
     if: github.event.inputs.task == 'secret-put'

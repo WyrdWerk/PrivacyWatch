@@ -1241,7 +1241,7 @@
         "detail": "Headquartered in San Francisco. US data centers."
       },
       "sourceUrl": "https://www.perplexity.ai/hub/legal/perplexity-api-terms-of-service",
-      "privacyUrl": "https://www.perplexity.ai/hub/legal/dpa",
+      "privacyUrl": "https://docs.perplexity.ai/docs/resources/privacy-security",
       "sourceDate": "2026-06-28",
       "notes": "Added via OpenRouter ToS cross-reference. Search-focused AI with separate API product."
     },

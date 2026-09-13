@@ -129,6 +129,55 @@ test('worst case: an all-changed batch hashes at most the cap and defers the res
   }
 });
 
+test('production shape: 59 URLs, shard 10, cap 4 — full baseline within 16 runs, no re-hash', async () => {
+  const COUNT = 59;
+  const prodManifest = {
+    urls: Array.from({ length: COUNT }, (_, i) => ({
+      url: `https://s${i}.example/terms`,
+      providers: [{ id: `s${i}`, name: `S${i}`, surface: 'API' }],
+    })),
+  };
+  let storedState = null;
+  const snapshots = [];
+  const env = {
+    MANIFEST_URL: 'https://manifest.example/watch-urls.json',
+    SHARD_SIZE: '10',
+    MAX_HASHED_BODIES: '4',
+    WATCH_STATE: {
+      get: async () => storedState,
+      put: async (_key, value) => {
+        storedState = JSON.parse(value);
+      },
+    },
+    SNAPSHOTS: { put: async (key) => snapshots.push(key) },
+  };
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (input) => {
+    const url = typeof input === 'string' ? input : input.url;
+    if (url === env.MANIFEST_URL) {
+      return new Response(JSON.stringify(prodManifest), { headers: { 'content-type': 'application/json' } });
+    }
+    return new Response(bigBody, { status: 200, headers: { 'content-type': 'text/html' } });
+  };
+  try {
+    let runs = 0;
+    let seen = 0;
+    while (runs < 40) {
+      runs++;
+      const result = await watcher.scheduled({}, env, {});
+      assert.ok(result.hashed <= 4, `run ${runs} hashed ${result.hashed} bodies — cap exceeded`);
+      seen = Object.values(storedState.entries).filter((e) => e.seen).length;
+      if (seen === COUNT) break;
+    }
+    assert.equal(seen, COUNT, `all ${COUNT} URLs baselined`);
+    assert.ok(runs <= 16, `expected ≤ 16 runs at 4 hashes/run, took ${runs}`);
+    assert.equal(snapshots.length, COUNT, 'each URL snapshotted exactly once — no re-hashing');
+    assert.equal(storedState.events.length, 0);
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});
+
 test('304 responses cost no body hashing', async () => {
   const baseline = makeEnv({ maxHashed: 20 });
   try {

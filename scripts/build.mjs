@@ -2,6 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { buildManifest } from './lib/manifest.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
@@ -49,4 +50,9 @@ for (const dir of DIRS) {
   copyDir(src, path.join(dist, dir));
 }
 
-console.log(`Built production artifact in dist/ (${FILES.length} files + ${DIRS.length} dirs)`);
+// Derived watch manifest for the watcher Worker — always in sync with providers.json.
+const providers = JSON.parse(fs.readFileSync(path.join(root, 'providers.json'), 'utf-8')).providers || [];
+const manifest = buildManifest(providers);
+fs.writeFileSync(path.join(dist, 'watch-urls.json'), JSON.stringify(manifest, null, 2) + '\n');
+
+console.log(`Built production artifact in dist/ (${FILES.length} files + ${DIRS.length} dirs, watch manifest: ${manifest.urls.length} distinct URLs)`);

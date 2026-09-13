@@ -13,7 +13,7 @@
   },
   "vars": {
     "MANIFEST_URL": "https://privacywatch.wyrdwerk.com/watch-urls.json",
-    "SHARD_SIZE": "10",
+    "SHARD_SIZE": "20",
     "ISSUE_REPO": "WyrdWerk/PrivacyWatch",
     "ISSUE_NUMBER": "2"
   }

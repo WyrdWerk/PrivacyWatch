@@ -30,3 +30,20 @@ test('skips providers without a sourceUrl', () => {
   const m = buildManifest([{ id: 'x', sourceUrl: '' }, { id: 'y', sourceUrl: 'https://ok.example/p' }]);
   assert.equal(m.urls.length, 1);
 });
+
+test('privacyUrl entries are watched and deduplicated like ToS entries', () => {
+  const providers = [
+    { id: 'a', name: 'A', surface: 'API', sourceUrl: 'https://a.example/tos', privacyUrl: 'https://a.example/privacy' },
+    { id: 'b', name: 'B', surface: 'API', sourceUrl: 'https://b.example/tos' },
+    { id: 'c', name: 'C', surface: 'API', sourceUrl: 'https://c.example/tos', privacyUrl: 'https://a.example/privacy' },
+  ];
+  const m = buildManifest(providers, { generatedAt: '2026-09-13T00:00:00Z' });
+  assert.deepEqual(m.urls.map((u) => u.url), [
+    'https://a.example/privacy',
+    'https://a.example/tos',
+    'https://b.example/tos',
+    'https://c.example/tos',
+  ]);
+  const privacy = m.urls.find((u) => u.url === 'https://a.example/privacy');
+  assert.deepEqual(privacy.providers.map((p) => p.id), ['a', 'c']);
+});

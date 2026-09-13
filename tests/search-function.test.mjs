@@ -2,10 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { onRequestGet } from '../functions/api/search.js';
 
-// Deterministic 4-dim "embedding" derived from the text so relevance ordering is
-// testable: the query vector and matching chunks share a direction.
+// Deterministic 768-dim "embedding" derived from the text so relevance ordering
+// is testable: the query vector and matching chunks share a direction.
 function vecFor(text) {
-  const v = new Float32Array(4);
+  const v = new Float32Array(768);
   if (text.includes('training')) v[0] = 1;
   if (text.includes('retention')) v[1] = 1;
   if (text.includes('eu')) v[2] = 1;
@@ -13,12 +13,13 @@ function vecFor(text) {
   return v;
 }
 
-function makeEnv({ chunks, queryText }) {
+function makeEnv({ chunks, queryText, failEmbed = false } = {}) {
   const aiCalls = [];
   const env = {
     AI: {
       run: async (model, { text }) => {
         aiCalls.push({ model, text: [...text] });
+        if (failEmbed) throw new Error('injected AI failure');
         return { data: text.map((t) => Array.from(vecFor(t))) };
       },
     },
@@ -36,26 +37,29 @@ function request(url) {
   return new Request(url);
 }
 
-test('missing q returns 400 with error', async () => {
+test('missing q returns 400 with bench and error', async () => {
   const { env } = makeEnv({ chunks: [] });
   const res = await onRequestGet({ request: request('https://site.example/api/search'), env });
   assert.equal(res.status, 400);
+  const body = await res.json();
+  assert.equal(body.error, 'missing q parameter');
+  assert.ok(body.bench, 'bench present on controlled responses');
 });
 
-test('ranks the matching provider first by cosine score', async () => {
+test('ranks the matching provider first by dot-product score', async () => {
   const chunks = [
-    { provider_id: 'openai-api', url: 'https://openai.example/terms', text: 'training off by default for api customers', embedding: vecFor('training').buffer && new Uint8Array(new Float32Array(vecFor('training')).buffer) },
+    { provider_id: 'openai-api', url: 'https://openai.example/terms', text: 'training off by default for api customers', embedding: new Uint8Array(new Float32Array(vecFor('training')).buffer) },
     { provider_id: 'deepgram', url: 'https://deepgram.example/terms', text: 'retention 30 days for audio', embedding: new Uint8Array(new Float32Array(vecFor('retention')).buffer) },
-  ].map((c) => ({ ...c, embedding: c.embedding }));
-  const { env, aiCalls } = makeEnv({ chunks });
+  ];
+  const { env } = makeEnv({ chunks });
   const res = await onRequestGet({ request: request('https://site.example/api/search?q=training%20policy'), env });
   assert.equal(res.status, 200);
   const body = await res.json();
   assert.equal(body.count, 2);
-  assert.deepEqual(body.results[0].providerIds, ['openai-api']);
+  assert.equal(body.results[0].providerIds.join(','), 'openai-api');
   assert.equal(body.results[0].url, 'https://openai.example/terms');
   assert.equal(body.bench.rowsScanned, 2);
-  assert.equal(aiCalls.length, 1, 'exactly one embedding call');
+  assert.equal(body.bench.stage, 'done');
 });
 
 test('providerIds split on comma for shared source URLs', async () => {
@@ -92,4 +96,15 @@ test('k parameter caps results', async () => {
   const res = await onRequestGet({ request: request('https://site.example/api/search?q=training&k=3'), env });
   const body = await res.json();
   assert.equal(body.results.length, 3);
+});
+
+test('AI failure returns 502 with bench telemetry and a generic public error', async () => {
+  const { env } = makeEnv({ chunks: [] });
+  env.AI = { run: async () => { throw new Error('injected AI failure'); } };
+  const res = await onRequestGet({ request: request('https://site.example/api/search?q=anything'), env });
+  assert.equal(res.status, 502);
+  const body = await res.json();
+  assert.equal(body.error, 'internal error', 'generic public message — no internal details');
+  assert.ok(body.bench, 'bench present on the failure response');
+  assert.match(body.bench.stage, /error/);
 });

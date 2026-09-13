@@ -67,7 +67,11 @@ async function embedTexts(env, texts) {
   for (let i = 0; i < texts.length; i += 8) {
     const res = await env.AI.run(EMBED_MODEL, { text: texts.slice(i, i + 8) });
     const data = res?.data ?? [];
-    for (const d of data) out.push(l2normalize(new Float32Array(Array.isArray(d) ? d : d.embedding)));
+    for (const d of data) {
+      const vec = l2normalize(new Float32Array(Array.isArray(d) ? d : d.embedding));
+      if (vec.length !== EMBED_DIMS) throw new Error(`embedding dimension mismatch: ${vec.length} != ${EMBED_DIMS}`);
+      out.push(vec);
+    }
   }
   return out;
 }
@@ -212,13 +216,15 @@ async function indexCatchUp(env, state, providerByUrl, limit, count, d1Budget) {
       errors.push(u);
     }
   }
-  return { processed, chunksIndexed, d1Queries, aiCalls, errors };
+  return { processed, chunksIndexed, d1Queries, aiCalls, attempted: indexPending.length, errors };
 }
 
 // Ops-route backfill: catches up the semantic index on demand. Bounded per
 // dispatch by the caller-supplied limit AND by an explicit daily cap
-// (MAX_BACKFILL_PER_DAY URLs/day, tracked in state with a UTC-date roll) so
-// repeated dispatches cannot drain the Workers AI daily allocation.
+// (MAX_BACKFILL_PER_DAY URLs ATTEMPTED per UTC day, tracked in state) so
+// repeated dispatches cannot drain the Workers AI daily allocation — attempted
+// URLs are counted, not just successful ones, so AI-consuming failures still
+// draw down the allowance.
 const MAX_BACKFILL_PER_DAY = 20;
 
 async function runBackfill(env, limit) {
@@ -244,7 +250,7 @@ async function runBackfill(env, limit) {
   let used = 0;
   const effectiveLimit = Math.min(limit, remainingToday);
   const cu = await indexCatchUp(env, state, providerByUrl, effectiveLimit, () => ++used, d1Budget);
-  state.backfillCount += cu.processed;
+  state.backfillCount += cu.attempted;
   await env.WATCH_STATE.put('watcher', JSON.stringify(state));
   const remaining = Object.values(state.entries)
     .filter((e) => e.seen && e.hash && e.lastSnapshotKey && e.indexedHash !== e.hash).length;

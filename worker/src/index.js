@@ -61,13 +61,20 @@ async function sha256Hex(text) {
 }
 
 // Embed a batch of texts with the Workers AI binding. Returns L2-normalized
-// Float32Array vectors in input order.
-async function embedTexts(env, texts) {
+// Float32Array vectors in input order. `telemetry.aiCalls` counts every
+// attempted AI invocation — including the one that throws — so quota
+// accounting reflects actual consumption.
+async function embedTexts(env, texts, telemetry) {
   const out = [];
   for (let i = 0; i < texts.length; i += 8) {
+    telemetry.aiCalls += 1;
     const res = await env.AI.run(EMBED_MODEL, { text: texts.slice(i, i + 8) });
     const data = res?.data ?? [];
-    for (const d of data) out.push(l2normalize(new Float32Array(Array.isArray(d) ? d : d.embedding)));
+    for (const d of data) {
+      const vec = l2normalize(new Float32Array(Array.isArray(d) ? d : d.embedding));
+      if (vec.length !== EMBED_DIMS) throw new Error(`embedding dimension mismatch: ${vec.length} != ${EMBED_DIMS}`);
+      out.push(vec);
+    }
   }
   return out;
 }
@@ -79,7 +86,7 @@ async function embedTexts(env, texts) {
 // count, and charges each statement against the caller's D1 statement budget.
 const INSERT_CHUNK_SQL_BASE = 'INSERT INTO chunks (id, provider_id, url, text, embedding, revision, updated_at) VALUES ';
 
-function insertChunkStatements(env, url, providerId, chunks, vectors, contentHash, urlHash, now) {
+export function insertChunkStatements(env, url, providerId, chunks, vectors, contentHash, urlHash, now) {
   const stmts = [env.DB.prepare('DELETE FROM chunks WHERE url = ?1').bind(url)];
   for (let start = 0; start < chunks.length; start += 14) {
     const rows = Math.min(14, chunks.length - start);
@@ -93,21 +100,35 @@ function insertChunkStatements(env, url, providerId, chunks, vectors, contentHas
   return stmts;
 }
 
-async function indexUrl(env, url, providerIds, normalized, contentHash, urlHash, d1Budget) {
+export async function indexUrl(env, url, providerIds, normalized, contentHash, urlHash, d1Budget, telemetry) {
   const chunks = chunkText(normalized);
   // Always emit the DELETE: an empty/failed re-index must still remove obsolete
-  // chunks so stale content never stays searchable.
-  const statements = 1 + Math.ceil(Math.max(chunks.length, 1) / 14);
+  // chunks so stale content never stays searchable. The budget reserves the
+  // PLANNED statement count (conservative), but the returned telemetry reports
+  // only what was actually attempted, so d1Queries/aiCalls are truthful
+  // consumption evidence, never an upper bound of work that never ran.
+  const plannedStatements = 1 + Math.ceil(chunks.length / 14);
   if (d1Budget) {
-    if (d1Budget.remaining < statements) return { deferred: true, statements };
-    d1Budget.remaining -= statements;
+    if (d1Budget.remaining < plannedStatements) {
+      // Pre-AI deferral: no AI call, no D1 statement attempted.
+      return { deferred: true, statements: 0, aiCalls: 0 };
+    }
+    d1Budget.remaining -= plannedStatements;
   }
-  const vectors = await embedTexts(env, chunks);
-  const now = new Date().toISOString();
-  const providerId = providerIds.map((p) => p.id).join(',');
-  const stmts = insertChunkStatements(env, url, providerId, chunks, vectors, contentHash, urlHash, now);
-  await env.DB.batch(stmts);
-  return { chunks: chunks.length, statements, aiCalls: Math.ceil(Math.max(chunks.length, 1) / 8) };
+  let d1Attempted = 0;
+  try {
+    const vectors = chunks.length ? await embedTexts(env, chunks, telemetry) : [];
+    const now = new Date().toISOString();
+    const providerId = providerIds.map((p) => p.id).join(',');
+    const stmts = insertChunkStatements(env, url, providerId, chunks, vectors, contentHash, urlHash, now);
+    d1Attempted = stmts.length;
+    await env.DB.batch(stmts);
+    return { chunks: chunks.length, statements: d1Attempted, aiCalls: telemetry.aiCalls };
+  } catch (err) {
+    // Attempted AI invocation(s) consumed quota; the batch's statements count
+    // only if the batch was actually attempted (insertChunkStatements succeeded).
+    return { error: String(err.message ?? err).slice(0, 160), statements: d1Attempted, aiCalls: telemetry.aiCalls };
+  }
 }
 
 function normalizeHtml(html) {
@@ -189,17 +210,23 @@ async function indexCatchUp(env, state, providerByUrl, limit, count, d1Budget) {
   for (const [u, e] of indexPending) {
     if (count() > SOFT_SUBREQUEST_LIMIT - 2) break;
     e.indexAttempts = (e.indexAttempts ?? 0) + 1;
+    const telemetry = { aiCalls: 0 };
     try {
       const snap = await env.SNAPSHOTS.get(e.lastSnapshotKey);
       if (!snap) { e.indexError = 'snapshot missing'; continue; }
       const raw = await snap.text();
       const normalized = normalizeHtml(raw);
       const urlHash = await sha256Hex(u);
-      const r = await indexUrl(env, u, providerByUrl.get(u) ?? [], normalized, e.hash, urlHash, d1Budget);
+      const r = await indexUrl(env, u, providerByUrl.get(u) ?? [], normalized, e.hash, urlHash, d1Budget, telemetry);
       d1Queries += r.statements;
-      aiCalls += r.aiCalls;
+      aiCalls += telemetry.aiCalls;
       if (r.deferred) {
         e.indexError = 'index deferred: D1 statement budget';
+        continue;
+      }
+      if (r.error) {
+        e.indexError = r.error;
+        errors.push(u);
         continue;
       }
       e.indexedHash = e.hash;
@@ -212,27 +239,45 @@ async function indexCatchUp(env, state, providerByUrl, limit, count, d1Budget) {
       errors.push(u);
     }
   }
-  return { processed, chunksIndexed, d1Queries, aiCalls, errors };
+  return { processed, chunksIndexed, d1Queries, aiCalls, attempted: indexPending.length, errors };
 }
 
-// Ops-route backfill: catches up the semantic index on demand (bounded by the
-// caller-supplied limit and the D1 statement budget). Reads the manifest for
-// provider mapping and persists the updated state.
+// Ops-route backfill: catches up the semantic index on demand. Bounded per
+// dispatch by the caller-supplied limit AND by an explicit daily cap
+// (MAX_BACKFILL_PER_DAY URLs ATTEMPTED per UTC day, tracked in state) so
+// repeated dispatches cannot drain the Workers AI daily allocation — attempted
+// URLs are counted, not just successful ones, so AI-consuming failures still
+// draw down the allowance.
+const MAX_BACKFILL_PER_DAY = 20;
+
 async function runBackfill(env, limit) {
   const state = await env.WATCH_STATE.get('watcher', 'json');
   if (!state) return { ok: true, processed: 0, chunksIndexed: 0, remaining: 0 };
   state.entries = state.entries ?? {};
+  state.backfillDay = state.backfillDay ?? '';
+  state.backfillCount = state.backfillCount ?? 0;
+  const today = new Date().toISOString().slice(0, 10);
+  if (state.backfillDay !== today) {
+    state.backfillDay = today;
+    state.backfillCount = 0;
+  }
+  const remainingToday = MAX_BACKFILL_PER_DAY - state.backfillCount;
+  if (remainingToday <= 0) {
+    return { ok: false, reason: `daily backfill cap reached (${MAX_BACKFILL_PER_DAY}/day) — resets 00:00 UTC` };
+  }
   const mRes = await fetch(env.MANIFEST_URL, { headers: { 'cache-control': 'no-cache' } });
   if (!mRes.ok) return { ok: false, reason: `manifest fetch failed: ${mRes.status}` };
   const manifest = await mRes.json();
   const providerByUrl = new Map((manifest.urls ?? []).map((u) => [u.url, u.providers]));
   const d1Budget = { remaining: 40 };
   let used = 0;
-  const cu = await indexCatchUp(env, state, providerByUrl, limit, () => ++used, d1Budget);
+  const effectiveLimit = Math.min(limit, remainingToday);
+  const cu = await indexCatchUp(env, state, providerByUrl, effectiveLimit, () => ++used, d1Budget);
+  state.backfillCount += cu.attempted;
   await env.WATCH_STATE.put('watcher', JSON.stringify(state));
   const remaining = Object.values(state.entries)
     .filter((e) => e.seen && e.hash && e.lastSnapshotKey && e.indexedHash !== e.hash).length;
-  return { ok: true, processed: cu.processed, chunksIndexed: cu.chunksIndexed, d1Queries: cu.d1Queries, aiCalls: cu.aiCalls, errors: cu.errors, remaining };
+  return { ok: true, processed: cu.processed, chunksIndexed: cu.chunksIndexed, d1Queries: cu.d1Queries, aiCalls: cu.aiCalls, errors: cu.errors, dailyRemaining: Math.max(0, MAX_BACKFILL_PER_DAY - state.backfillCount), remaining };
 }
 
 async function runCheck(env) {
@@ -264,6 +309,10 @@ async function runCheck(env) {
       entries: state.entries ?? {},
       events: state.events ?? [],
       deferred: state.deferred ?? [],
+      // The backfill daily cap survives manifest changes — a URL/order change
+      // must not reset the same-day allowance.
+      backfillDay: state.backfillDay ?? '',
+      backfillCount: state.backfillCount ?? 0,
     };
   }
   state.entries = state.entries ?? {};
@@ -271,18 +320,28 @@ async function runCheck(env) {
 
   // URL removals: mark stale, keep last snapshot reference per retention policy (cleanup happens on report).
   const known = new Set(urls.map((u) => u.url));
+  // Stale-URL chunk deletion: budgeted as D1 queries (not fetch subrequests) and
+  // retry-safe — a failed DELETE retries on later runs while the URL stays stale.
+  const staleD1Budget = { remaining: 24 };
+  let staleD1Queries = 0;
   for (const key of Object.keys(state.entries)) {
-    if (!known.has(key) && !state.entries[key].stale) {
-      state.entries[key].stale = true;
-      state.entries[key].checkedAt = new Date().toISOString();
-      state.entries[key].lastStatus = 'removed-from-manifest';
-      // Remove a stale URL's chunks so removed pages never stay searchable.
-      if (env.DB && !dryRun) {
+    if (!known.has(key)) {
+      const se = state.entries[key];
+      if (!se.stale) {
+        se.stale = true;
+        se.checkedAt = new Date().toISOString();
+        se.lastStatus = 'removed-from-manifest';
+      }
+      if (env.DB && !dryRun && !se.chunksDeleted && staleD1Budget.remaining >= 1) {
+        // Reserve the D1 statement before the attempt: a failed call consumes
+        // the query, bounding stale-delete attempts per invocation.
+        staleD1Budget.remaining -= 1;
+        staleD1Queries += 1;
         try {
           await env.DB.prepare('DELETE FROM chunks WHERE url = ?1').bind(key).run();
-          count();
+          se.chunksDeleted = true;
         } catch (err) {
-          state.entries[key].chunkDeleteError = String(err.message ?? err).slice(0, 120);
+          se.chunkDeleteError = String(err.message ?? err).slice(0, 120);
         }
       }
     }
@@ -298,8 +357,6 @@ async function runCheck(env) {
   const now = new Date().toISOString();
   let changes = 0;
   let indexed = 0;
-  let d1Queries = 0;
-  let aiCalls = 0;
   const maxHashed = parseInt(env.MAX_HASHED_BODIES || String(DEFAULT_MAX_HASHED_BODIES), 10);
   let hashedBodies = 0;
   // D1 statement budget per invocation: each indexed URL costs 1 DELETE +
@@ -363,8 +420,11 @@ async function runCheck(env) {
 
     hashedBodies++;
 
-    entry.etag = res.headers.get('etag') ?? entry.etag ?? null;
-    entry.lastModified = res.headers.get('last-modified') ?? entry.lastModified ?? null;
+    // Validators are staged, not committed: they join the entry only after the
+    // snapshot is durably stored, so an R2 failure can never let a later 304
+    // hide an unrecorded change (the reviewer's 304-freeze finding).
+    const newEtag = res.headers.get('etag') ?? entry.etag ?? null;
+    const newLastModified = res.headers.get('last-modified') ?? entry.lastModified ?? null;
     const { text, truncated } = await readCappedBody(res);
     const normalized = normalizeHtml(text);
     const newHash = await sha256Hex(normalized);
@@ -372,9 +432,10 @@ async function runCheck(env) {
     const oldHash = entry.hash ?? null;
 
     if (oldHash === null) {
-      // Baseline: all-or-nothing — hash/seen/lastSnapshotKey are committed only
-      // after the snapshot is durably stored; on failure the URL re-queues with
-      // no hash, so a missing snapshot can never 304-freeze the entry.
+      // Baseline: all-or-nothing — validators, hash, seen, and lastSnapshotKey
+      // are committed only after the snapshot is durably stored; on failure the
+      // URL re-queues with no hash, so a missing snapshot can never 304-freeze
+      // the entry into permanent unbaselined state.
       const snapshotKey = `snapshots/${urlHash}/${newHash}.html`;
       let stored = false;
       if (!dryRun && subrequests < SOFT_SUBREQUEST_LIMIT - 1) {
@@ -395,6 +456,8 @@ async function runCheck(env) {
         if (!stillQueued.includes(url)) stillQueued.push(url);
         continue;
       }
+      entry.etag = newEtag;
+      entry.lastModified = newLastModified;
       entry.hash = newHash;
       entry.seen = true;
       entry.lastStatus = truncated ? 'baseline-capped' : 'baseline';
@@ -424,6 +487,7 @@ async function runCheck(env) {
       } catch (err) {
         entry.lastStatus = `inconclusive:snapshot-error:${err.message ?? 'unknown'}`;
         state.entries[url] = entry;
+        if (!stillQueued.includes(url)) stillQueued.push(url);
         continue;
       }
     }
@@ -433,6 +497,10 @@ async function runCheck(env) {
       if (!stillQueued.includes(url)) stillQueued.push(url);
       continue;
     }
+    // Validators commit together with the hash — only after the snapshot is
+    // durably stored — so an R2 failure can never let a later 304 hide the change.
+    entry.etag = newEtag;
+    entry.lastModified = newLastModified;
     changes++;
     const eventId = await sha256Hex(`${url}:${oldHash}:${newHash}`);
     entry.hash = newHash;
@@ -460,9 +528,13 @@ async function runCheck(env) {
   // Semantic index catch-up: re-index entries whose stored hash has no matching
   // indexed revision (indexing failures, entries baselined before the index
   // existed). Bounded per run; converges across runs.
+  let d1Queries = 0;
+  let aiCalls = 0;
   if (!dryRun && env.DB && env.AI) {
     const cu = await indexCatchUp(env, state, providerByUrl, MAX_BACKFILL_PER_RUN, (n) => count(), d1Budget);
     indexed += cu.chunksIndexed;
+    d1Queries += cu.d1Queries;
+    aiCalls += cu.aiCalls;
   }
 
   // Durable reporting: pending events are retried on every subsequent run until
@@ -520,7 +592,7 @@ async function runCheck(env) {
     hashed: hashedBodies,
     deferredForCpu: slice.filter((u) => state.entries[u.url]?.lastStatus === 'deferred:body-budget').length,
     indexed,
-    d1Queries,
+    d1Queries: d1Queries + staleD1Queries,
     aiCalls,
     indexErrors: Object.values(state.entries).filter((e) => e.indexError).length,
     pendingEvents: state.events.filter((e) => !e.reported).length,

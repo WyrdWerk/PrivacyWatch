@@ -4,9 +4,10 @@
 // L2-normalized Float32 vectors (both query and stored vectors are normalized
 // at write time), top-k results with source citations.
 //
-// Every controlled response carries `bench` telemetry (stage + timings) per the
-// review gate: production cpuTime/latency evidence decides whether /api/ask
-// ships and whether the full scan stays on the free plan.
+// Every controlled response carries `bench` telemetry (stage + timings) in a
+// uniform nested shape, per the review gate: production cpuTime/latency
+// evidence decides whether /api/ask ships. Unexpected errors return a generic
+// public message with the same bench shape; details go to console.error only.
 
 const EMBED_MODEL = '@cf/baai/bge-base-en-v1.5';
 const EMBED_DIMS = 768;
@@ -47,12 +48,12 @@ export async function onRequestGet({ request, env }) {
   const bench = { stage: 'start', embedMs: 0, scanMs: 0, rowsScanned: 0, totalMs: 0 };
   try {
     const params = new URL(request.url).searchParams;
-    const q = (params.get('q') ?? '').trim().slice(0, MAX_QUERY_CHARS);
+    const q = (params.get('q') ?? '').trim().slice(0, 512);
     const k = Math.min(Math.max(parseInt(params.get('k') ?? String(DEFAULT_TOP_K), 10) || DEFAULT_TOP_K, 1), MAX_TOP_K);
     if (!q) {
       bench.stage = 'missing-q';
       bench.totalMs = Math.round(performance.now() - t0);
-      return json({ ...bench, error: 'missing q parameter' }, 400);
+      return json({ bench, error: 'missing q parameter' }, 400);
     }
 
     bench.stage = 'embed';
@@ -61,9 +62,14 @@ export async function onRequestGet({ request, env }) {
     if (!data.length) {
       bench.stage = 'embed-failed';
       bench.totalMs = Math.round(performance.now() - t0);
-      return json({ ...bench, error: 'embedding failed' }, 502);
+      return json({ bench, error: 'embedding failed' }, 502);
     }
     const qv = l2normalize(new Float32Array(Array.isArray(data[0]) ? data[0] : data[0].embedding));
+    if (qv.length !== EMBED_DIMS) {
+      bench.stage = 'embed-dims-mismatch';
+      bench.totalMs = Math.round(performance.now() - t0);
+      return json({ bench, error: 'embedding dimension mismatch' }, 502);
+    }
     bench.embedMs = Math.round(performance.now() - t0);
 
     bench.stage = 'scan';
@@ -85,9 +91,9 @@ export async function onRequestGet({ request, env }) {
     bench.stage = 'done';
     bench.totalMs = Math.round(performance.now() - t0);
     return json({
+      bench,
       query: q,
       count: scored.length,
-      bench,
       results: scored.slice(0, k).map((s) => ({
         providerIds: s.providerId ? s.providerId.split(',') : [],
         url: s.url,
@@ -96,8 +102,9 @@ export async function onRequestGet({ request, env }) {
       })),
     });
   } catch (err) {
+    console.error('[/api/search] internal error:', err);
     bench.stage = 'error';
     bench.totalMs = Math.round(performance.now() - t0);
-    return json({ ...bench, error: String(err.message ?? err).slice(0, 200) }, 502);
+    return json({ bench, error: 'internal error' }, 502);
   }
 }

@@ -12,6 +12,10 @@ on:
           - secret-put
           - d1-migrate
           - backfill
+  # Daily semantic-index backfill: scheduled runs execute the backfill job only.
+  # Consumption is bounded by the Worker's 20-URL/day cap (~100 AI invocations/day).
+  schedule:
+    - cron: '17 4 * * *'
 
 permissions:
   contents: read
@@ -98,7 +102,7 @@ jobs:
           fi
 
   backfill:
-    if: github.event.inputs.task == 'backfill'
+    if: github.event.inputs.task == 'backfill' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
     environment: production
     steps:

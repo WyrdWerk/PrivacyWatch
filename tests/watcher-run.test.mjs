@@ -322,8 +322,7 @@ test('backfill route: auth-gated, processes queued URLs, daily cap enforced', as
     const res1 = await watcher.fetch(req(20), e.env);
     assert.equal(res1.status, 200);
     const body1 = await res1.json();
-    const alreadyIndexed = Object.values(e.getState().entries).filter((en) => en.indexedHash).length;
-    assert.equal(body1.processed, PAGES - alreadyIndexed, 'all remaining URLs indexed in one dispatch');
+    assert.equal(body1.processed, PAGES - before, "all remaining URLs indexed in one dispatch");
 
     // second dispatch same day: everything already indexed → nothing left, no cap breach
     const res2 = await watcher.fetch(req(20), e.env);

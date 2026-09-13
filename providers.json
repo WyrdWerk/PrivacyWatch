@@ -600,12 +600,12 @@
       "rating": "guarded",
       "incident": false,
       "training": {
-        "label": "Not stated (OpenRouter: no training)",
-        "detail": "Service Agreement does not explicitly address training. OpenRouter lists MiMo as 'Does not train.' Privacy Policy at privacy.mi.com/XiaomiMiMoPlatform/en_GB/ was inaccessible (504 timeout) — needs manual verification."
+        "label": "Off — no training on your content",
+        "detail": "Privacy Policy (June 25, 2026 update, verified 2026-09-13): \"Xiaomi will not use the content you provide for model training or any other purposes.\" Resolves the previously inaccessible privacy.mi.com page; OpenRouter's 'Does not train' listing independently agrees."
       },
       "retention": {
         "label": "Reasonable period",
-        "detail": "Service Agreement: 'permanently delete personal information within a reasonable period' upon service expiration or user request. No specific timeframe."
+        "detail": "Service Agreement: 'permanently delete personal information within a reasonable period' upon service expiration or user request. Privacy Policy §6: retained for the period necessary for the stated purposes, then deleted or anonymized once legal hold periods elapse."
       },
       "zdr": {
         "label": "Not available",
@@ -619,8 +619,8 @@
       },
       "sourceUrl": "https://platform.xiaomimimo.com/docs/terms/user-agreement",
       "privacyUrl": "https://mimo.mi.com/docs/terms/privacy-policy",
-      "sourceDate": "2026-05-27",
-      "notes": "Upgraded from Unverified based on Service Agreement (April 26, 2026). Major finding: international data goes to EU/Singapore, not China. Privacy Policy still inaccessible — training policy needs confirmation. Open-source weights on HuggingFace (MIT) available for self-hosting. User Agreement via OpenRouter (anchor removed for compatibility).",
+      "sourceDate": "2026-09-13",
+      "notes": "Upgraded from Unverified based on Service Agreement (April 26, 2026). Major finding: international data goes to EU/Singapore, not China. Privacy Policy relocated to mimo.mi.com/docs/terms/privacy-policy (June 25, 2026 update) and verified 2026-09-13 — training explicitly excluded, resolving the previously inaccessible privacy.mi.com page. Open-source weights on HuggingFace (MIT) available for self-hosting. User Agreement via OpenRouter (anchor removed for compatibility).",
       "relatedUrls": [
         "https://platform.xiaomimimo.com/#/docs/terms/user-agreement",
         "https://privacy.mi.com/XiaomiMiMoPlatform/en_GB/"

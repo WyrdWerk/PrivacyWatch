@@ -3109,7 +3109,7 @@
       "category": "inference",
       "categoryLabel": "Inference",
       "rating": "high-risk",
-      "incident": true,
+      "incident": false,
       "training": {
         "label": "On — email opt-out",
         "detail": "ToS §4.6.3(f): StreamLake may use Content to \"create, test, improve, train, or otherwise develop the artificial intelligence or machine learning models, systems, architecture, weights or related technology used by StreamLake in connection with the Services.\" §4.6.4: revoke \"by sending an email to support@StreamLake.ai\"."

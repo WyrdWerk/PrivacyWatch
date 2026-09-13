@@ -15,9 +15,9 @@ Source: OpenRouter provider-selection docs list, deduplicated against
 - **Batch 1 (9 providers) landed in v1.4.0**: StepFun, Baidu Qianfan, ByteDance
   Seed (BytePlus), Tencent Cloud, Upstage, Meta (Model API), Deepgram, Voyage AI,
   Black Forest Labs.
-- Remaining 45 below, grouped into research batches. One batch ≈ one PR.
+- Batches 2 (9) and 3 (13) landed in v1.5.0 (feat/provider-batch-2-3). Remaining 23 below, grouped into research batches. One batch ≈ one PR.
 
-## Batch 2 — cloud / inference platforms (9)
+## Batch 2 — cloud / inference platforms (9) — ✅ landed in v1.5.0
 
 | Provider | ToS URL |
 |---|---|
@@ -31,7 +31,7 @@ Source: OpenRouter provider-selection docs list, deduplicated against
 | AtlasCloud | https://www.atlascloud.ai/privacy |
 | NVIDIA (API Catalog) | https://assets.ngc.nvidia.com/products/api-catalog/legal/NVIDIA%20API%20Trial%20Terms%20of%20Service.pdf |
 
-## Batch 3 — model labs & specialists (13)
+## Batch 3 — model labs & specialists (13) — ✅ landed in v1.5.0
 
 | Provider | ToS URL |
 |---|---|
@@ -50,6 +50,8 @@ Source: OpenRouter provider-selection docs list, deduplicated against
 | Sourceful | https://www.sourceful.com/legal/spring-terms-of-use |
 
 ## Batch 4 — discount / community compute (20)
+
+**DONE — researched and landed in v1.6.0 (2026-09-13), 20 rows: chutes, venice, mancer, nextbit, akashml, phala-redpill, inference-net, novitai, friendli, parasail, openinference, ionstream, darkbloom, sail-research, perceptron, inceptron, dekallm, streamlake, aionlabs, mara.** Research notes in `policies/<id>--2026-09-13.md`.
 
 | Provider | ToS URL |
 |---|---|
@@ -75,6 +77,8 @@ Source: OpenRouter provider-selection docs list, deduplicated against
 | MARA | https://www.mara.com/mara-legals/ai-policies#cloud-toc |
 
 ## Batch 5 — misc (3)
+
+**DONE — researched and landed in v1.6.0 (2026-09-13), 3 rows: nex-agi, modelrun-modular, morph.** Research notes in `policies/<id>--2026-09-13.md`.
 
 | Provider | ToS URL |
 |---|---|

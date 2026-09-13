@@ -60,3 +60,61 @@ All files scraped and saved on **2026-05-27**.
 | **Deepgram** | API (Speech) | Inference | [Deepgram terms](https://deepgram.com/terms) | [deepgram--2026-09-13.md](./deepgram--2026-09-13.md) |
 | **Voyage AI** | API (Embeddings) | Inference | [Voyage ToS](https://www.voyageai.com/tos) | [voyage-ai--2026-09-13.md](./voyage-ai--2026-09-13.md) |
 | **Black Forest Labs** | API (FLUX) | Inference | [FLUX API service terms](https://bfl.ai/legal/flux-api-service-terms) | [black-forest-labs--2026-09-13.md](./black-forest-labs--2026-09-13.md) |
+
+> **Research notes (2026-09-13, OpenRouter batches 2+3):** source-verified
+> research notes (not full page snapshots) supporting the v1.5.0 rows.
+> Quotes in each note are attributed to the documents listed in the row's
+> `relatedUrls` / `privacyUrl`.
+
+| Provider | Surface | Category | Primary Source | Research Note |
+| --- | --- | --- | --- | --- |
+| **Modal** | API (Serverless GPU) | Inference | [https://modal.com/legal/terms](https://modal.com/legal/terms) | [modal--2026-09-13.md](./modal--2026-09-13.md) |
+| **Baseten** | API (Model Inference) | Inference | [https://www.baseten.co/terms-and-conditions](https://www.baseten.co/terms-and-conditions) | [baseten--2026-09-13.md](./baseten--2026-09-13.md) |
+| **CoreWeave** | API (GPU Cloud) | Inference | [https://docs.coreweave.com/policies/terms-of-service](https://docs.coreweave.com/policies/terms-of-service) | [coreweave--2026-09-13.md](./coreweave--2026-09-13.md) |
+| **DigitalOcean** | API (GenAI Platform) | Inference | [https://www.digitalocean.com/legal/terms-of-service-agreement](https://www.digitalocean.com/legal/terms-of-service-agreement) | [digitalocean-genai--2026-09-13.md](./digitalocean-genai--2026-09-13.md) |
+| **Crusoe** | API (Managed Inference) | Inference | [https://legal.crusoe.ai/open-router#managed-inference-tos-open-router](https://legal.crusoe.ai/open-router#managed-inference-tos-open-router) | [crusoe--2026-09-13.md](./crusoe--2026-09-13.md) |
+| **io.net** | API (Decentralized GPU) | Inference | [https://io.net/terms](https://io.net/terms) | [ionet--2026-09-13.md](./ionet--2026-09-13.md) |
+| **GMICloud** | API (GPU Cloud) | Inference | [https://www.gmicloud.ai/terms-and-conditions](https://www.gmicloud.ai/terms-and-conditions) | [gmicloud--2026-09-13.md](./gmicloud--2026-09-13.md) |
+| **AtlasCloud** | API (GPU Cloud) | Inference | [https://www.atlascloud.ai/privacy](https://www.atlascloud.ai/privacy) | [atlascloud--2026-09-13.md](./atlascloud--2026-09-13.md) |
+| **NVIDIA** | API (Model Catalog) | Inference | [https://assets.ngc.nvidia.com/products/api-catalog/legal/NVIDIA%20API%20Trial%20Terms%20of%20Service.pdf](https://assets.ngc.nvidia.com/products/api-catalog/legal/NVIDIA%20API%20Trial%20Terms%20of%20Service.pdf) | [nvidia-api-catalog--2026-09-13.md](./nvidia-api-catalog--2026-09-13.md) |
+| **Reka AI** | API (Multimodal LLM) | Inference | [https://reka.ai/legal/terms-of-use](https://reka.ai/legal/terms-of-use) | [reka-ai--2026-09-13.md](./reka-ai--2026-09-13.md) |
+| **Thinking Machines** | API (Research Models) | Inference | [https://thinkingmachines.ai/legal/tml-free-research-api-tier-terms-of-service.pdf](https://thinkingmachines.ai/legal/tml-free-research-api-tier-terms-of-service.pdf) | [thinking-machines--2026-09-13.md](./thinking-machines--2026-09-13.md) |
+| **Inception Labs** | API (Diffusion LLM) | Inference | [https://www.inceptionlabs.ai/terms-of-use](https://www.inceptionlabs.ai/terms-of-use) | [inception-labs--2026-09-13.md](./inception-labs--2026-09-13.md) |
+| **Sakana AI** | API (Model Platform) | Inference | [https://console.sakana.ai/terms-of-service](https://console.sakana.ai/terms-of-service) | [sakana-ai--2026-09-13.md](./sakana-ai--2026-09-13.md) |
+| **Poolside** | API (Code Models) | Inference | [https://www.poolside.ai/legal/eula](https://www.poolside.ai/legal/eula) | [poolside--2026-09-13.md](./poolside--2026-09-13.md) |
+| **Relace** | API (Code Models) | Inference | [https://www.relace.ai/terms-of-use](https://www.relace.ai/terms-of-use) | [relace--2026-09-13.md](./relace--2026-09-13.md) |
+| **Decart** | API (Vision/LLM) | Inference | [https://cogito.decart.ai/legal/terms](https://cogito.decart.ai/legal/terms) | [decart--2026-09-13.md](./decart--2026-09-13.md) |
+| **Liquid AI** | API (Foundation Models) | Inference | [https://www.liquid.ai/terms-conditions](https://www.liquid.ai/terms-conditions) | [liquid-ai--2026-09-13.md](./liquid-ai--2026-09-13.md) |
+| **Runway** | API (Video Generation) | Inference | [https://runwayml.com/terms-of-use](https://runwayml.com/terms-of-use) | [runway--2026-09-13.md](./runway--2026-09-13.md) |
+| **Krea** | API (Image/Video Generation) | Inference | [https://www.krea.ai/terms](https://www.krea.ai/terms) | [krea--2026-09-13.md](./krea--2026-09-13.md) |
+| **HeyGen** | API (Video Avatars) | Inference | [https://www.heygen.com/terms](https://www.heygen.com/terms) | [heygen--2026-09-13.md](./heygen--2026-09-13.md) |
+| **Fish Audio** | API (Voice/TTS) | Inference | [https://fish.audio/terms](https://fish.audio/terms) | [fish-audio--2026-09-13.md](./fish-audio--2026-09-13.md) |
+| **Sourceful** | API (Image Generation) | Inference | [https://www.sourceful.com/legal/spring-terms-of-use](https://www.sourceful.com/legal/spring-terms-of-use) | [sourceful--2026-09-13.md](./sourceful--2026-09-13.md) |
+
+> **Research notes (2026-09-13, OpenRouter batches 4+5):** source-verified research notes for the v1.6.0 rows. Quotes are attributed to the specific document listed in each row's relatedUrls / privacyUrl.
+
+| Provider | Surface | Category | Primary Source | Research Note |
+| --- | --- | --- | --- | --- |
+| **Chutes** | API | Inference | [https://chutes.ai/tos](https://chutes.ai/tos) | [chutes--2026-09-13.md](./chutes--2026-09-13.md) |
+| **Venice** | API | Inference | [https://venice.ai/legal/tos](https://venice.ai/legal/tos) | [venice--2026-09-13.md](./venice--2026-09-13.md) |
+| **Mancer** | API | Inference | [https://mancer.tech/terms](https://mancer.tech/terms) | [mancer--2026-09-13.md](./mancer--2026-09-13.md) |
+| **NextBit** | API | Inference | [https://www.nextbit256.com/docs/terms-of-service](https://www.nextbit256.com/docs/terms-of-service) | [nextbit--2026-09-13.md](./nextbit--2026-09-13.md) |
+| **AkashML** | API | Inference | [https://akashml.com/terms](https://akashml.com/terms) | [akashml--2026-09-13.md](./akashml--2026-09-13.md) |
+| **Phala (Redpill)** | API | Inference | [https://redpill.ai/terms](https://redpill.ai/terms) | [phala-redpill--2026-09-13.md](./phala-redpill--2026-09-13.md) |
+| **Inference.net** | API | Inference | [https://inference.net/terms-of-service/](https://inference.net/terms-of-service/) | [inference-net--2026-09-13.md](./inference-net--2026-09-13.md) |
+| **Novita AI** | API | Inference | [https://novita.ai/legal/terms-of-service](https://novita.ai/legal/terms-of-service) | [novitai--2026-09-13.md](./novitai--2026-09-13.md) |
+| **FriendliAI** | API | Inference | [https://friendli.ai/terms-of-service](https://friendli.ai/terms-of-service) | [friendli--2026-09-13.md](./friendli--2026-09-13.md) |
+| **Parasail** | API | Inference | [https://www.parasail.io/legal/terms-of-service](https://www.parasail.io/legal/terms-of-service) | [parasail--2026-09-13.md](./parasail--2026-09-13.md) |
+| **Open Inference** | API | Inference | [https://www.openinference.ai/terms](https://www.openinference.ai/terms) | [openinference--2026-09-13.md](./openinference--2026-09-13.md) |
+| **Ionstream** | API | Inference | [https://ionstream.ai/terms-and-conditions/](https://ionstream.ai/terms-and-conditions/) | [ionstream--2026-09-13.md](./ionstream--2026-09-13.md) |
+| **Darkbloom** | API | Inference | [https://www.darkbloom.dev/terms.html](https://www.darkbloom.dev/terms.html) | [darkbloom--2026-09-13.md](./darkbloom--2026-09-13.md) |
+| **Sail Research** | API | Inference | [https://www.sailresearch.com/terms](https://www.sailresearch.com/terms) | [sail-research--2026-09-13.md](./sail-research--2026-09-13.md) |
+| **Perceptron** | API | Inference | [https://www.perceptron.inc/terms-of-use](https://www.perceptron.inc/terms-of-use) | [perceptron--2026-09-13.md](./perceptron--2026-09-13.md) |
+| **Inceptron** | API | Inference | [https://www.inceptron.io/termsofservice](https://www.inceptron.io/termsofservice) | [inceptron--2026-09-13.md](./inceptron--2026-09-13.md) |
+| **DekaLLM (Cloudeka)** | API | Inference | [https://docs.cloudeka.ai/service-portal-ai/end-user-license-agreement](https://docs.cloudeka.ai/service-portal-ai/end-user-license-agreement) | [dekallm--2026-09-13.md](./dekallm--2026-09-13.md) |
+| **StreamLake** | API | Inference | [https://www.streamlake.ai/document/DOC/mgkchnd89grpt1961fw](https://www.streamlake.ai/document/DOC/mgkchnd89grpt1961fw) | [streamlake--2026-09-13.md](./streamlake--2026-09-13.md) |
+| **Aion Labs** | API | Inference | [https://www.aionlabs.ai/terms/](https://www.aionlabs.ai/terms/) | [aionlabs--2026-09-13.md](./aionlabs--2026-09-13.md) |
+| **MARA** | API | Inference | [https://www.mara.com/mara-legals/ai-policies#cloud-toc](https://www.mara.com/mara-legals/ai-policies#cloud-toc) | [mara--2026-09-13.md](./mara--2026-09-13.md) |
+| **Nex AGI** | API | Inference | [https://api.nex-agi.cn/privacy-policy](https://api.nex-agi.cn/privacy-policy) | [nex-agi--2026-09-13.md](./nex-agi--2026-09-13.md) |
+| **ModelRun (Modular)** | API | Inference | [https://www.modular.com/legal/terms](https://www.modular.com/legal/terms) | [modelrun-modular--2026-09-13.md](./modelrun-modular--2026-09-13.md) |
+| **Morph** | API | Inference | [https://www.morphllm.com/privacy/tos](https://www.morphllm.com/privacy/tos) | [morph--2026-09-13.md](./morph--2026-09-13.md) |

@@ -22,13 +22,13 @@ For each provider surface, we research and document:
 
 ## Providers covered
 
-**52 tracked surfaces** across 41 provider families in 4 categories:
+**97 tracked surfaces** across 86 provider families in 4 categories:
 
 **US Frontier:** OpenAI · Anthropic · Google Gemini · xAI / Grok
 
 **Chinese:** Alibaba/Qwen · Moonshot AI/Kimi · Zhipu AI/GLM · MiniMax · DeepSeek · Xiaomi MiMo
 
-**Inference:** Fireworks AI · Together AI · DeepInfra · Nebius AI · SiliconFlow · Groq · Cohere · Mistral · Perplexity · Cloudflare · Amazon Bedrock · Azure · AI21 · Cerebras · SambaNova · StepFun · Baidu Qianfan · ByteDance Seed · Tencent Cloud · Upstage · Meta · Deepgram · Voyage AI · Black Forest Labs
+**Inference:** Fireworks AI · Together AI · DeepInfra · Nebius AI · SiliconFlow · Groq · Cohere · Mistral · Perplexity · Cloudflare · Amazon Bedrock · Azure · AI21 · Cerebras · SambaNova · StepFun · Baidu Qianfan · ByteDance Seed · Tencent Cloud · Upstage · Meta · Deepgram · Voyage AI · Black Forest Labs · Modal · Baseten · CoreWeave · DigitalOcean (GenAI) · Crusoe · io.net · GMICloud · AtlasCloud · NVIDIA · Reka AI · Thinking Machines · Inception Labs · Sakana AI · Poolside · Relace · Decart · Liquid AI · Runway · Krea · HeyGen · Fish Audio · Sourceful · Chutes · Venice · Mancer · NextBit · AkashML · Phala · Inference.net · Novita AI · FriendliAI · Parasail · Open Inference · Ionstream · Darkbloom · Sail Research · Perceptron · Inceptron · DekaLLM · StreamLake · Aion Labs · MARA · Nex AGI · ModelRun · Morph
 
 **Coding Tools:** Cursor · OpenCode · HyperAgent · Crof AI · Wafer AI · Neuralwatt · CommandCode
 

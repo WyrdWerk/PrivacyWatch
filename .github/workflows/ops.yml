@@ -55,7 +55,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -o pipefail
-          if npx wrangler d1 create privacywatch-index --json 2>&1 | tee d1-create-output.json; then
+          if npx wrangler d1 create privacywatch-index 2>&1 | tee d1-create-output.json; then
             echo "::notice::D1 database created"
             exit 0
           fi

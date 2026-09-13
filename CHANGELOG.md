@@ -5,6 +5,12 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 ---
 
+## v1.4.0 — 2026-09-13
+
+**OpenRouter batch 1: 9 new inference providers.** Added StepFun, Baidu Qianfan, ByteDance Seed (BytePlus ModelArk), Tencent Cloud (TokenHub), Upstage (Solar), Meta (Model API), Deepgram, Voyage AI, and Black Forest Labs (FLUX) — researched from primary terms-of-service documents with quotes. Highlights: BytePlus ModelArk and Tencent TokenHub are training-off by default with documented ZDR conditions; Black Forest Labs' FLUX API terms grant training rights with no opt-out (rated High Risk); Deepgram and Voyage AI are training-on by default with self-serve opt-outs (rated Caution). StepFun carries an incident flag for the joint CISA/NSA/FBI advisory AA26-251A alleging unauthorized distillation. 43 → 52 surfaces across 41 families.
+
+---
+
 ## v1.3.9 — 2026-06-28
 
 **Inference expansion + logo standardization.** Added 10 new inference providers (Groq, Cohere, Mistral, Perplexity, Cloudflare, Amazon Bedrock, Azure, AI21, Cerebras, SambaNova). Updated 15 existing providers with canonical ToS URLs from OpenRouter's curated index. Replaced all 32 provider logos with official SVGs from models.dev CDN. README updated to reflect 43 tracked surfaces across 32 provider families.

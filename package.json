@@ -1,6 +1,6 @@
 {
   "name": "privacywatch",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": false,
   "description": "PrivacyWatch — track data retention, privacy, and model training policies",
   "scripts": {

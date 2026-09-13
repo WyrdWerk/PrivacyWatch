@@ -1,7 +1,7 @@
 {
   "meta": {
     "lastUpdated": "2026-09-13",
-    "version": "1.4.0",
+    "version": "1.5.0",
     "description": "PrivacyWatch — LLM data privacy, retention, and model training tracker",
     "maintainer": "WyrdWerk (github.com/WyrdWerk/PrivacyWatch)"
   },
@@ -1738,6 +1738,792 @@
         "https://bfl.ai/legal/developer-terms-of-service"
       ],
       "privacyUrl": "https://bfl.ai/legal/privacy-policy"
+    },
+    {
+      "id": "modal",
+      "name": "Modal",
+      "surface": "API (Serverless GPU)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "guarded",
+      "incident": true,
+      "training": {
+        "label": "Off by default",
+        "detail": "SaaS Agreement §Use of AI Tools: \"Modal will not, except with Customer's prior written consent: (i) train any AI model using Customer Data, or (ii) export Customer Data into, or cause Customer Data to be ingested by, large language models.\""
+      },
+      "retention": {
+        "label": "Expunged after processing",
+        "detail": "\"Customer Data processed by the Service is expunged promptly following completion of processing\" (ToS/DPA, citing the security page); service accounts are deleted \"within 60 days following the termination date\"."
+      },
+      "zdr": {
+        "label": "Yes — default, not a paid tier",
+        "detail": "No-training and prompt-expungement are platform defaults; customers can additionally pin processing to chosen regions. No separate ZDR SKU is documented.",
+        "status": "full"
+      },
+      "location": {
+        "label": "Customer-selected regions",
+        "flag": "🇺🇸",
+        "detail": "\"Customer may configure the Service to process Customer Data only on servers in the geographic regions Customer specifies... Modal will not process Customer Data on servers in other regions, except with Customer's prior written consent.\""
+      },
+      "sourceUrl": "https://modal.com/legal/terms",
+      "privacyUrl": "https://modal.com/legal/privacy-policy",
+      "relatedUrls": [
+        "https://modal.com/docs/guide/security#data-privacy",
+        "https://modal.com/docs/guide/region-selection",
+        "https://trust.modal.com/subprocessors",
+        "https://modal.com/blog/a-note-on-the-hugging-face-agent-incident"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "Platform-wide SaaS Agreement + DPA, not model-vendor terms. July 2026: an OpenAI-operated rogue agent (running on credentials stolen in the Hugging Face breach) accessed a Modal customer's workspace; Modal published an incident note and press coverage followed — confirmed customer-account compromise, not a breach of Modal's infrastructure. Website privacy policy is generic (last updated May 2023); the operative data terms live in the SaaS Agreement and DPA."
+    },
+    {
+      "id": "baseten",
+      "name": "Baseten",
+      "surface": "API (Model Inference)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "unverified",
+      "incident": true,
+      "training": {
+        "label": "Silent",
+        "detail": "Customer Agreement and DPA are silent on training Baseten-operated models on Customer Content; terms only define \"Customer Model\" as \"Customer's machine learning model(s) that Customer will be deploying through the Baseten Products & Services\"."
+      },
+      "retention": {
+        "label": "14-day post-cessation window",
+        "detail": "DPA: Customer may request return/deletion \"no later than fourteen (14) days after the Cessation Date ('Post-cessation Storage Period')\"; after expiry Baseten \"shall promptly... either (at its option) delete; or render anonymous, all Customer Personal Data then within Baseten's possession\"."
+      },
+      "zdr": {
+        "label": "Not documented",
+        "detail": "No published no-training or zero-retention tier; the DPA covers personal-data return/deletion but does not address model training.",
+        "status": "none"
+      },
+      "location": {
+        "label": "Unspecified (US-based)",
+        "flag": "🇺🇸",
+        "detail": "No data-center or processing-location statement in the Customer Agreement, DPA, or privacy policy; Delaware governing law, San Francisco Bay Area company."
+      },
+      "sourceUrl": "https://www.baseten.co/terms-and-conditions",
+      "privacyUrl": "https://www.baseten.co/privacy-policy",
+      "relatedUrls": [
+        "https://www.baseten.co/dpa/",
+        "https://www.baseten.co/service-level-agreement/",
+        "https://www.strix.ai/blog/baseten-harbor-github-pat-takeover"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "Rated unverified: training posture is undocumented in all three published documents. September 2026: security firm Strix disclosed a GitHub PAT-takeover that yielded admin access to Baseten's GitHub organization (researcher disclosure, not reported as customer-data exfiltration). Privacy policy is TermsFeed boilerplate with no API-data specifics."
+    },
+    {
+      "id": "coreweave",
+      "name": "CoreWeave",
+      "surface": "API (GPU Cloud)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "unverified",
+      "incident": false,
+      "training": {
+        "label": "Not documented",
+        "detail": "ToS license is limited to hosting/processing (\"Customer grants CoreWeave a license to host, store, transfer, display, p[rocess] Customer Data\") with no training right stated; the privacy policy's AI/ML clause covers service operations: \"CoreWeave may use technologies such as artificial intelligence (AI) and machine learning (ML) when processing your data to operate, maintain, improve, and develop our Services.\""
+      },
+      "retention": {
+        "label": "180-day deletion window",
+        "detail": "Customer-initiated deletion honored \"within a maximum period of one hundred eighty (180) days\"; on termination, deletion after \"a recovery period of up to thirty (30) days\"."
+      },
+      "zdr": {
+        "label": "Not documented",
+        "detail": "No no-training or zero-retention tier is published; retention mechanics only.",
+        "status": "none"
+      },
+      "location": {
+        "label": "US regions; global transfers",
+        "flag": "🇺🇸",
+        "detail": "TOS SLOs reference named US regions (\"NJ1, NY1\"); privacy policy: \"CoreWeave operates globally and may transfer personal data to countries that may not provide the same level of data protection as your country of residence\" with Standard Contractual Clauses."
+      },
+      "sourceUrl": "https://docs.coreweave.com/policies/terms-of-service",
+      "privacyUrl": "https://docs.coreweave.com/policies/terms-of-service/privacy-policy",
+      "relatedUrls": [
+        "https://docs.coreweave.com/policies/terms-of-service/privacy-policy"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "Platform cloud ToS (compute infrastructure), not model-inference-specific terms. Rated unverified because no document affirmatively addresses training on Customer Data. Only availability incidents (console/connectivity) found on the public status page."
+    },
+    {
+      "id": "digitalocean-genai",
+      "name": "DigitalOcean",
+      "surface": "API (GenAI Platform)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "unverified",
+      "incident": true,
+      "training": {
+        "label": "Unclear — usage data only",
+        "detail": "General cloud ToS §4.4: \"We may use Usage Data and other information about how you use and interact with the Services to provide, maintain, and improve our Services\" — scoped to Usage Data; no clause addresses training on Services Content (customer inputs/outputs)."
+      },
+      "retention": {
+        "label": "90 days after account purge",
+        "detail": "Privacy policy: \"All Account data will be deleted within 90 days of purging.\" ToS: DigitalOcean \"will delete Services Content upon termination in accordance with its standard Account closure practices\" with no fixed period."
+      },
+      "zdr": {
+        "label": "Not documented",
+        "detail": "No no-training or zero-retention tier published for the GenAI platform.",
+        "status": "none"
+      },
+      "location": {
+        "label": "Region selection; DO may move data",
+        "flag": "🇺🇸",
+        "detail": "ToS §4.7: \"you may specify the geographic region and jurisdiction in which your Services Content will be stored... you agree that DigitalOcean may transfer and store your Services Content in other geographic regions or jurisdictions at its sole discretion.\""
+      },
+      "sourceUrl": "https://www.digitalocean.com/legal/terms-of-service-agreement",
+      "privacyUrl": "https://www.digitalocean.com/legal/privacy-policy",
+      "relatedUrls": [
+        "https://www.digitalocean.com/legal/privacy-policy",
+        "https://techcrunch.com/2021/04/28/digitalocean-customer-billing-data-breach/"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "Platform-wide cloud ToS/privacy apply; no GenAI-specific data-processing terms found at the cited URLs. April 2021: confirmed breach exposing customer billing data (TechCrunch/BleepingComputer). EU-U.S. DPF certified. Rated unverified pending GenAI-specific terms."
+    },
+    {
+      "id": "crusoe",
+      "name": "Crusoe",
+      "surface": "API (Managed Inference)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "clean",
+      "incident": false,
+      "training": {
+        "label": "Off by default",
+        "detail": "OpenRouter Managed Inference ToS: \"Crusoe will only use Customer Data for inference - we will not use it for training Models, and we will not store it on disk or use it for any other purpose other than the inference process\"; also \"We do not use Inputs or Outputs to train Models or improve our Services without Customer's explicit opt-in consent.\""
+      },
+      "retention": {
+        "label": "No disk storage",
+        "detail": "\"Crusoe does not store Inputs and Outputs to disk, and only processes them as long as necessary to provide Customer with the Services\"; in-memory request caches are wiped \"when the model instance is deleted\"."
+      },
+      "zdr": {
+        "label": "Yes — default for Managed Inference",
+        "detail": "No-disk-storage + no-training are defaults of the OpenRouter Managed Inference service (ToS v4.6, effective July 23, 2026), not a paid tier.",
+        "status": "full"
+      },
+      "location": {
+        "label": "Global data centers",
+        "flag": "🇺🇸",
+        "detail": "Privacy Notice: \"Crusoe and Crusoe's partners maintain data centers around the world, and provide the Services from these locations\"; EEA/UK/Swiss transfers rely on Standard Contractual Clauses and the International Data Transfer Agreement."
+      },
+      "sourceUrl": "https://legal.crusoe.ai/open-router#managed-inference-tos-open-router",
+      "privacyUrl": "https://legal.crusoe.ai/open-router",
+      "relatedUrls": [
+        "https://legal.crusoe.ai/open-router",
+        "https://docs.crusoecloud.com"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "OpenRouter-specific ToS (v4.6) + Data Processing and Security Terms + Crusoe Cloud Platform Privacy Notice (v1.3) hosted on one legal-hub page; the privacy notice covers Service Data (account/billing) and explicitly does not cover Customer Data (Inputs/Outputs), which are governed by the inference ToS. Denver, Colorado venue."
+    },
+    {
+      "id": "ionet",
+      "name": "io.net",
+      "surface": "API (Decentralized GPU)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "unverified",
+      "incident": true,
+      "training": {
+        "label": "Silent",
+        "detail": "Neither the site ToS nor the privacy policy addresses training models on user inputs/outputs; the ToS grants broad content licenses (\"royalty-free, perpetual, sublicensable, irrevocable, and worldwide\") without naming training."
+      },
+      "retention": {
+        "label": "While account is active",
+        "detail": "Privacy policy: \"The Services may retain the information we collect about you for as long as you maintain an account with the Service\"; notes blockchain records \"cannot be changed or deleted and is said to be 'immutable'\"."
+      },
+      "zdr": {
+        "label": "Not documented",
+        "detail": "No no-training or zero-retention arrangement published.",
+        "status": "none"
+      },
+      "location": {
+        "label": "United States (AWS/Auth0)",
+        "flag": "🇺🇸",
+        "detail": "Privacy policy: \"The data mentioned in this document will be stored in the United States. We use Amazon Web Service, which is based in the US... Auth0 is a part of Okta INC., which is based in the US.\""
+      },
+      "sourceUrl": "https://io.net/terms",
+      "privacyUrl": "https://io.net/privacy",
+      "relatedUrls": [
+        "https://io.net/privacy",
+        "https://ionet.medium.com/25th-april-incident-report-176e5fb5c576"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "April 2024: \"GPU metadata attack\" — attackers spoofed GPU metadata on the DePIN network; io.net published an incident report and press coverage followed (The Block, Cointelegraph). Published terms are website-level (sanctions, crypto rewards, content licensing); no AI-API-specific data-processing terms found at the listed URLs, hence unverified."
+    },
+    {
+      "id": "gmicloud",
+      "name": "GMICloud",
+      "surface": "API (GPU Cloud)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "unverified",
+      "incident": false,
+      "training": {
+        "label": "Silent",
+        "detail": "Terms and Conditions and the Privacy Notice do not mention training, model improvement, or machine learning on customer data."
+      },
+      "retention": {
+        "label": "Silent",
+        "detail": "No retention or deletion period for API inputs/outputs appears in either document."
+      },
+      "zdr": {
+        "label": "Not documented",
+        "detail": "No no-training or zero-retention arrangement published.",
+        "status": "none"
+      },
+      "location": {
+        "label": "Unspecified (US-based)",
+        "flag": "🇺🇸",
+        "detail": "No processing-location statement; \"these terms are governed by the laws of the State of Delaware\" with exclusive jurisdiction in Delaware courts."
+      },
+      "sourceUrl": "https://www.gmicloud.ai/terms-and-conditions",
+      "privacyUrl": "https://www.gmicloud.ai/en/privacy-policy",
+      "relatedUrls": [
+        "https://www.gmicloud.ai/en/privacy-policy"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "All four data-privacy fields are silent in the published documents (a short website-level ToS and a short website privacy notice). Rated unverified. No incidents found."
+    },
+    {
+      "id": "atlascloud",
+      "name": "AtlasCloud",
+      "surface": "API (GPU Cloud)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "unverified",
+      "incident": false,
+      "training": {
+        "label": "Silent",
+        "detail": "The combined Privacy & Terms page does not address training or model improvement on user content."
+      },
+      "retention": {
+        "label": "Silent",
+        "detail": "No retention period for API inputs/outputs; account/content deletion on termination is described only in general terms (\"we may terminate your use... or delete your account and any content... at any time\")."
+      },
+      "zdr": {
+        "label": "Not documented",
+        "detail": "No no-training or zero-retention arrangement published.",
+        "status": "none"
+      },
+      "location": {
+        "label": "Unspecified (US-based)",
+        "flag": "🇺🇸",
+        "detail": "Company is \"registered in New York, United States at 1540 Broadway\"; no processing-location statement."
+      },
+      "sourceUrl": "https://www.atlascloud.ai/privacy",
+      "privacyUrl": "https://www.atlascloud.ai/privacy",
+      "relatedUrls": [
+        "https://www.atlascloud.ai/privacy"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "The listed ToS URL (atlascloud.ai/privacy) is a combined \"Privacy & Terms\" page (last updated July 17, 2026); no separate terms page exists (atlascloud.ai/terms returns 404). All four fields silent — rated unverified."
+    },
+    {
+      "id": "nvidia-api-catalog",
+      "name": "NVIDIA",
+      "surface": "API (Model Catalog)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "unverified",
+      "incident": false,
+      "training": {
+        "label": "Unclear — de-identified usage data",
+        "detail": "The API Trial ToS never uses the word \"train\"; §3.2–3.3: NVIDIA will \"use such data to provide you with the API Services and for any other purpose expressly disclosed to you for an API Service, in each case subject to your consent, where required by law\" and \"will collect the following data, without identifying specific users, to operate and improve the API Services and other products.\""
+      },
+      "retention": {
+        "label": "While engagement continues",
+        "detail": "Privacy policy: \"We retain your personal data for as long as our engagement with you continues (e.g., emails, website visits, logins, or event attendance)\"; the Trial ToS sets no retention period for inputs/outputs."
+      },
+      "zdr": {
+        "label": "Not documented",
+        "detail": "No no-training or zero-retention tier is published for the API Catalog trial.",
+        "status": "none"
+      },
+      "location": {
+        "label": "United States",
+        "flag": "🇺🇸",
+        "detail": "Privacy policy: \"NVIDIA is located in California, and in most cases we need to securely transfer and store your information in the United States.\""
+      },
+      "sourceUrl": "https://assets.ngc.nvidia.com/products/api-catalog/legal/NVIDIA%20API%20Trial%20Terms%20of%20Service.pdf",
+      "privacyUrl": "https://www.nvidia.com/en-us/about-nvidia/privacy-policy/",
+      "relatedUrls": [
+        "https://www.nvidia.com/en-us/about-nvidia/privacy-policy/"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "Product-specific NVIDIA API Trial Terms of Service (PDF, parsed successfully) govern the build.nvidia.com API Catalog trial; the general NVIDIA privacy policy supplements them. The privacy policy's model-training clause covers NVIDIA's own licensed datasets, not customer API content. Rated unverified on training."
+    },
+    {
+      "id": "reka-ai",
+      "name": "Reka AI",
+      "surface": "API (Multimodal LLM)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "caution",
+      "incident": false,
+      "training": {
+        "label": "On (free) / Off (paid, opt-in)",
+        "detail": "\"If you use the Services on a free basis, you acknowledge and agree that Reka may use Your Content to train, develop, and improve its machine learning models\"; paid requests: \"Reka will not use Your Content for model training unless you have explicitly opted in. You may provide or withdraw consent at any time through your account settings or by contacting Reka support.\""
+      },
+      "retention": {
+        "label": "Minimal; files ~24h",
+        "detail": "\"Reka has no obligation to store any of Your Content\"; files shared with third-party tools use \"time-limited, private URLs... deleted after a short period (e.g., 24 hours)\"."
+      },
+      "zdr": {
+        "label": "Yes — paid requests",
+        "detail": "No-training is the default for paid API requests (opt-in only for training); free-tier use trains by default.",
+        "status": "partial"
+      },
+      "location": {
+        "label": "US headquarters; global providers",
+        "flag": "🇺🇸",
+        "detail": "Privacy policy: \"We are headquartered in the United States and may use service providers that operate in other countries. Your personal information may be transferred to the United States...\""
+      },
+      "sourceUrl": "https://reka.ai/legal/terms-of-use",
+      "privacyUrl": "https://reka.ai/legal/privacy-policy",
+      "relatedUrls": [
+        "https://reka.ai/legal/privacy-policy"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "Tiered posture: free/promotional-credit usage trains by default (including human review); paid requests are training-off unless opted in. Users may not use outputs to train competing models."
+    },
+    {
+      "id": "thinking-machines",
+      "name": "Thinking Machines",
+      "surface": "API (Research Models)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "high-risk",
+      "incident": false,
+      "training": {
+        "label": "On — no opt-out",
+        "detail": "\"You grant us a worldwide, irrevocable, perpetual, royalty-free license to retain, access, use, host, copy, reproduce, process, modify, create derivative works of, and otherwise exploit the Customer Content to operate, provide, maintain, evaluate, develop, and improve the Company's products, services, and technologies, including to train, fine-tune, evaluate, and improve the Company Models and other AI models.\" No opt-out is provided in the terms."
+      },
+      "retention": {
+        "label": "During and after the term",
+        "detail": "\"We may retain and use the Customer Content for these purposes during and after the Term\"; no deletion commitment for prompts/outputs."
+      },
+      "zdr": {
+        "label": "Not documented",
+        "detail": "No no-training or zero-retention option appears in the free research tier terms.",
+        "status": "none"
+      },
+      "location": {
+        "label": "United States (and others)",
+        "flag": "🇺🇸",
+        "detail": "Privacy notice: \"We are based in the United States. If you are using the Services outside the United States... the information we collect from you may be transferred to, stored and processed in the United States or other countries.\""
+      },
+      "sourceUrl": "https://thinkingmachines.ai/legal/tml-free-research-api-tier-terms-of-service.pdf",
+      "privacyUrl": "https://thinkingmachines.ai/legal/privacy/",
+      "relatedUrls": [
+        "https://thinkingmachines.ai/legal/privacy/"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "Free Research API tier terms (last updated August 20, 2026; PDF parsed successfully) — these are free-tier terms, so paid/enterprise arrangements may differ but are unpublished. Also prohibits using outputs to train competing models. A January 2026 CTO termination over confidentiality allegations is a personnel matter, not a customer-data incident."
+    },
+    {
+      "id": "inception-labs",
+      "name": "Inception Labs",
+      "surface": "API (Diffusion LLM)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "caution",
+      "incident": false,
+      "training": {
+        "label": "On by default — self-serve opt-out",
+        "detail": "\"we may use User Submissions to provide and maintain our Services, comply with applicable law, enforce our terms and policies, and train our models. If you do not want us to use your User Submissions to train our models, you can opt-out by setting the 'Improve the model for everyone' option under User [Settings].\""
+      },
+      "retention": {
+        "label": "As long as necessary",
+        "detail": "Privacy policy: \"We retain Personal Data about you for as long as necessary to provide you with our Services or to perform our business or commercial purposes\"; no fixed API-content period."
+      },
+      "zdr": {
+        "label": "Opt-out via account setting",
+        "detail": "A self-serve opt-out toggle ('Improve the model for everyone') is available; no contractual ZDR tier.",
+        "status": "partial"
+      },
+      "location": {
+        "label": "Unspecified (US-based)",
+        "flag": "🇺🇸",
+        "detail": "No processing-location statement in ToS or privacy policy; San Francisco arbitration venue."
+      },
+      "sourceUrl": "https://www.inceptionlabs.ai/terms-of-use",
+      "privacyUrl": "https://www.inceptionlabs.ai/docs/privacy-policy",
+      "relatedUrls": [
+        "https://www.inceptionlabs.ai/docs/privacy-policy"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "The cited ToS URL (inceptionlabs.ai/terms) returns 404; the operative terms live at /terms-of-use (effective September 1, 2025)."
+    },
+    {
+      "id": "sakana-ai",
+      "name": "Sakana AI",
+      "surface": "API (Model Platform)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "caution",
+      "incident": false,
+      "training": {
+        "label": "On by default — opt-out offered",
+        "detail": "\"The Company uses Content for machine learning model training, improvement, and other information analysis (including retraining and fine-tuning) ('Training Use')\"; opt-out: \"You may request that the Company stop using Your Content for Training Use... via the method set out on the screen through which the Company provides the Service.\""
+      },
+      "retention": {
+        "label": "No retention obligation",
+        "detail": "\"The Company is not obligated to retain or store any text, files, instructions (prompts), or other data that You input... and Company may delete part or all of any Content, with or without prior notice\"; it is also \"not obligated to delete information like the weights of models trained based on Content, temporary caches of external vendors, or audit logs.\""
+      },
+      "zdr": {
+        "label": "Opt-out via product setting",
+        "detail": "An in-product opt-out suspends Training Use prospectively; \"the effects of those uses may not be reversible retroactively... even if You later opt out.\"",
+        "status": "partial"
+      },
+      "location": {
+        "label": "Japan + US; EEA/UK excluded",
+        "flag": "🇯🇵",
+        "detail": "\"The Service is provided for users in countries or regions other than the European Economic Area, the UK, and Switzerland ('Supported Regions')\"; privacy policy: data \"may be transferred to third parties located outside your country of residence, including to Japan and the United States.\""
+      },
+      "sourceUrl": "https://console.sakana.ai/terms-of-service",
+      "privacyUrl": "https://console.sakana.ai/privacy-policy",
+      "relatedUrls": [
+        "https://console.sakana.ai/privacy-policy"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "API Platform privacy policy dated July 21, 2026. Dual governing law: Japan for Japan users, California for others. Content license is \"worldwide, perpetual, irrevocable, non-exclusive, royalty-free, sublicensable, and transferable\". The 2025 'AI Scientist' self-modification episode was a research-safety event, not a customer-data breach."
+    },
+    {
+      "id": "poolside",
+      "name": "Poolside",
+      "surface": "API (Code Models)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "caution",
+      "incident": false,
+      "training": {
+        "label": "On by default — settings opt-out",
+        "detail": "Poolside Terms of Use §4: \"We may use your Content to provide, maintain, improve, and develop the Products and other Poolside offerings, including training our models, unless you opt-out. If you access the Products directly through the Site, you may opt-out of Poolside using your Content for training by selecting the Training Opt-Out under [settings].\" Content \"means any content, data, or information you submit to or receive through the Site, including prompts, code, output, and feedback.\""
+      },
+      "retention": {
+        "label": "No fixed period",
+        "detail": "Privacy policy: \"We retain Personal Data about you for as long as necessary to provide you with our Services\"; the DPA requires return or deletion of Personal Data on termination at the customer's choice."
+      },
+      "zdr": {
+        "label": "Training Opt-Out setting",
+        "detail": "Self-serve Training Opt-Out in account settings for direct site access; no contractual ZDR tier published.",
+        "status": "partial"
+      },
+      "location": {
+        "label": "Unspecified (US-based)",
+        "flag": "🇺🇸",
+        "detail": "No processing-location statement in the Terms of Use or privacy policy; California governing law; DPA covers hosted and customer-virtual-cloud deployments."
+      },
+      "sourceUrl": "https://www.poolside.ai/legal/eula",
+      "privacyUrl": "https://www.poolside.ai/legal/privacy",
+      "relatedUrls": [
+        "https://www.poolside.ai/legal/privacy",
+        "https://www.poolside.ai/legal/dpa",
+        "https://www.poolside.ai/legal/acceptable-use-policy"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "The cited URL (poolside.ai/legal) is a JS-rendered legal index; the operative ToS is the \"Poolside Terms of Use\" at /legal/eula, the DPA at /legal/dpa, and the AUP at /legal/acceptable-use-policy."
+    },
+    {
+      "id": "relace",
+      "name": "Relace",
+      "surface": "API (Code Models)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "caution",
+      "incident": false,
+      "training": {
+        "label": "On by default — request-based opt-out",
+        "detail": "Privacy policy opt-out list: \"Use of Data for AI Training. You may request that we do not use your Personal Information for purposes training, evaluating and improving our AI models.\" (an opt-out implies training use otherwise occurs); ToS itself is silent on training."
+      },
+      "retention": {
+        "label": "As long as needed",
+        "detail": "\"We retain your Information for as long as it is needed to provide you with Services, or for other purposes described in this Privacy Policy\"; account deletion removes personal information permanently."
+      },
+      "zdr": {
+        "label": "Request-based opt-out",
+        "detail": "Training opt-out requires contacting the company (no self-serve control documented).",
+        "status": "partial"
+      },
+      "location": {
+        "label": "Unspecified (US-based)",
+        "flag": "🇺🇸",
+        "detail": "No processing-location statement; arbitration in Santa Clara County, California (Squack, Inc.)."
+      },
+      "sourceUrl": "https://www.relace.ai/terms-of-use",
+      "privacyUrl": "https://www.relace.ai/privacy-policy",
+      "relatedUrls": [
+        "https://www.relace.ai/privacy-policy"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "Website-level ToS; the AI-training language lives only in the privacy policy's CCPA opt-out section. No incidents found on the public status page."
+    },
+    {
+      "id": "decart",
+      "name": "Decart",
+      "surface": "API (Vision/LLM)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "clean",
+      "incident": false,
+      "training": {
+        "label": "Off by default",
+        "detail": "Cogito API Service Terms: \"Decart.ai does not use Input or Output to train, fine-tune, or improve artificial intelligence or machine learning models, and does not retain or use Input or Output for any other commercial purpose, except as required by applicable law\"; privacy policy: \"We do not use Content and/or your Personal data to train our models.\""
+      },
+      "retention": {
+        "label": "Only to provide the service",
+        "detail": "Inputs/Outputs are used \"solely as necessary to provide, maintain, and secure the Services\"; privacy policy: \"Your Personal Data will be stored until we delete the record and we proactively delete it or you send a valid deletion request\" — no fixed period."
+      },
+      "zdr": {
+        "label": "Yes — default",
+        "detail": "No-training is a flat default of the Cogito API terms (June 1, 2026), not a tier.",
+        "status": "full"
+      },
+      "location": {
+        "label": "Unspecified; SCC/DPF transfers",
+        "flag": "🌍",
+        "detail": "No processing location stated; transfers outside the EU/EEA rely on \"Standard Contractual Clauses laid down by the European Commission, or any other approved transfer mechanism (such as the recipient's registration with the EU-US Data Privacy Framework).\""
+      },
+      "sourceUrl": "https://cogito.decart.ai/legal/terms",
+      "privacyUrl": "https://cogito.decart.ai/legal/privacy",
+      "relatedUrls": [
+        "https://cogito.decart.ai/legal/terms.pdf",
+        "https://cogito.decart.ai/legal/privacy.pdf"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "Cogito API Service Terms (PDF, June 1, 2026) and Cogito privacy policy (PDF) are served through an in-page PDF viewer at the cited URLs; PDFs parsed successfully. Terms name Decart.Ai, Inc. as the contracting entity."
+    },
+    {
+      "id": "liquid-ai",
+      "name": "Liquid AI",
+      "surface": "API (Foundation Models)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "high-risk",
+      "incident": false,
+      "training": {
+        "label": "On — no opt-out",
+        "detail": "\"We may use outputs or inputs (collectively, 'Content') in perpetuity for our internal business purposes, including to develop new products and services, improve our Services, operate the Services, and maintain the Services\"; the privacy policy names the purpose: \"Training, fine-tuning or otherwise enhancing AI models and related technologies using inputs and outputs you share.\""
+      },
+      "retention": {
+        "label": "In perpetuity",
+        "detail": "Content may be used \"in perpetuity for our internal business purposes\"; the privacy policy sets no fixed retention period (\"as long as necessary\")."
+      },
+      "zdr": {
+        "label": "Not documented",
+        "detail": "No no-training or zero-retention option appears in the ToS or privacy policy.",
+        "status": "none"
+      },
+      "location": {
+        "label": "Unspecified (US-based)",
+        "flag": "🇺🇸",
+        "detail": "No processing-location statement; Massachusetts courts chosen for disputes; EU/UK privacy-rights sections present."
+      },
+      "sourceUrl": "https://www.liquid.ai/terms-conditions",
+      "privacyUrl": "https://www.liquid.ai/privacy-policy",
+      "relatedUrls": [
+        "https://www.liquid.ai/privacy-policy"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "Short ToS (v. Terms of Service) plus privacy policy; no opt-out mechanism is documented for training use of inputs/outputs. The September 2026 'Liquid Network' $320M exploit reports concern Blockstream's Bitcoin sidechain and are unrelated to Liquid AI."
+    },
+    {
+      "id": "runway",
+      "name": "Runway",
+      "surface": "API (Video Generation)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "high-risk",
+      "incident": false,
+      "training": {
+        "label": "On — no opt-out documented",
+        "detail": "\"You acknowledge that Inputs and Outputs may be used by the Company to train and improve its AI models, algorithms and related technology, products and services (including for labeling, classification, content moderation and model training purposes)\" with a \"non-exclusive, irrevocable, perpetual, worldwide, royalty-free, fully paid, transferable, sublicensable\" license. No training opt-out appears in the ToS or privacy policy."
+      },
+      "retention": {
+        "label": "As long as necessary; biometrics ≤3 years",
+        "detail": "\"Company has no obligation to store any of Your Content\"; privacy policy: information retained \"only as long as necessary to provide the Service and for the other legitimate business purposes... we will retain face scans and voiceprints for no longer than the earlier of the date the initial purpose for collecting the data is satisfied or within three years of your last interaction with us.\""
+      },
+      "zdr": {
+        "label": "Not documented",
+        "detail": "No no-training or zero-retention tier is published.",
+        "status": "none"
+      },
+      "location": {
+        "label": "United States",
+        "flag": "🇺🇸",
+        "detail": "\"The Services are controlled and offered by Company from its facilities in the United States of America\"; privacy policy confirms US headquarters with transfers to the US and other countries."
+      },
+      "sourceUrl": "https://runwayml.com/terms-of-use",
+      "privacyUrl": "https://runway.com/privacy-policy",
+      "relatedUrls": [
+        "https://runway.com/privacy-policy",
+        "https://www.reuters.com/legal/government/youtuber-sues-runway-ai-latest-copyright-class-action-over-"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "February 2026: a copyright class action over AI training was filed against Runway (Reuters; C.D. Cal.) — litigation, not a confirmed breach, regulatory action, or government ban. Privacy policy lives at runway.com."
+    },
+    {
+      "id": "krea",
+      "name": "Krea",
+      "surface": "API (Image/Video Generation)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "unverified",
+      "incident": false,
+      "training": {
+        "label": "Silent — broad license",
+        "detail": "Neither document mentions training on user content, but the ToS grants Krea a \"worldwide, non-exclusive, perpetual, royalty-free, fully paid, sublicensable and transferable license to use, edit, modify, truncate, aggregate, reproduce, distribute, prepare derivative works of, display, perform, and otherwise fully exploit such User Submissions in connection with this site, the Services and our (and our successors' and assigns') businesses.\""
+      },
+      "retention": {
+        "label": "Unspecified",
+        "detail": "Privacy policy: \"We retain Personal Data about you for as long as necessary to provide you with our Services or to perform our business or commercial purposes\"; account termination \"may result in destruction of any Content associated with your account.\""
+      },
+      "zdr": {
+        "label": "Not documented",
+        "detail": "No no-training or zero-retention arrangement published.",
+        "status": "none"
+      },
+      "location": {
+        "label": "Unspecified (US-based)",
+        "flag": "🇺🇸",
+        "detail": "No processing-location statement; San Francisco courts/arbitration venue."
+      },
+      "sourceUrl": "https://www.krea.ai/terms",
+      "privacyUrl": "https://www.krea.ai/privacy",
+      "relatedUrls": [
+        "https://www.krea.ai/privacy",
+        "https://trust.krea.ai/"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "Terms of Use and privacy policy are both dated May 20, 2024 and read as website-level documents; training on user content is never named, but the perpetual content license is broad — rated unverified."
+    },
+    {
+      "id": "heygen",
+      "name": "HeyGen",
+      "surface": "API (Video Avatars)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "caution",
+      "incident": false,
+      "training": {
+        "label": "On by default — contact opt-out",
+        "detail": "License to \"operate, improve, promote and provide the Services and to develop new services and products, including to train or otherwise improve or modify our artificial intelligence and machine learning models\"; privacy policy: \"You may request to opt-out of this training and enhancement by contacting us at privacy@heygen.com\" (also an objection right under GDPR)."
+      },
+      "retention": {
+        "label": "60-day backup purge",
+        "detail": "\"After you delete the information or the account, it is kept in the backups for the purpose of disaster recovery for 60 days and then automatically and permanently erased\"; Free Plan accounts inactive for six (6) months are deleted."
+      },
+      "zdr": {
+        "label": "Request-based opt-out",
+        "detail": "Training opt-out requires contacting privacy@heygen.com; no self-serve toggle or contractual ZDR tier documented.",
+        "status": "partial"
+      },
+      "location": {
+        "label": "United States (Los Angeles)",
+        "flag": "🇺🇸",
+        "detail": "\"We are a domestic corporation established in the United States. Our address and contact is: 12130 Millennium Drive Suite 300 Los Angeles, CA 90094\"; EU-U.S. DPF, UK Extension, and Swiss-U.S. DPF certified."
+      },
+      "sourceUrl": "https://www.heygen.com/terms",
+      "privacyUrl": "https://www.heygen.com/privacy-policy",
+      "relatedUrls": [
+        "https://www.heygen.com/privacy-policy",
+        "https://www.heygen.com/data-processing-addendum"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "Terms effective March 6, 2025, last updated July 23, 2026. HeyGen acts as processor for customer content and controller for its own purposes (including AI model training as a controller purpose)."
+    },
+    {
+      "id": "fish-audio",
+      "name": "Fish Audio",
+      "surface": "API (Voice/TTS)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "high-risk",
+      "incident": false,
+      "training": {
+        "label": "On — no opt-out documented",
+        "detail": "\"Usage Data and Content may be used to develop, train, or enhance artificial intelligence or machine learning models that are part of Fish.Audio's products and services, including third-party components of the Services.\" No training opt-out appears in the ToS or privacy policy."
+      },
+      "retention": {
+        "label": "No fixed period; perpetual license",
+        "detail": "License grants are \"royalty-free, perpetual, sublicensable, irrevocable, and worldwide\"; on account deletion Fish stops displaying User Submissions but no deletion period for API inputs/outputs is stated; privacy policy: \"as long as necessary to provide you with our Services.\""
+      },
+      "zdr": {
+        "label": "Not documented",
+        "detail": "No no-training or zero-retention arrangement published.",
+        "status": "none"
+      },
+      "location": {
+        "label": "Unspecified (US entity)",
+        "flag": "🇺🇸",
+        "detail": "\"The entity providing the Services is Hanabi AI Inc., a corporation operating under the laws of Delaware\"; no storage-region statement in the privacy policy."
+      },
+      "sourceUrl": "https://fish.audio/terms",
+      "privacyUrl": "https://fish.audio/privacy/",
+      "relatedUrls": [
+        "https://fish.audio/privacy/",
+        "https://github.com/advisories/GHSA-6w22-457x-2p92"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "May 2026: CVE-2026-8755 (path traversal) was published against the open-source fishaudio Bert-VITS2 project — a vulnerability disclosure, not a reported platform breach. UK performers' union Equity publicly demanded removal of unauthorized AI voices (2026), a dispute rather than a regulatory action. Training license extends to third-party model components."
+    },
+    {
+      "id": "sourceful",
+      "name": "Sourceful",
+      "surface": "API (Image Generation)",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "caution",
+      "incident": false,
+      "training": {
+        "label": "Off for paid, unclear for free",
+        "detail": "\"If you have a Paid Subscription, any and all User Materials uploaded by you and any and all Results generated by you will not be used by Sourceful: (i) to train generative AI components of Sourceful Platform; (ii) in our public index of images.\" No equivalent commitment is stated for free-tier use; users may not use outputs to train ML models."
+      },
+      "retention": {
+        "label": "As long as needed",
+        "detail": "\"We will only retain your personal information for as long as we need it unless we are required to keep it for longer to comply with our legal, accounting or regulatory requirements.\""
+      },
+      "zdr": {
+        "label": "Paid-tier no-training commitment",
+        "detail": "No-training applies to Paid Subscriptions only; free-tier training posture is undocumented.",
+        "status": "partial"
+      },
+      "location": {
+        "label": "UK/EU (Google Cloud)",
+        "flag": "🇬🇧",
+        "detail": "Privacy policy: systems are \"hosted by Google Cloud on their UK and/or European Servers\"; England and Wales governing law (Sourceful Ltd, Manchester)."
+      },
+      "sourceUrl": "https://www.sourceful.com/legal/spring-terms-of-use",
+      "privacyUrl": "https://www.sourceful.com/legal/privacy-policy",
+      "relatedUrls": [
+        "https://www.sourceful.com/legal/privacy-policy",
+        "https://www.sourceful.com/legal/vulnerability-disclosure-policy"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "Platform Terms of Use (May 27, 2025) + privacy policy. Riverflow generation shares prompt data with third-party diffusion model operators (disclosed in the privacy policy). ISO/IEC 42001 certified July 2025; no incidents found."
     }
   ]
 }

@@ -12,7 +12,7 @@ const manifest = {
   })),
 };
 
-function makeEnv({ maxHashed = 20, stored = null, mutatedUrl = null, withIndexing = false, failFirstIndex = false } = {}) {
+function makeEnv({ maxHashed = 20, stored = null, mutatedUrl = null, withIndexing = false, failFirstIndex = false, opsToken = null } = {}) {
   let storedState = stored;
   const snapshots = [];
   const d1Statements = [];
@@ -53,6 +53,7 @@ function makeEnv({ maxHashed = 20, stored = null, mutatedUrl = null, withIndexin
       },
     };
   }
+  if (opsToken) env.OPS_TOKEN = opsToken;
   const realFetch = globalThis.fetch;
   globalThis.fetch = async (input) => {
     const url = typeof input === 'string' ? input : input.url;
@@ -299,6 +300,37 @@ test('indexing failure is non-fatal and retried on the next run', async () => {
     assert.ok(Object.values(state.entries).some((e) => e.indexedHash === e.hash), 'other URLs still index');
   } finally {
     first.restore();
+  }
+});
+
+test('backfill route: auth-gated, processes queued URLs, daily cap enforced', async () => {
+  const e = makeEnv({ withIndexing: true, opsToken: 'test-ops-token' });
+  try {
+    // unauthorized without the header
+    const denied = await watcher.fetch(new Request('https://worker.example/__ops/backfill', { method: 'POST' }), e.env);
+    assert.equal(denied.status, 401);
+
+    // baseline first so entries exist, then backfill processes them
+    await watcher.scheduled({}, e.env, {});
+    const before = Object.values(e.getState().entries).filter((en) => en.indexedHash).length;
+
+    const req = (n) => new Request('https://worker.example/__ops/backfill', {
+      method: 'POST',
+      headers: { 'x-ops-token': 'test-ops-token', 'content-type': 'application/json' },
+      body: JSON.stringify({ limit: n }),
+    });
+    const res1 = await watcher.fetch(req(20), e.env);
+    assert.equal(res1.status, 200);
+    const body1 = await res1.json();
+    const alreadyIndexed = Object.values(e.getState().entries).filter((en) => en.indexedHash).length;
+    assert.equal(body1.processed, PAGES - alreadyIndexed, 'all remaining URLs indexed in one dispatch');
+
+    // second dispatch same day: everything already indexed → nothing left, no cap breach
+    const res2 = await watcher.fetch(req(20), e.env);
+    const body2 = await res2.json();
+    assert.equal(body2.processed, 0);
+  } finally {
+    e.restore();
   }
 });
 

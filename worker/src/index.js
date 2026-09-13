@@ -215,24 +215,40 @@ async function indexCatchUp(env, state, providerByUrl, limit, count, d1Budget) {
   return { processed, chunksIndexed, d1Queries, aiCalls, errors };
 }
 
-// Ops-route backfill: catches up the semantic index on demand (bounded by the
-// caller-supplied limit and the D1 statement budget). Reads the manifest for
-// provider mapping and persists the updated state.
+// Ops-route backfill: catches up the semantic index on demand. Bounded per
+// dispatch by the caller-supplied limit AND by an explicit daily cap
+// (MAX_BACKFILL_PER_DAY URLs/day, tracked in state with a UTC-date roll) so
+// repeated dispatches cannot drain the Workers AI daily allocation.
+const MAX_BACKFILL_PER_DAY = 20;
+
 async function runBackfill(env, limit) {
   const state = await env.WATCH_STATE.get('watcher', 'json');
   if (!state) return { ok: true, processed: 0, chunksIndexed: 0, remaining: 0 };
   state.entries = state.entries ?? {};
+  state.backfillDay = state.backfillDay ?? '';
+  state.backfillCount = state.backfillCount ?? 0;
+  const today = new Date().toISOString().slice(0, 10);
+  if (state.backfillDay !== today) {
+    state.backfillDay = today;
+    state.backfillCount = 0;
+  }
+  const remainingToday = MAX_BACKFILL_PER_DAY - state.backfillCount;
+  if (remainingToday <= 0) {
+    return { ok: false, reason: `daily backfill cap reached (${MAX_BACKFILL_PER_DAY}/day) — resets 00:00 UTC` };
+  }
   const mRes = await fetch(env.MANIFEST_URL, { headers: { 'cache-control': 'no-cache' } });
   if (!mRes.ok) return { ok: false, reason: `manifest fetch failed: ${mRes.status}` };
   const manifest = await mRes.json();
   const providerByUrl = new Map((manifest.urls ?? []).map((u) => [u.url, u.providers]));
   const d1Budget = { remaining: 40 };
   let used = 0;
-  const cu = await indexCatchUp(env, state, providerByUrl, limit, () => ++used, d1Budget);
+  const effectiveLimit = Math.min(limit, remainingToday);
+  const cu = await indexCatchUp(env, state, providerByUrl, effectiveLimit, () => ++used, d1Budget);
+  state.backfillCount += cu.processed;
   await env.WATCH_STATE.put('watcher', JSON.stringify(state));
   const remaining = Object.values(state.entries)
     .filter((e) => e.seen && e.hash && e.lastSnapshotKey && e.indexedHash !== e.hash).length;
-  return { ok: true, processed: cu.processed, chunksIndexed: cu.chunksIndexed, d1Queries: cu.d1Queries, aiCalls: cu.aiCalls, errors: cu.errors, remaining };
+  return { ok: true, processed: cu.processed, chunksIndexed: cu.chunksIndexed, d1Queries: cu.d1Queries, aiCalls: cu.aiCalls, errors: cu.errors, dailyRemaining: Math.max(0, MAX_BACKFILL_PER_DAY - state.backfillCount), remaining };
 }
 
 async function runCheck(env) {

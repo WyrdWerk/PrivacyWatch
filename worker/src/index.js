@@ -7,6 +7,36 @@ const SOFT_SUBREQUEST_LIMIT = 44;
 const HASH_SLICE_BYTES = 65536;
 const FETCH_TIMEOUT_MS = 15000;
 const MAX_EVENTS = 50;
+const EMBED_MODEL = '@cf/baai/bge-base-en-v1.5';
+const EMBED_DIMS = 768;
+const CHUNK_SIZE = 1500;
+const CHUNK_OVERLAP = 150;
+const MAX_CHUNKS_PER_URL = 40;
+const MAX_BACKFILL_PER_RUN = 2;
+
+function chunkText(normalized, { size = CHUNK_SIZE, overlap = CHUNK_OVERLAP, max = MAX_CHUNKS_PER_URL } = {}) {
+  if (!normalized) return [];
+  const chunks = [];
+  let start = 0;
+  while (start < normalized.length && chunks.length < max) {
+    chunks.push(normalized.slice(start, start + size));
+    if (start + size >= normalized.length) break;
+    start += size - overlap;
+  }
+  return chunks;
+}
+
+function l2normalize(vec) {
+  let sum = 0;
+  for (let i = 0; i < vec.length; i++) sum += vec[i] * vec[i];
+  const norm = Math.sqrt(sum) || 1;
+  for (let i = 0; i < vec.length; i++) vec[i] /= norm;
+  return vec;
+}
+
+function f32Blob(vec) {
+  return new Uint8Array(vec.buffer, vec.byteOffset, vec.byteLength);
+}
 // Measured (independent review benchmark): capped normalize+hash costs ~1.4-1.6 ms
 // per 64 KiB body in a V8-shaped runtime. Free cron triggers allow 10 ms CPU, so a
 // run that hashes every fetched body at shard 20 would exceed it (~29-33 ms).
@@ -28,6 +58,43 @@ async function sha256Hex(text) {
   const data = new TextEncoder().encode(text);
   const digest = await crypto.subtle.digest('SHA-256', data);
   return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Embed a batch of texts with the Workers AI binding. Returns L2-normalized
+// Float32Array vectors in input order.
+async function embedTexts(env, texts) {
+  const out = [];
+  for (let i = 0; i < texts.length; i += 8) {
+    const res = await env.AI.run(EMBED_MODEL, { text: texts.slice(i, i + 8) });
+    const data = res?.data ?? [];
+    for (const d of data) out.push(l2normalize(new Float32Array(Array.isArray(d) ? d : d.embedding)));
+  }
+  return out;
+}
+
+// Re-index one URL atomically: drop its previous chunks, insert the fresh
+// revision. Called from the change/baseline paths (text in hand) and the
+// backfill route (snapshot re-read). Statements stay under D1's 100-parameter
+// limit by batching 14 rows per INSERT (7 bound params per row).
+const INSERT_CHUNK_SQL = 'INSERT INTO chunks (id, provider_id, url, text, embedding, revision, updated_at) VALUES '
+  + Array(14).fill('(?, ?, ?, ?, ?, ?, ?)').join(', ');
+
+async function indexUrl(env, url, providerIds, normalized, contentHash, urlHash) {
+  const chunks = chunkText(normalized);
+  if (!chunks.length) return 0;
+  const vectors = await embedTexts(env, chunks);
+  const now = new Date().toISOString();
+  const providerId = providerIds.map((p) => p.id).join(',');
+  const stmts = [env.DB.prepare('DELETE FROM chunks WHERE url = ?1').bind(url)];
+  for (let start = 0; start < chunks.length; start += 14) {
+    const params = [];
+    for (let i = start; i < Math.min(start + 14, chunks.length); i++) {
+      params.push(`${urlHash}:${i}`, providerId, url, chunks[i], f32Blob(vectors[i]), contentHash, now);
+    }
+    stmts.push(env.DB.prepare(INSERT_CHUNK_SQL).bind(...params));
+  }
+  await env.DB.batch(stmts);
+  return chunks.length;
 }
 
 function normalizeHtml(html) {
@@ -86,6 +153,36 @@ function renderEvent(e) {
     `> ${e.excerpt.replace(/\n/g, ' ')}`,
   ];
   return lines.join('\n');
+}
+
+// Semantic-index catch-up shared by the cron run and the /__ops/backfill route:
+// re-indexes up to `limit` URLs whose stored hash has no matching indexed
+// revision, reading their latest snapshot from R2. Mutates `state` in place.
+async function indexCatchUp(env, state, providerByUrl, limit, count) {
+  let processed = 0;
+  let chunksIndexed = 0;
+  const errors = [];
+  const indexPending = Object.entries(state.entries)
+    .filter(([, e]) => e.seen && e.hash && e.lastSnapshotKey && e.indexedHash !== e.hash)
+    .slice(0, limit);
+  for (const [u, e] of indexPending) {
+    if (count() > SOFT_SUBREQUEST_LIMIT - 2) break;
+    try {
+      const snap = await env.SNAPSHOTS.get(e.lastSnapshotKey);
+      if (!snap) { e.indexError = 'snapshot missing'; continue; }
+      const raw = await snap.text();
+      const normalized = normalizeHtml(raw);
+      const urlHash = await sha256Hex(u);
+      chunksIndexed += await indexUrl(env, u, providerByUrl.get(u) ?? [], normalized, e.hash, urlHash);
+      e.indexedHash = e.hash;
+      e.indexError = null;
+      processed++;
+    } catch (err) {
+      e.indexError = String(err.message ?? err).slice(0, 160);
+      errors.push(u);
+    }
+  }
+  return { processed, chunksIndexed, errors };
 }
 
 async function runCheck(env) {
@@ -217,6 +314,14 @@ async function runCheck(env) {
         await env.SNAPSHOTS.put(entry.lastSnapshotKey, new TextEncoder().encode(text));
         count();
       }
+      if (!dryRun && env.DB && env.AI && subrequests < SOFT_SUBREQUEST_LIMIT - 2) {
+        try {
+          await indexUrl(env, url, w.providers, normalized, newHash, urlHash);
+          entry.indexedHash = newHash;
+        } catch (err) {
+          entry.indexError = String(err.message ?? err).slice(0, 160);
+        }
+      }
       state.entries[url] = entry;
       continue;
     }
@@ -257,6 +362,15 @@ async function runCheck(env) {
     state.entries[url] = entry;
   }
   state.deferred = stillQueued;
+
+  // Semantic index catch-up: re-index entries whose stored hash has no matching
+  // indexed revision (indexing failures, entries baselined before the index
+  // existed). Bounded per run; converges across runs.
+  let indexed = 0;
+  if (!dryRun && env.DB && env.AI) {
+    const cu = await indexCatchUp(env, state, providerByUrl, MAX_BACKFILL_PER_RUN, (n) => count());
+    indexed = cu.chunksIndexed;
+  }
 
   // Durable reporting: pending events are retried on every subsequent run until
   // GitHub acknowledges; eventId dedupe keeps comments identifiable on retries.
@@ -312,6 +426,8 @@ async function runCheck(env) {
     changes,
     hashed: hashedBodies,
     deferredForCpu: slice.filter((u) => state.entries[u.url]?.lastStatus === 'deferred:body-budget').length,
+    indexed,
+    indexErrors: Object.values(state.entries).filter((e) => e.indexError).length,
     pendingEvents: state.events.filter((e) => !e.reported).length,
     reportStatus,
     subrequests,
@@ -335,15 +451,28 @@ export default {
       if (!env.OPS_TOKEN) return json({ error: 'OPS_TOKEN not provisioned yet' }, 503);
       if (request.headers.get('x-ops-token') !== env.OPS_TOKEN) return json({ error: 'unauthorized' }, 401);
       const state = await env.WATCH_STATE.get('watcher', 'json');
+      const entries = Object.values(state?.entries ?? {});
       return json({
         ok: true,
         manifestUrl: env.MANIFEST_URL,
         shardSize: parseInt(env.SHARD_SIZE || '10', 10),
         cursor: state?.cursor ?? null,
-        trackedUrls: state?.entries ? Object.keys(state.entries).length : 0,
+        trackedUrls: entries.length,
         pendingEvents: (state?.events ?? []).filter((e) => !e.reported).length,
+        needsIndexing: entries.filter((e) => e.seen && e.hash && e.indexedHash !== e.hash).length,
+        indexErrors: entries.filter((e) => e.indexError).length,
         lastManifestHash: state?.manifestHash ?? null,
       });
+    }
+    if (url.pathname === '/__ops/backfill' && request.method === 'POST') {
+      // Authenticated semantic-index catch-up: re-indexes up to `limit` URLs whose
+      // stored hash has no matching indexed revision (snapshots re-read from R2).
+      if (!env.OPS_TOKEN) return json({ error: 'OPS_TOKEN not provisioned yet' }, 503);
+      if (request.headers.get('x-ops-token') !== env.OPS_TOKEN) return json({ error: 'unauthorized' }, 401);
+      let limit = 5;
+      try { limit = Math.max(1, Math.min(20, parseInt((await request.json()).limit ?? '5', 10) || 5)); } catch { /* default */ }
+      const result = await runBackfill(env, limit);
+      return json({ ok: true, ...result });
     }
     return json({ error: 'not found' }, 404);
   },

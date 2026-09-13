@@ -111,7 +111,13 @@ async function runCheck(env) {
   };
   count(); // state get
   if (state.manifestHash !== manifestHash) {
-    state = { manifestHash, cursor: 0, entries: state.entries ?? {}, events: state.events ?? [] };
+    state = {
+      manifestHash,
+      cursor: 0,
+      entries: state.entries ?? {},
+      events: state.events ?? [],
+      deferred: state.deferred ?? [],
+    };
   }
   state.entries = state.entries ?? {};
   state.events = state.events ?? [];

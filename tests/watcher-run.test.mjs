@@ -178,6 +178,62 @@ test('production shape: 59 URLs, shard 10, cap 4 — full baseline within 16 run
   }
 });
 
+test('deferred queue survives manifest changes and drains before seen URLs', async () => {
+  const bodyHtml = '<html><body><p>' + 'terms text '.repeat(7000) + '</p></body></html>';
+  const listA = Array.from({ length: 10 }, (_, i) => `https://p${i}.example/terms`);
+  let currentUrls = listA;
+  let storedState = null;
+  const snapshots = [];
+  const fetchCounts = {};
+  const env = {
+    MANIFEST_URL: 'https://manifest.example/watch-urls.json',
+    SHARD_SIZE: '10',
+    MAX_HASHED_BODIES: '4',
+    WATCH_STATE: {
+      get: async () => storedState,
+      put: async (_key, value) => {
+        storedState = JSON.parse(value);
+      },
+    },
+    SNAPSHOTS: { put: async (key) => snapshots.push(key) },
+  };
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (input) => {
+    const url = typeof input === 'string' ? input : input.url;
+    if (url === env.MANIFEST_URL) {
+      return new Response(JSON.stringify({
+        urls: currentUrls.map((u) => ({ url: u, providers: [{ id: u, name: u, surface: 'API' }] })),
+      }), { headers: { 'content-type': 'application/json' } });
+    }
+    fetchCounts[url] = (fetchCounts[url] ?? 0) + 1;
+    return new Response(bodyHtml, { status: 200, headers: { 'content-type': 'text/html' } });
+  };
+  try {
+    // run 1 (manifest A, 10 URLs, cap 4): p0-p3 baselined, p4-p9 CPU-deferred
+    await watcher.scheduled({}, env, {});
+    assert.deepEqual(storedState.deferred, listA.slice(4));
+
+    // run 2 (manifest B appends s10): the queue must drain FIRST — p4-p7 hash,
+    // p0-p3 are not re-fetched or re-hashed, p8-p9 re-queue
+    currentUrls = [...listA, 'https://s10.example/terms'];
+    await watcher.scheduled({}, env, {});
+    assert.equal(fetchCounts['https://p4.example/terms'], 1, 'queued p4 fetched first');
+    assert.equal(fetchCounts['https://p0.example/terms'], 1, 'seen p0 not re-fetched while queue drains');
+    assert.ok(storedState.entries['https://p4.example/terms'].seen);
+    assert.equal(storedState.deferred[0], 'https://p8.example/terms');
+    assert.equal(storedState.deferred[1], 'https://p9.example/terms');
+
+    // run 3 (manifest B' removes p9): queued p9 dropped, queued p8 hashes before fresh s10
+    currentUrls = currentUrls.filter((u) => u !== 'https://p9.example/terms');
+    await watcher.scheduled({}, env, {});
+    assert.equal(fetchCounts['https://p8.example/terms'], 1, 'queued p8 retried before fresh URLs');
+    assert.ok(!storedState.deferred.includes('https://p9.example/terms'), 'removed queued URL dropped');
+    assert.ok(storedState.entries['https://p8.example/terms'].seen);
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});
+
 test('304 responses cost no body hashing', async () => {
   const baseline = makeEnv({ maxHashed: 20 });
   try {

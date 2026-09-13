@@ -5,6 +5,7 @@ dist/
 
 # wrangler files
 .wrangler
+.wrangler-dry/
 .dev.vars*
 !.dev.vars.example
 !.env.example

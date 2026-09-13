@@ -1,7 +1,7 @@
 {
   "meta": {
     "lastUpdated": "2026-09-13",
-    "version": "1.5.0",
+    "version": "1.6.0",
     "description": "PrivacyWatch — LLM data privacy, retention, and model training tracker",
     "maintainer": "WyrdWerk (github.com/WyrdWerk/PrivacyWatch)"
   },
@@ -2524,6 +2524,781 @@
       ],
       "sourceDate": "2026-09-13",
       "notes": "Platform Terms of Use (May 27, 2025) + privacy policy. Riverflow generation shares prompt data with third-party diffusion model operators (disclosed in the privacy policy). ISO/IEC 42001 certified July 2025; no incidents found."
+    },
+    {
+      "id": "chutes",
+      "name": "Chutes",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "clean",
+      "incident": false,
+      "training": {
+        "label": "Off — explicit",
+        "detail": "ToS: \"No Training on Your Data: We do not use your API requests, responses, or application content to train AI models.\" No opt-out needed — training is simply not exercised."
+      },
+      "retention": {
+        "label": "Not stored — memory only",
+        "detail": "\"We do not log, store, or persist the content of your API inference requests or responses.\" Content \"exists only in memory for the duration of the request\"; only request metadata (timestamps, token counts) is collected."
+      },
+      "zdr": {
+        "label": "Yes — by design",
+        "detail": "Standard API mode is memory-only; E2E mode relays the request as an encrypted blob; TEE mode (confidential_compute) puts processing \"inside hardware-isolated memory\".",
+        "status": "full"
+      },
+      "location": {
+        "label": "Decentralized — global node operators",
+        "flag": "🌐",
+        "detail": "Inference is provided by independent third-party node operators (Bittensor ecosystem); TEE mode prevents access by Chutes or datacenter operators."
+      },
+      "sourceUrl": "https://chutes.ai/tos",
+      "privacyUrl": "https://chutes.ai/privacy",
+      "relatedUrls": [
+        "https://chutes.ai/dpa"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "First-party applications (chat.chutes.ai) store user content as a core feature and are deletable; third-party chutes may carry their own terms. Status page shows operational incidents; no confirmed data breach found."
+    },
+    {
+      "id": "venice",
+      "name": "Venice",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "clean",
+      "incident": false,
+      "training": {
+        "label": "Off — contractual",
+        "detail": "ToS §10.2: Venice.ai \"shall not use, and shall require that third-party large language model providers ('Third-Party LLM Providers') do not use, any User Content to train any machine learning, deep learning, or statistical learning algorithms, LLMs, neural networks, or models.\""
+      },
+      "retention": {
+        "label": "Zero retention via providers",
+        "detail": "PP: \"We operate a zero data retention policy with our model providers in which our model providers are prohibited from storing, retaining, or using any of your Prompts or Outputs beyond the time strictly necessary to process and return a response.\""
+      },
+      "zdr": {
+        "label": "Yes — by design",
+        "detail": "ZDR with model providers by default; likeness generation is routed to BytePlus (Singapore), which is prohibited from using likeness data for unrelated purposes.",
+        "status": "full"
+      },
+      "location": {
+        "label": "US + third-party providers",
+        "flag": "🇺🇸",
+        "detail": "Venice operates the service; generation runs on third-party open model providers (likeness features via BytePlus, Singapore)."
+      },
+      "sourceUrl": "https://venice.ai/legal/tos",
+      "privacyUrl": "https://venice.ai/legal/privacy-policy",
+      "relatedUrls": [
+        "https://venice.ai/privacy",
+        "https://venice.ai/models"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "Privacy-first consumer design (chat history kept locally in browser); OpenRouter access uses the same ToS §10.2 terms. No confirmed incidents found."
+    },
+    {
+      "id": "mancer",
+      "name": "Mancer",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "unverified",
+      "incident": false,
+      "training": {
+        "label": "Silent",
+        "detail": "ToS has no clause on training or model improvement over API inputs/outputs. Privacy policy lists \"improving efficiency, training, and quality control\" only as an operational ground for personal information."
+      },
+      "retention": {
+        "label": "Silent — no stated period",
+        "detail": "ToS: \"We will process and store Customer Content in accordance with our privacy commitments.\" No auto-deletion period for API content; delinquent accounts are \"archived or purged\" after 30 days of delinquency."
+      },
+      "zdr": {
+        "label": "Not documented",
+        "detail": "No no-training or zero-retention arrangement found in the ToS or privacy policy.",
+        "status": "none"
+      },
+      "location": {
+        "label": "US hosting",
+        "flag": "🇺🇸",
+        "detail": "PP: \"Our Platform is hosted in the United States of America\" (Sunlit Software Inc. dba Mancer AI)."
+      },
+      "sourceUrl": "https://mancer.tech/terms",
+      "privacyUrl": "https://mancer.tech/privacy",
+      "relatedUrls": [],
+      "sourceDate": "2026-09-13",
+      "notes": "Thin, template-style terms (updated June 6, 2024). Prompt/output handling is undocumented, so the row stays unverified rather than inferred."
+    },
+    {
+      "id": "nextbit",
+      "name": "NextBit",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "clean",
+      "incident": false,
+      "training": {
+        "label": "Off — explicit",
+        "detail": "ToS §5.3: \"Nextbit does not use customer data to train, fine-tune, or otherwise adapt any AI model.\" PP: \"Your Personal Data will not be used to train AI models.\""
+      },
+      "retention": {
+        "label": "Short — auto-deleted",
+        "detail": "Diagnostic/improvement data \"is stored in isolated environments with restricted access controls and is automatically and permanently deleted upon expiry of the retention period.\" Specific day-count not published."
+      },
+      "zdr": {
+        "label": "Yes — documented",
+        "detail": "Dedicated Zero Data Retention page: customer data used to train/fine-tune = \"Never\"; operational data always kept in isolated environments; EU-resident infrastructure available on request.",
+        "status": "full"
+      },
+      "location": {
+        "label": "EU option",
+        "flag": "🇪🇺",
+        "detail": "Operator NEXTBIT 256, S.L. (Spain); ZDR page: \"EU-resident infrastructure available upon request.\""
+      },
+      "sourceUrl": "https://www.nextbit256.com/docs/terms-of-service",
+      "privacyUrl": "https://www.nextbit256.com/docs/privacy-policy",
+      "relatedUrls": [
+        "https://www.nextbit256.com/docs/zero-data-retention",
+        "https://www.nextbit256.com/docs/dpa"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "ToS v4 dated May 2026. ZDR page also documents a \"No AI Model Training — Contractual Basis\" table."
+    },
+    {
+      "id": "akashml",
+      "name": "AkashML",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "clean",
+      "incident": false,
+      "training": {
+        "label": "Off — explicit",
+        "detail": "PP: \"We do not use Voice Samples, Voiceprints, user-uploaded images, prompts, generated Outputs, or other User Content to train, fine-tune, or improve any AI model, whether our own or any third party's.\""
+      },
+      "retention": {
+        "label": "Not retained post-request",
+        "detail": "\"we do not retain prompts or transient inputs after the request has been processed\"; exception only for content the user affirmatively saves (e.g., voice-library uploads)."
+      },
+      "zdr": {
+        "label": "Yes — transient processing",
+        "detail": "Inputs are processed transiently and not persisted; stored voice/voiceprint features carry BIPA-style consent and deletion rules.",
+        "status": "full"
+      },
+      "location": {
+        "label": "Decentralized — Akash Network",
+        "flag": "🌐",
+        "detail": "PP: \"the Services are hosted on the Akash Network, a decentralized compute network operated by third-party node operators.\""
+      },
+      "sourceUrl": "https://akashml.com/terms",
+      "privacyUrl": "https://akashml.com/privacy",
+      "relatedUrls": [],
+      "sourceDate": "2026-09-13",
+      "notes": "ToS: de-identified, aggregated analytics are \"not used to train AI models\" and the content license terminates when the user deletes the content or closes the account."
+    },
+    {
+      "id": "phala-redpill",
+      "name": "Phala (Redpill)",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "unverified",
+      "incident": false,
+      "training": {
+        "label": "Unclear — improvement rights, no training statement",
+        "detail": "ToS §19: \"We may use Content to provide, maintain, develop, and improve our Services, comply with applicable law, enforce our terms and policies, and keep our Services safe.\" No commitment not to train; TEE-mode logging excluded."
+      },
+      "retention": {
+        "label": "TEE mode: not collected",
+        "detail": "\"When using models deployed in TEE (Trusted Execution Environment) mode, we do not collect or log user prompts or request data.\" Non-TEE retention not specified."
+      },
+      "zdr": {
+        "label": "Partial — TEE mode only",
+        "detail": "TEE-mode prompts are end-to-end encrypted and unlogged; no formal ZDR arrangement documented for non-TEE endpoints.",
+        "status": "partial"
+      },
+      "location": {
+        "label": "Undisclosed",
+        "flag": "🌐",
+        "detail": "Decentralized TEE providers; terms name no processing regions."
+      },
+      "sourceUrl": "https://redpill.ai/terms",
+      "privacyUrl": "https://redpill.ai/privacy",
+      "relatedUrls": [],
+      "sourceDate": "2026-09-13",
+      "notes": "Privacy policy is website-focused (cookies, IP/User-Agent for anti-spam retained six months). Training default cannot be determined from the documents, so the row stays unverified."
+    },
+    {
+      "id": "inference-net",
+      "name": "Inference.net",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "caution",
+      "incident": false,
+      "training": {
+        "label": "Off — explicit",
+        "detail": "PP: \"We do not use your data to train AI models.\""
+      },
+      "retention": {
+        "label": "Not documented",
+        "detail": "ToS: \"you do not own your User Account, nor do you possess any rights to data stored by or on behalf of Inference.net on the servers running the Service.\" No auto-deletion period published."
+      },
+      "zdr": {
+        "label": "Not documented",
+        "detail": "No ZDR tier found; the no-training statement is the only data-right commitment.",
+        "status": "none"
+      },
+      "location": {
+        "label": "Undisclosed",
+        "flag": "🌐",
+        "detail": "Terms do not state processing regions."
+      },
+      "sourceUrl": "https://inference.net/terms-of-service/",
+      "privacyUrl": "https://inference.net/privacy-policy/",
+      "relatedUrls": [],
+      "sourceDate": "2026-09-13",
+      "notes": "ToS separately prohibits customers from using site content for ML training. Provider no-training is stated only in the privacy policy; retention is vague → caution."
+    },
+    {
+      "id": "novitai",
+      "name": "Novita AI",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "clean",
+      "incident": false,
+      "training": {
+        "label": "Off — ZDR default",
+        "detail": "ToS §10.2: \"By Default, Novita AI will not use your Content to train our own models or to improve the Services.\" PP: \"The Personal Information will not be used for model training.\""
+      },
+      "retention": {
+        "label": "Not retained post-delivery",
+        "detail": "ZDR policy: no logging for human review and no retention \"beyond the time it takes to generate Output and deliver that Output to you\"; automated safety screening is excluded from the definition of retention."
+      },
+      "zdr": {
+        "label": "Yes — by design",
+        "detail": "\"Zero Data Retention\" policy by default, except where required by law or needed to provide the service/technical support.",
+        "status": "full"
+      },
+      "location": {
+        "label": "Singapore + global",
+        "flag": "🇸🇬",
+        "detail": "PP: personal information \"may transfer... to countries outside your country or region, including the United States.\""
+      },
+      "sourceUrl": "https://novita.ai/legal/terms-of-service",
+      "privacyUrl": "https://novita.ai/legal/privacy-policy",
+      "relatedUrls": [],
+      "sourceDate": "2026-09-13",
+      "notes": "Screening carve-out: Novita may \"apply automated safety screening tools to your Content as we deem appropriate\" without it counting as retention."
+    },
+    {
+      "id": "friendli",
+      "name": "FriendliAI",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "caution",
+      "incident": false,
+      "training": {
+        "label": "Free tier on; paid inputs excluded",
+        "detail": "Exhibit 1 §1.1(c): Customer Materials submitted to free-of-charge services may be used \"for the purpose of improving, developing, enhancing, and providing FriendliAI's and its Affiliates' products and services\"; §1.1(d) improvement rights exclude Customer Inputs, Outputs, and proprietary Customer-Provided Checkpoints."
+      },
+      "retention": {
+        "label": "ZDR default — console opt-in",
+        "detail": "\"FriendliAI will not store, log, or otherwise persist any Customer Inputs or Customer Outputs beyond the duration strictly necessary to process the applicable API request and return a response, unless Customer opts-in to broader retention and use... through the Product Management Console.\""
+      },
+      "zdr": {
+        "label": "Yes — default, with carve-outs",
+        "detail": "ZDR is the default but expressly yields to §1.1(c) free-tier improvement rights and to customer opt-ins via the Product Management Console.",
+        "status": "full"
+      },
+      "location": {
+        "label": "KR + US/UK customer terms",
+        "flag": "🇰🇷",
+        "detail": "Privacy policy carries a Korean-residents annex plus UK GDPR and US-visitor sections; hosting regions are not itemized."
+      },
+      "sourceUrl": "https://friendli.ai/terms-of-service",
+      "privacyUrl": "https://friendli.ai/privacypolicy",
+      "relatedUrls": [
+        "https://friendli.ai/dpa"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "\"Model Improvements\" are treated as the Team Owner's Confidential Information. On termination FriendliAI \"may delete all Customer Materials... in accordance with FriendliAI's standard data retention policies.\""
+    },
+    {
+      "id": "parasail",
+      "name": "Parasail",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "guarded",
+      "incident": false,
+      "training": {
+        "label": "Off — explicit",
+        "detail": "ToS §2.7: \"we will not use your Customer Input to train our own models or to improve the Platform.\""
+      },
+      "retention": {
+        "label": "Request-duration only",
+        "detail": "\"only retain your Content for as long as is necessary to provide the Service to you (i.e., for the time it takes to generate Output and deliver that Output to you)\"; Parasail may inspect prompt/usage metadata (flags, parameters, sizes)."
+      },
+      "zdr": {
+        "label": "Yes — by design",
+        "detail": "PP: \"We do not store or log any personal data you send as Input to the 'serverless' and 'dedicated' versions of the Service\"; the batch tier is processed after submission by design.",
+        "status": "full"
+      },
+      "location": {
+        "label": "Undisclosed",
+        "flag": "🌐",
+        "detail": "Parasail, Inc.; privacy policy lists storage/retention sections but extracted text names no processing regions."
+      },
+      "sourceUrl": "https://www.parasail.io/legal/terms-of-service",
+      "privacyUrl": "https://www.parasail.io/legal/privacy-policy",
+      "relatedUrls": [],
+      "sourceDate": "2026-09-13",
+      "notes": "Batch tier: queries \"will not be processed in real time\" (discounted token pricing). No confirmed incidents found."
+    },
+    {
+      "id": "openinference",
+      "name": "Open Inference",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "caution",
+      "incident": false,
+      "training": {
+        "label": "Conflicting — ToS opt-out vs PP prohibition",
+        "detail": "ToS: \"If you do not want us to use your Customer Content to train our models, or to share it with third parties for their business purposes, you may opt out by following the instructions on the Platform.\" PP: \"we do not use it to train or improve any model.\""
+      },
+      "retention": {
+        "label": "Zero retention (PP)",
+        "detail": "PP: \"We operate the Services on a zero-data-retention basis with respect to the contents of your prompts and the responses generated from them.\""
+      },
+      "zdr": {
+        "label": "Yes — per privacy policy",
+        "detail": "\"We process your inputs only transiently, solely to generate and return your output, and we do not store Customer Content after the response is delivered.\"",
+        "status": "full"
+      },
+      "location": {
+        "label": "US hosting",
+        "flag": "🇺🇸",
+        "detail": "PP: \"Our Platform is hosted in the United States and is subject to U.S. law.\""
+      },
+      "sourceUrl": "https://www.openinference.ai/terms",
+      "privacyUrl": "https://www.openinference.ai/privacy",
+      "relatedUrls": [],
+      "sourceDate": "2026-09-13",
+      "notes": "ToS implies training with self-serve opt-out while the privacy policy states flat no-training ZDR; rated caution until the documents reconcile. Delinquent accounts may be \"suspended, archived, or purged\" after 30 days."
+    },
+    {
+      "id": "ionstream",
+      "name": "Ionstream",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "unverified",
+      "incident": false,
+      "training": {
+        "label": "Silent",
+        "detail": "The MSA and privacy policy contain no clause on training or model improvement over customer inputs/outputs."
+      },
+      "retention": {
+        "label": "Silent",
+        "detail": "No auto-deletion period published; the MSA covers infrastructure management and backup integrity, not API data lifecycle."
+      },
+      "zdr": {
+        "label": "Not documented",
+        "detail": "No no-training or zero-retention arrangement found; a sub-processors page exists.",
+        "status": "none"
+      },
+      "location": {
+        "label": "US (Texas)",
+        "flag": "🇺🇸",
+        "detail": "Ionstream LLC, 2626 Spring Cypress Road, Spring, Texas; MSA governed by US law."
+      },
+      "sourceUrl": "https://ionstream.ai/terms-and-conditions/",
+      "privacyUrl": "https://ionstream.ai/legal/privacy-policy",
+      "relatedUrls": [
+        "https://ionstream.ai/legal/subprocessors"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "Terms are infrastructure-MSA boilerplate; API prompt/output handling is undocumented → unverified."
+    },
+    {
+      "id": "darkbloom",
+      "name": "Darkbloom",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "guarded",
+      "incident": false,
+      "training": {
+        "label": "Not granted — improvement allowed",
+        "detail": "PP §5.6: \"This Privacy Policy does not grant us a right to use your Content for general-purpose model training.\" ToS license: use Inputs and Outputs \"solely as necessary to provide, secure, maintain, bill for, enforce, and improve the Services, comply with law, and prevent fraud, abuse, or misuse.\""
+      },
+      "retention": {
+        "label": "Transient — plaintext coordinator",
+        "detail": "\"The current service architecture requires our coordinator to process request payloads in plaintext on a transient basis\"; generated images may be \"temporarily stored in service memory pending retrieval\"."
+      },
+      "zdr": {
+        "label": "Partial — no E2E encryption yet",
+        "detail": "ToS flags \"the current absence of end-to-end encryption between consumer and provider\"; processing is transient but not sealed end-to-end.",
+        "status": "partial"
+      },
+      "location": {
+        "label": "US + providers",
+        "flag": "🇺🇸",
+        "detail": "Eigen Labs, Inc.: \"We may process personal information in the United States and other jurisdictions where we or our service providers operate.\""
+      },
+      "sourceUrl": "https://www.darkbloom.dev/terms.html",
+      "privacyUrl": "https://www.darkbloom.dev/privacy.html",
+      "relatedUrls": [],
+      "sourceDate": "2026-09-13",
+      "notes": "Privacy properties are architecture-dependent per the privacy policy; no confirmed incidents found."
+    },
+    {
+      "id": "sail-research",
+      "name": "Sail Research",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "guarded",
+      "incident": false,
+      "training": {
+        "label": "Off — opt-in only",
+        "detail": "\"Sail will not use Customer Data (including Inputs and Outputs) to train, fine-tune, or improve any artificial intelligence or machine-learning model, except (a) with Customer's express opt-in consent, or (b) as necessary to provide the Services.\""
+      },
+      "retention": {
+        "label": "Not documented",
+        "detail": "No input/output retention period published; §6.4 service data (usage/telemetry, excluding input/output content) may be used and de-identified; email analytics kept ~12 months (PostHog)."
+      },
+      "zdr": {
+        "label": "Not documented",
+        "detail": "No formal ZDR tier; training requires express opt-in consent.",
+        "status": "none"
+      },
+      "location": {
+        "label": "Undisclosed",
+        "flag": "🌐",
+        "detail": "No processing region stated in ToS or privacy policy."
+      },
+      "sourceUrl": "https://www.sailresearch.com/terms",
+      "privacyUrl": "https://www.sailresearch.com/privacy",
+      "relatedUrls": [
+        "https://docs.sailresearch.com/dpa"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "Strong no-training clause with opt-in exception; retention documentation is thin. Sailboxes are hosted sandboxed VM environments."
+    },
+    {
+      "id": "perceptron",
+      "name": "Perceptron",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "caution",
+      "incident": false,
+      "training": {
+        "label": "Consumer tier on; enterprise opt-in",
+        "detail": "PP: under a Consumer Use License the Provider \"may process and use data submitted by users to train, test, and improve its AI models\" (aggregated/anonymized handling); enterprise licenses: \"shall not use Customer Data for AI training or development purposes unless expressly authorized in writing.\""
+      },
+      "retention": {
+        "label": "≤ 30 days",
+        "detail": "\"such data will be retained for no longer than thirty (30) days and will thereafter be deleted or de-identified\" (unless law/disputes require longer)."
+      },
+      "zdr": {
+        "label": "Partial — on request, approval required",
+        "detail": "\"customers may request reduced or zero-retention options for certain services or endpoints, subject to technical, security, and compliance requirements.\"",
+        "status": "partial"
+      },
+      "location": {
+        "label": "Undisclosed",
+        "flag": "🌐",
+        "detail": "No processing regions stated; USD billing via Stripe."
+      },
+      "sourceUrl": "https://www.perceptron.inc/terms-of-use",
+      "privacyUrl": "https://www.perceptron.inc/privacy-policy",
+      "relatedUrls": [],
+      "sourceDate": "2026-09-13",
+      "notes": "ToS: use of Customer Data for security/abuse monitoring \"shall not be deemed training of foundation models or customer-facing AI models.\""
+    },
+    {
+      "id": "inceptron",
+      "name": "Inceptron",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "clean",
+      "incident": false,
+      "training": {
+        "label": "Off — opt-in only",
+        "detail": "ToS §4.2: \"We do not use Customer Content to train our foundation or fine-tuned models unless you (i) explicitly opt in via product settings, or (ii) sign a separate agreement.\" PP: \"We do not train models on customer data or share model weights across customers.\""
+      },
+      "retention": {
+        "label": "Zero-retention default",
+        "detail": "§6.2: \"Zero-retention is enabled by default: prompts and outputs are not logged or stored. Request data is processed only transiently to serve the request.\" Standard tier keeps \"minimal operational logging with short retention for security/abuse detection\"."
+      },
+      "zdr": {
+        "label": "Yes — by design",
+        "detail": "Prompts/outputs not logged or stored by default; temporary payload retention only by explicit opt-in for debugging.",
+        "status": "full"
+      },
+      "location": {
+        "label": "Undisclosed",
+        "flag": "🌐",
+        "detail": "§6.4 references international-transfer safeguards but names no regions."
+      },
+      "sourceUrl": "https://www.inceptron.io/termsofservice",
+      "privacyUrl": "https://www.inceptron.io/privacy",
+      "relatedUrls": [],
+      "sourceDate": "2026-09-13",
+      "notes": "Optional DPA available for B2B/API customers handling personal data; encryption in transit and at rest where applicable."
+    },
+    {
+      "id": "dekallm",
+      "name": "DekaLLM (Cloudeka)",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "guarded",
+      "incident": false,
+      "training": {
+        "label": "Off — explicit",
+        "detail": "\"Customer data is never used to train models, is temporarily stored for operational purposes only, and is permanently deleted according to a defined schedule.\""
+      },
+      "retention": {
+        "label": "Temporary — scheduled deletion",
+        "detail": "Inputs/outputs kept \"temporarily... for operational purposes only\" and \"permanently deleted according to a defined schedule\"; the schedule itself is not published."
+      },
+      "zdr": {
+        "label": "Partial — transient processing, no ZDR tier",
+        "detail": "Transient operational storage with scheduled permanent deletion; no formal ZDR product tier documented.",
+        "status": "partial"
+      },
+      "location": {
+        "label": "Indonesia",
+        "flag": "🇮🇩",
+        "detail": "Lintasarta Cloudeka (Deka LLM); terms are subject to Indonesian law and the privacy policy cites Indonesia's PDP Law."
+      },
+      "sourceUrl": "https://docs.cloudeka.ai/service-portal-ai/end-user-license-agreement",
+      "privacyUrl": null,
+      "relatedUrls": [
+        "https://docs.cloudeka.ai/service-portal-ai/end-user-license-agreement#privacy-policy"
+      ],
+      "sourceDate": "2026-09-13",
+      "notes": "EULA covers the Deka LLM API gateway; the service \"excludes model fine-tuning\"; SLA 99.95%. Standalone privacy policy lives in the Lintasarta portal."
+    },
+    {
+      "id": "streamlake",
+      "name": "StreamLake",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "high-risk",
+      "incident": true,
+      "training": {
+        "label": "On — email opt-out",
+        "detail": "ToS §4.6.3(f): StreamLake may use Content to \"create, test, improve, train, or otherwise develop the artificial intelligence or machine learning models, systems, architecture, weights or related technology used by StreamLake in connection with the Services.\" §4.6.4: revoke \"by sending an email to support@StreamLake.ai\"."
+      },
+      "retention": {
+        "label": "Stored while needed — no fixed period",
+        "detail": "PP: \"We store and process the content you upload to the Platform, as well as data generated through your use of the Platform\"; StreamLake \"reserve[s] the right to delete, destroy, or anonymize your Data that is no longer needed.\" No auto-deletion period."
+      },
+      "zdr": {
+        "label": "Not available",
+        "detail": "Training on Content is an enumerated default right; no no-training or zero-retention tier found.",
+        "status": "none"
+      },
+      "location": {
+        "label": "Singapore",
+        "flag": "🇸🇬",
+        "detail": "PP: \"We store your Data on our servers located in Singapore\"; StreamLake is a Kuaishou affiliate incorporated in Singapore."
+      },
+      "sourceUrl": "https://www.streamlake.ai/document/DOC/mgkchnd89grpt1961fw",
+      "privacyUrl": "https://www.streamlake.ai/document/DOC/mgkci47q13qr66h9i54",
+      "relatedUrls": [],
+      "sourceDate": "2026-09-13",
+      "notes": "Incident note: parent Kuaishou was fined ¥119.1M (~$17M) by Beijing's cyberspace regulator in Feb 2026 for content-control failures and system vulnerabilities (Reuters/Global Times/Caixin), and a Kuaishou unit was fined US$3.7M over live-streaming e-commerce violations (SCMP) — corporate regulatory actions, not API data breaches."
+    },
+    {
+      "id": "aionlabs",
+      "name": "Aion Labs",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "unverified",
+      "incident": false,
+      "training": {
+        "label": "Silent",
+        "detail": "ToS contains no clause permitting or prohibiting training/model improvement on Inputs or Outputs."
+      },
+      "retention": {
+        "label": "Necessary-purpose only",
+        "detail": "PP: \"We collect and store this content only as necessary to provide the Services\"; personal data kept \"only for as long as necessary to fulfill the purposes... unless a longer retention period is required by law.\""
+      },
+      "zdr": {
+        "label": "Not documented",
+        "detail": "No ZDR tier; storage limited to service necessity.",
+        "status": "none"
+      },
+      "location": {
+        "label": "Undisclosed",
+        "flag": "🌐",
+        "detail": "No processing regions named; EU right-to-be-forgotten acknowledged."
+      },
+      "sourceUrl": "https://www.aionlabs.ai/terms/",
+      "privacyUrl": "https://www.aionlabs.ai/privacy/",
+      "relatedUrls": [],
+      "sourceDate": "2026-09-13",
+      "notes": "Thin terms; GDPR rights described generically. Insufficient documentation to verify training posture → unverified."
+    },
+    {
+      "id": "mara",
+      "name": "MARA",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "clean",
+      "incident": false,
+      "training": {
+        "label": "Off — explicit",
+        "detail": "AI Policies: \"MARA may not train models on Customer Content from the Services\"; \"we do not share any User AI Data with third parties for the purposes of training, fine-tuning or related activities.\""
+      },
+      "retention": {
+        "label": "Not retained",
+        "detail": "\"Inputs provided by users and any generated outputs are not retained\"; \"We delete any operational logs associated with our inference Services when they are no longer necessary to provide\" the service."
+      },
+      "zdr": {
+        "label": "Yes — by design",
+        "detail": "Inference inputs/outputs are not retained and MARA states \"We do not collect or view the contents of User AI Data\"; query logs (Service Usage Data) are used for operations/improvement but exclude Customer Content.",
+        "status": "full"
+      },
+      "location": {
+        "label": "US + other countries",
+        "flag": "🇺🇸",
+        "detail": "\"your data may be stored and processed in the United States and other countries\"; hosted solution governed by New York law."
+      },
+      "sourceUrl": "https://www.mara.com/mara-legals/ai-policies#cloud-toc",
+      "privacyUrl": "https://www.mara.com/mara-legals/privacy-policy",
+      "relatedUrls": [],
+      "sourceDate": "2026-09-13",
+      "notes": "Personal-information retention: 12 months from last engagement unless law requires longer. No confirmed breach of the AI service found; SEC filings discuss security-breach risk factors generically."
+    },
+    {
+      "id": "nex-agi",
+      "name": "Nex AGI",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "high-risk",
+      "incident": false,
+      "training": {
+        "label": "On — documented",
+        "detail": "PP: \"To identify areas for improvement, develop new features, and enhance the overall user experience. This includes training and refining our underlying technology, such as Nex-AGI models and algorithms.\" Applied to User Content, communication info, device/usage info, and log data."
+      },
+      "retention": {
+        "label": "Open-ended",
+        "detail": "\"We store your information as long as necessary to provide the services, fulfill the purposes outlined in this policy and other legitimate business purposes (such as service improvement, resolving disputes, safety or security)... account, input, and payment information are retained while your account is active.\" No auto-deletion period."
+      },
+      "zdr": {
+        "label": "Not available",
+        "detail": "No no-training or zero-retention tier; training is an enumerated purpose over User Content.",
+        "status": "none"
+      },
+      "location": {
+        "label": "China",
+        "flag": "🇨🇳",
+        "detail": "Operated by Shanghai Qiji Zhifeng in Shanghai, China; backups are stored \"in different physical locations\"; personal information \"may be transferred to and stored on servers\" abroad (region unnamed)."
+      },
+      "sourceUrl": "https://api.nex-agi.cn/privacy-policy",
+      "privacyUrl": "https://api.nex-agi.cn/privacy-policy",
+      "relatedUrls": [],
+      "sourceDate": "2026-09-13",
+      "notes": "Only opt-outs found: marketing-unsubscribe links and account deletion via api-service@qijizhifeng.com; no training opt-out documented. ToS URL is itself the privacy policy."
+    },
+    {
+      "id": "modelrun-modular",
+      "name": "ModelRun (Modular)",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "unverified",
+      "incident": false,
+      "training": {
+        "label": "Silent on API data",
+        "detail": "ToS covers Modular IP and AI-Derived Work but has no clause permitting or prohibiting training on User Generated Content. PP: aggregated/anonymized data is used \"to analyze, build and improve the Services\"."
+      },
+      "retention": {
+        "label": "Silent",
+        "detail": "No retention period for User Generated Content published; \"Derivative Data\" (aggregated/anonymized metrics, feedback, ratings on Code) is owned by Modular and usable \"for any lawful purpose\"."
+      },
+      "zdr": {
+        "label": "Not documented",
+        "detail": "No ZDR tier found in terms or privacy policy.",
+        "status": "none"
+      },
+      "location": {
+        "label": "US",
+        "flag": "🇺🇸",
+        "detail": "Modular Inc, 199 1st Street, Los Altos, CA; processing regions not itemized."
+      },
+      "sourceUrl": "https://www.modular.com/legal/terms",
+      "privacyUrl": "https://www.modular.com/legal/privacy",
+      "relatedUrls": [],
+      "sourceDate": "2026-09-13",
+      "notes": "The ModelRun inference surface on OpenRouter is hosted by Modular; its terms do not document the hosted inference API's prompt/output handling → unverified."
+    },
+    {
+      "id": "morph",
+      "name": "Morph",
+      "surface": "API",
+      "surfaceType": "api",
+      "category": "inference",
+      "categoryLabel": "Inference",
+      "rating": "guarded",
+      "incident": false,
+      "training": {
+        "label": "Off by default — support/debug exception",
+        "detail": "ToS: \"No training by default — your code is not used to train our models, except when you request support or we're debugging issues.\" Free tier: during support Morph may \"train our models to prevent similar issues, and improve service quality\"."
+      },
+      "retention": {
+        "label": "90d free / 30d paid / ZDR enterprise",
+        "detail": "Free: \"We retain your code and content for up to 90 days\" then deleted/anonymized; paid: \"30-day data retention with secure deletion\"; enterprise: \"Code and content processed exclusively in memory and never written to persistent storage.\""
+      },
+      "zdr": {
+        "label": "Yes — enterprise tier",
+        "detail": "Enterprise ZDR: \"Zero Training: We do not use your submissions to train or improve our models. Period.\"; immediate memory purge, no content logging, no human access without explicit grant.",
+        "status": "full"
+      },
+      "location": {
+        "label": "US primary",
+        "flag": "🇺🇸",
+        "detail": "PP: \"Our primary data processing occurs in the United States, with additional processing in select countries where our service providers operate\"; SCCs for EEA/UK/Swiss transfers; self-hosted keeps data in your environment."
+      },
+      "sourceUrl": "https://www.morphllm.com/privacy/tos",
+      "privacyUrl": "https://www.morphllm.com/privacy",
+      "relatedUrls": [],
+      "sourceDate": "2026-09-13",
+      "notes": "Managed Instance option is \"hosted within your private cloud environment\". Rated guarded because free/paid tiers include a support/debugging training exception; enterprise tier removes it."
     }
   ]
 }

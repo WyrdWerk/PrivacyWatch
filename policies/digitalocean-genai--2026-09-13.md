@@ -13,3 +13,6 @@ Primary source: https://www.digitalocean.com/legal/terms-of-service-agreement
 Privacy page used: https://www.digitalocean.com/legal/privacy-policy
 Supporting documents: https://www.digitalocean.com/legal/privacy-policy; https://techcrunch.com/2021/04/28/digitalocean-customer-billing-data-breach/
 Platform-wide cloud ToS/privacy apply; no GenAI-specific data-processing terms found at the cited URLs. April 2021: confirmed breach exposing customer billing data (TechCrunch/BleepingComputer). EU-U.S. DPF certified. Rated unverified pending GenAI-specific terms.
+
+## 2026-09-15 re-verification
+Still no GenAI-specific terms. Unverified → Caution for vague “improve our Services” language. Incident flag kept.

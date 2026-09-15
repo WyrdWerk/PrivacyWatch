@@ -13,3 +13,6 @@ Primary source: https://assets.ngc.nvidia.com/products/api-catalog/legal/NVIDIA%
 Privacy page used: https://www.nvidia.com/en-us/about-nvidia/privacy-policy/
 Supporting documents: https://www.nvidia.com/en-us/about-nvidia/privacy-policy/
 Product-specific NVIDIA API Trial Terms of Service (PDF, parsed successfully) govern the build.nvidia.com API Catalog trial; the general NVIDIA privacy policy supplements them. The privacy policy's model-training clause covers NVIDIA's own licensed datasets, not customer API content. Rated unverified on training.
+
+## 2026-09-15 re-verification
+Trial ToS §3.3(iv): User Content and Generated Content used “to improve NVIDIA products and services, including AI models.” Unverified → High Risk. No opt-out in that clause.

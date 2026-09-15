@@ -7,6 +7,8 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 **Light mode default.** WyrdWerk cream/ink/teal palette is now the default theme. Dark mode remains available via the header toggle (`localStorage`).
 
+**Rating legend.** Caution now includes opaque/silent public pages after a live check (GMICloud, AtlasCloud). That is not a finding that they train. Unverified is reserved for documents that exist but never mention API inputs/outputs (Ionstream).
+
 **Full 97-surface audit.** Pass 3 corrected Unverified rows that had training/improvement language in **privacy policies or later ToS sections**, not only the first ToS page: CoreWeave → Caution (PP inputs/outputs + AI/ML), NVIDIA API Catalog → High Risk (§3.3(iv) User Content including AI models), io.net → High Risk (§9 non-confidential UGC), Modular → Caution (§4.2 perpetual Derivative Data), DigitalOcean/GMICloud/AtlasCloud → Caution (vague or silent). Ionstream remains Unverified. Notes: [policies/AUDIT_2026-09-15.md](policies/AUDIT_2026-09-15.md).
 
 **Provider logos from Logo.dev.** Local 64px PNGs for all 86 families in `assets/logos/` (`npm run logos`). The site does not call img.logo.dev in the browser.

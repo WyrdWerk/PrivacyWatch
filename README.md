@@ -44,9 +44,9 @@ Public dataset: [`providers.json`](./providers.json) · Schema: [`providers.sche
 |---|---|
 | 🟢 Clean | Training off by default, ZDR documented, clear policy |
 | 🟡 Guarded | Generally safe with documented caveats |
-| 🟠 Caution | Training on by default, or vague retention language |
+| 🟠 Caution | Training on by default, vague retention, **or** published pages that stay silent/opaque after a live check (not evidence they train) |
 | 🔴 High Risk | Training on with weak opt-out, China storage, confirmed breach or gov bans |
-| ⚫ Unverified | Published docs never state a training default — not a missing score |
+| ⚫ Unverified | We have a document but it never addresses API inputs/outputs at all — not a missing review, and not the same as Caution-for-opacity |
 
 A 🚩 incident flag is additive — it marks confirmed security breaches, regulatory actions, or government bans on top of the base rating.
 
@@ -76,7 +76,7 @@ PrivacyWatch is a static site hosted on Cloudflare Pages. Pushes to `main` trigg
 
 - **Not legal advice.** This is a good-faith summary of public policy documents.
 - **Policies change.** Always verify with primary sources before making compliance decisions.
-- **"Unknown" ≠ safe.** ⚫ Unverified means we couldn't confirm — not that the provider is clean.
+- **"Unknown" ≠ safe.** ⚫ Unverified means the cited document never addresses API data — not that the provider is clean. 🟠 Caution on a silent/opaque host means we looked and they still don’t say; it is not a finding that they train.
 - Research conducted May–June 2026. Verify dates on individual provider entries.
 
 ---

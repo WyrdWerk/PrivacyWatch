@@ -34,7 +34,7 @@ For each provider surface, we research and document:
 
 Public dataset: [`providers.json`](./providers.json) · Schema: [`providers.schema.json`](./providers.schema.json)
 
-**Data sources:** Primary research from provider privacy policies, ToS, and DPAs. Cross-referenced with [OpenRouter](https://openrouter.ai)'s curated ToS index and [models.dev](https://models.dev) for provider metadata and logos.
+**Data sources:** Primary research from provider privacy policies, ToS, and DPAs. Cross-referenced with [OpenRouter](https://openrouter.ai)'s curated ToS index. Brand marks are local PNGs in `assets/logos/`, refreshed from [Logo.dev](https://www.logo.dev/docs/logo-images/introduction) via `npm run logos` (publishable key, never shipped to the browser).
 
 ---
 

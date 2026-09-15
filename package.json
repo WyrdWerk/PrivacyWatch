@@ -5,6 +5,7 @@
   "description": "PrivacyWatch — track data retention, privacy, and model training policies",
   "scripts": {
     "build": "node scripts/build.mjs",
+    "logos": "node scripts/fetch-logos.mjs",
     "deploy": "npm run build && npm run validate && wrangler pages deploy dist --project-name privacywatch",
     "deploy:legacy-redirect": "node scripts/legacy-redirect.mjs",
     "setup:bulk-redirect": "node scripts/bulk-redirect.mjs",

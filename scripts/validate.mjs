@@ -2,6 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { logoMap } from './lib/logos.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
@@ -45,6 +46,21 @@ for (const p of providers) {
   }
   if (ids.has(p.id)) errors.push(`duplicate id: ${p.id}`);
   ids.add(p.id);
+}
+
+const logos = logoMap();
+const logoDir = path.join(root, 'assets', 'logos');
+const seenNames = new Set();
+for (const p of providers) {
+  if (seenNames.has(p.name)) continue;
+  seenNames.add(p.name);
+  const slug = logos[p.name];
+  if (!slug) {
+    errors.push(`${p.name}: missing logo mapping`);
+    continue;
+  }
+  const png = path.join(logoDir, `${slug}.png`);
+  if (!fs.existsSync(png)) errors.push(`${p.name}: missing assets/logos/${slug}.png`);
 }
 
 if (errors.length) {

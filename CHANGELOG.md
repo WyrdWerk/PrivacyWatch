@@ -3,6 +3,12 @@
 All policy changes, new providers, and corrections are logged here.
 Format: `[YYYY-MM-DD] Provider — what changed — source`
 
+## Unreleased
+
+**Provider logos from Logo.dev.** Fetched 86 family brand marks into `assets/logos/` via the Logo.dev image CDN (`npm run logos`). The site serves only local PNGs (CSP `img-src 'self'`); the publishable key is not embedded. Build injects the name→slug map from `scripts/lib/logos.mjs`.
+
+---
+
 ## v1.6.0 — 2026-09-13
 
 **OpenRouter batches 4+5: 23 new providers.** Added Chutes, Venice, Mancer, NextBit, AkashML, Phala (Redpill), Inference.net, Novita AI, FriendliAI, Parasail, Open Inference, Ionstream, Darkbloom, Sail Research, Perceptron, Inceptron, DekaLLM (Cloudeka), StreamLake, Aion Labs, MARA, Nex AGI, ModelRun (Modular), and Morph — researched from primary terms-of-service and privacy documents with quotes. Highlights: Chutes, Venice, NextBit, AkashML, Novita AI, Inceptron, and MARA are training-off by default with documented zero-retention or transient-only processing (rated Clean); Parasail, Darkbloom, Sail Research, DekaLLM, and Morph are training-off with thinner retention documentation (Guarded); FriendliAI (free-tier training rights over Customer Materials), Perceptron (consumer-tier training), Inference.net (undocumented retention), and Open Inference (conflicting ToS opt-out vs privacy-policy no-training language) are Caution; StreamLake (training on Content with email-only opt-out) and Nex AGI (training on with open-ended retention, processed in China) are High Risk. Mancer, Phala (Redpill), Ionstream, Aion Labs, and ModelRun (Modular) leave the API data lifecycle undocumented and are rated Unverified. Incident recorded for StreamLake: parent Kuaishou's Feb 2026 ¥119.1M cyberspace-regulator fine — a corporate content-regulation penalty, not an API data breach. 74 → 97 surfaces across 63 → 86 families.

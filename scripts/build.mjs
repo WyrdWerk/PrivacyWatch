@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { buildManifest } from './lib/manifest.mjs';
+import { logoMap } from './lib/logos.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
@@ -32,13 +33,27 @@ function copyDir(src, dest) {
 fs.rmSync(dist, { recursive: true, force: true });
 fs.mkdirSync(dist, { recursive: true });
 
+function injectLogoMap(html) {
+  const json = JSON.stringify(logoMap());
+  const needle = /const LOGO_MAP = \/\*LOGO_MAP\*\/[\s\S]*?;/;
+  if (!needle.test(html)) {
+    console.error('Failed to inject LOGO_MAP into index.html (marker missing)');
+    process.exit(1);
+  }
+  return html.replace(needle, `const LOGO_MAP = /*LOGO_MAP*/ ${json};`);
+}
+
 for (const file of FILES) {
   const src = path.join(root, file);
   if (!fs.existsSync(src)) {
     console.error(`Missing required file: ${file}`);
     process.exit(1);
   }
-  fs.copyFileSync(src, path.join(dist, file));
+  if (file === 'index.html') {
+    fs.writeFileSync(path.join(dist, file), injectLogoMap(fs.readFileSync(src, 'utf-8')));
+  } else {
+    fs.copyFileSync(src, path.join(dist, file));
+  }
 }
 
 for (const dir of DIRS) {

@@ -9,3 +9,6 @@ Pages read: https://redpill.ai/terms (ToS), https://redpill.ai/privacy (privacy 
 - INCIDENTS: none found.
 - Confidence: low.
 - Notes: privacy policy is website-focused (cookies, IP/User-Agent anti-spam retained six months). Training default cannot be determined → row unverified.
+
+## 2026-09-15 re-verification
+ToS §19 improvement rights over Input/Output are enough to leave Unverified. Row moved to Caution; TEE logging carve-out stays partial ZDR.

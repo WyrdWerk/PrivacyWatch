@@ -46,7 +46,7 @@ Public dataset: [`providers.json`](./providers.json) · Schema: [`providers.sche
 | 🟡 Guarded | Generally safe with documented caveats |
 | 🟠 Caution | Training on by default, or vague retention language |
 | 🔴 High Risk | Training on with weak opt-out, China storage, confirmed breach or gov bans |
-| ⚫ Unverified | Insufficient documentation to assess |
+| ⚫ Unverified | Published docs never state a training default — not a missing score |
 
 A 🚩 incident flag is additive — it marks confirmed security breaches, regulatory actions, or government bans on top of the base rating.
 

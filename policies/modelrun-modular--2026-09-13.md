@@ -9,3 +9,6 @@ Pages read: https://www.modular.com/legal/terms (ToS), https://www.modular.com/l
 - INCIDENTS: none found.
 - Confidence: low.
 - Notes: the ModelRun inference surface on OpenRouter is hosted by Modular; its terms do not document hosted-inference prompt/output handling → unverified.
+
+## 2026-09-15 re-verification
+ToS §4.2 perpetual/irrevocable Derivative Data license; Image Generation prompts are UGC for moderation and service improvement. Unverified → Caution.

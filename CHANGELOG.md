@@ -3,9 +3,13 @@
 All policy changes, new providers, and corrections are logged here.
 Format: `[YYYY-MM-DD] Provider — what changed — source`
 
-## Unreleased
+## v1.6.1 — 2026-09-15
 
-**Provider logos from Logo.dev.** Fetched 86 family brand marks into `assets/logos/` via the Logo.dev image CDN (`npm run logos`). The site serves only local PNGs (CSP `img-src 'self'`); the publishable key is not embedded. Build injects the name→slug map from `scripts/lib/logos.mjs`.
+**Light mode default.** WyrdWerk cream/ink/teal palette is now the default theme. Dark mode remains available via the header toggle (`localStorage`).
+
+**Full 97-surface audit.** Pass 3 corrected Unverified rows that had training/improvement language in **privacy policies or later ToS sections**, not only the first ToS page: CoreWeave → Caution (PP inputs/outputs + AI/ML), NVIDIA API Catalog → High Risk (§3.3(iv) User Content including AI models), io.net → High Risk (§9 non-confidential UGC), Modular → Caution (§4.2 perpetual Derivative Data), DigitalOcean/GMICloud/AtlasCloud → Caution (vague or silent). Ionstream remains Unverified. Notes: [policies/AUDIT_2026-09-15.md](policies/AUDIT_2026-09-15.md).
+
+**Provider logos from Logo.dev.** Local 64px PNGs for all 86 families in `assets/logos/` (`npm run logos`). The site does not call img.logo.dev in the browser.
 
 ---
 

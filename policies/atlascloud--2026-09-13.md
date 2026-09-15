@@ -13,3 +13,6 @@ Primary source: https://www.atlascloud.ai/privacy
 Privacy page used: https://www.atlascloud.ai/privacy
 Supporting documents: https://www.atlascloud.ai/privacy
 The listed ToS URL (atlascloud.ai/privacy) is a combined "Privacy & Terms" page (last updated July 17, 2026); no separate terms page exists (atlascloud.ai/terms returns 404). All four fields silent — rated unverified.
+
+## 2026-09-15 re-verification
+Termly policy viewer does not describe API prompt collection. Unverified → Caution (website-template opacity).

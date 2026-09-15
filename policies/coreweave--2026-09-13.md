@@ -13,3 +13,6 @@ Primary source: https://docs.coreweave.com/policies/terms-of-service
 Privacy page used: https://docs.coreweave.com/policies/terms-of-service/privacy-policy
 Supporting documents: https://docs.coreweave.com/policies/terms-of-service/privacy-policy
 Platform cloud ToS (compute infrastructure), not model-inference-specific terms. Rated unverified because no document affirmatively addresses training on Customer Data. Only availability incidents (console/connectivity) found on the public status page.
+
+## 2026-09-15 re-verification
+Privacy Policy (not ToS) “Content You Submit as a Customer” collects inputs/outputs to develop/improve products; §7 names AI/ML processing. Unverified → Caution.

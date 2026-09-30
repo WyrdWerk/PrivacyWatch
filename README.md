@@ -32,9 +32,33 @@ For each provider surface, we research and document:
 
 **Coding Tools:** Cursor · OpenCode · HyperAgent · Wafer AI · Neuralwatt · CommandCode
 
-Public dataset: [`providers.json`](./providers.json) · Schema: [`providers.schema.json`](./providers.schema.json)
+Public dataset: [`providers.json`](./providers.json) · Schema: [`providers.schema.json`](./providers.schema.json) · API: [`/api/v1`](#api) · Licence: CC BY 4.0
 
 **Data sources:** Primary research from provider privacy policies, ToS, and DPAs. Cross-referenced with [OpenRouter](https://openrouter.ai)'s curated ToS index. Brand marks are local PNGs in `assets/logos/`, refreshed from [Logo.dev](https://www.logo.dev/docs/logo-images/introduction) via `npm run logos` (publishable key, never shipped to the browser).
+
+---
+
+## API
+
+Read-only JSON API, no key required. Responses are CORS-enabled and cached for an hour.
+
+| Endpoint | Returns |
+|---|---|
+| `GET /api/v1/providers` | Summary rows; filter with `category`, `rating`, `surfaceType`, `training`, `zdr`, `retention`, `region`, `maxRetentionDays`, `incident`, `ids` (compare), `fields=full` |
+| `GET /api/v1/providers/{id}` | One full row, including `evidence[]` (source URL + verbatim quote + retrieval date) and `incidents[]` |
+| `GET /api/v1/meta` | Version, licence, counts, filter vocabularies, endpoint map |
+| `GET /api/v1/openapi.json` | OpenAPI 3.1 spec |
+| `GET /api/search?q=` | Semantic search over archived policy text |
+
+Examples:
+
+```
+/api/v1/providers?training=off&zdr=default,self-serve&region=EU
+/api/v1/providers?category=inference&maxRetentionDays=30
+/api/v1/providers?ids=openai-api,anthropic-api,google-vertex&fields=full
+```
+
+Filter values: comma-separate or repeat a parameter for OR; different parameters combine with AND. `silent` means we read the provider's documents and they don't address the field.
 
 ---
 
@@ -78,6 +102,13 @@ PrivacyWatch is a static site hosted on Cloudflare Pages. Pushes to `main` trigg
 - **Policies change.** Always verify with primary sources before making compliance decisions.
 - **"Unknown" ≠ safe.** ⚫ Unverified means the cited document never addresses API data — not that the provider is clean. 🟠 Caution on a silent/opaque host means we looked and they still don’t say; it is not a finding that they train.
 - Research conducted May–September 2026. Verify dates on individual provider entries.
+
+---
+
+## License
+
+- **Data** (`providers.json`, API responses, PrivacyWatch research notes): [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — credit "PrivacyWatch by WyrdWerk". Quoted policy text and logos belong to their owners. See [`LICENSE-DATA.md`](./LICENSE-DATA.md).
+- **Code**: [MIT](./LICENSE).
 
 ---
 

@@ -18,7 +18,7 @@ const FILES = [
   '_redirects',
 ];
 
-const DIRS = ['assets'];
+const DIRS = ['assets', 'api'];
 
 function copyDir(src, dest) {
   fs.mkdirSync(dest, { recursive: true });
@@ -65,8 +65,15 @@ for (const dir of DIRS) {
   copyDir(src, path.join(dist, dir));
 }
 
+// OpenAPI spec carries the dataset version.
+const dataset = JSON.parse(fs.readFileSync(path.join(root, 'providers.json'), 'utf-8'));
+const specPath = path.join(dist, 'api', 'v1', 'openapi.json');
+const spec = JSON.parse(fs.readFileSync(specPath, 'utf-8'));
+spec.info.version = dataset.meta.version;
+fs.writeFileSync(specPath, JSON.stringify(spec, null, 2) + '\n');
+
 // Derived watch manifest for the watcher Worker — always in sync with providers.json.
-const providers = JSON.parse(fs.readFileSync(path.join(root, 'providers.json'), 'utf-8')).providers || [];
+const providers = dataset.providers || [];
 const manifest = buildManifest(providers);
 fs.writeFileSync(path.join(dist, 'watch-urls.json'), JSON.stringify(manifest, null, 2) + '\n');
 

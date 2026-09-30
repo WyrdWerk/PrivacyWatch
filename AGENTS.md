@@ -15,6 +15,7 @@ PrivacyWatch tracks data privacy, retention, and model-training practices for 96
 | `providers.json` | The dataset — source of truth. Do not edit provider data without a research-backed reason. |
 | `providers.schema.json` | JSON schema for rows (mirrors the vocabularies). |
 | `scripts/lib/v2-fields.mjs` | Structured-field vocabularies (`VOCAB`) and validation/evidence rules — the source of truth for allowed values. |
+| `scripts/lib/briefs.mjs` | Per-provider brief pages (`/p/<id>`) and the sitemap, generated at build. |
 | `scripts/lib/api.mjs` | API summaries/filters — shared by the `/api/v1` Pages Function and the build. |
 | `functions/` | Pages Functions: `/api/v1` (providers, meta, openapi) and `/api/search`. |
 | `worker/` | Watcher Worker: checks policy URLs on cron (3×/day) and reports changes to issue #2. |
@@ -26,7 +27,7 @@ PrivacyWatch tracks data privacy, retention, and model-training practices for 96
 
 - `node --test tests/*.test.mjs` — unit tests (must pass).
 - `npm run validate` — validates providers.json against the schema and vocabularies, checks evidence rules, prints structured-field coverage; also checks `meta.version` === `package.json` version.
-- `npm run build` — builds `dist/` (injects logo map, copies API assets, stamps the OpenAPI version, emits the watcher manifest).
+- `npm run build` — builds `dist/` (injects logo map, copies API assets, stamps the OpenAPI version, generates brief pages + sitemap, emits the watcher manifest).
 
 All three must pass before any data change ships.
 

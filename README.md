@@ -4,7 +4,7 @@
 
 Who stores your prompts? Who trains on them? Researched from primary sources — privacy policies, ToS, DPAs, and API docs.
 
-**96 provider surfaces across 85 families · dataset v1.13.0 · all rows re-verified against live sources on 2026-09-30** (a few rows keep earlier verification dates — check each row's `sourceDate`).
+**96 provider surfaces across 85 families · all rows re-verified against live sources on 2026-09-30** (a few rows keep earlier verification dates — check each row's `sourceDate`).
 
 **Live:** [privacywatch.wyrdwerk.com](https://privacywatch.wyrdwerk.com)
 
@@ -40,6 +40,8 @@ Vocabularies are defined in [`scripts/lib/v2-fields.mjs`](./scripts/lib/v2-field
 **Coding Tools:** Cursor · OpenCode · HyperAgent · Wafer AI · Neuralwatt · CommandCode
 
 (Crof AI was removed from the dataset in v1.9.0 as defunct; its snapshot stays in `policies/` for the record.)
+
+**Provider briefs:** every row has its own page at `/p/<id>` (e.g. [/p/openai-api](https://privacywatch.wyrdwerk.com/p/openai-api)) with a plain-English summary, the evidence quotes and incidents.
 
 Public dataset: [`providers.json`](./providers.json) · Schema: [`providers.schema.json`](./providers.schema.json) · API: [`/api/v1`](#api) · Licence: CC BY 4.0
 
@@ -125,7 +127,7 @@ PrivacyWatch is a static site hosted on Cloudflare Pages. Pushes to `main` trigg
 - **Not legal advice.** This is a good-faith summary of public policy documents.
 - **Policies change.** Always verify with primary sources before making compliance decisions.
 - **"Unknown" ≠ safe.** ⚫ Unverified means the cited document never addresses API data — not that the provider is clean. 🟠 Caution on a silent/opaque host means we looked and they still don’t say; it is not a finding that they train.
-- Research dates: all 96 rows were re-verified against live sources on 2026-09-30 (dataset v1.13.0), except a few rows whose live pages blocked automated fetches or had gone unreachable, so they keep earlier `sourceDate`s. Always check the per-row `sourceDate` and the `retrieved` dates in `evidence[]` before relying on a claim.
+- Research dates: all 96 rows were re-verified against live sources on 2026-09-30, except a few rows whose live pages blocked automated fetches or had gone unreachable, so they keep earlier `sourceDate`s. Always check the per-row `sourceDate` and the `retrieved` dates in `evidence[]` before relying on a claim.
 
 ---
 

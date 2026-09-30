@@ -11,6 +11,7 @@ const dist = path.join(root, 'dist');
 
 const FILES = [
   'index.html',
+  'api-docs.html',
   'providers.json',
   'robots.txt',
   'sitemap.xml',

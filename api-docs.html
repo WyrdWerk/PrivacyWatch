@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PrivacyWatch — API Documentation</title>
+  <meta name="description" content="PrivacyWatch read-only JSON API: filter 96 LLM provider surfaces by training, retention, ZDR, region and more. No key required." />
+  <link rel="canonical" href="https://privacywatch.wyrdwerk.com/api-docs" />
+  <meta name="theme-color" content="#F8F5F0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('pw-theme');
+        document.documentElement.dataset.theme = (t === 'dark') ? 'dark' : 'light';
+      } catch (_) {
+        document.documentElement.dataset.theme = 'light';
+      }
+    })();
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      color-scheme: light;
+      /* WyrdWerk light palette — https://wyrdwerk.com */
+      --bg: #F8F5F0;
+      --surface: #FFFFFF;
+      --surface-hover: #F3F7FB;
+      --border: #E0D6CA;
+      --border-light: #EDE6DC;
+      --text-primary: #0D1725;
+      --text-secondary: #486680;
+      --text-muted: #486680;
+      --accent: #1E6E8E;
+      --accent-hover: #2A7A9A;
+      --accent-faint: rgba(30,110,142,.12);
+      --clean-bg: #dcfce7; --clean-text: #15803d;
+      --guarded-bg: #fef9c3; --guarded-text: #854d0e;
+      --caution-bg: #ffedd5; --caution-text: #9a3412;
+      --high-risk-bg: #fee2e2; --high-risk-text: #991b1b;
+      --unverified-bg: #EDE6DC; --unverified-text: #486680;
+      --table-head: #F3EEE7;
+      --logo-mark-bg: #0D1725;
+      --font: 'Inter', -apple-system, sans-serif;
+      --radius: 6px;
+      --shadow-sm: 0 1px 3px rgba(13,23,37,.08), 0 1px 2px rgba(13,23,37,.05);
+      --code-bg: #0D1725;
+      --code-text: #E6EDF3;
+    }
+
+    body { font-family: var(--font); background: var(--bg); color: var(--text-primary); font-size: 14px; line-height: 1.6; }
+
+    /* ── HEADER ── */
+    .header { background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .header-inner { max-width: 1280px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-mark { width: 28px; height: 28px; }
+    .logo-wordmark { font-size: 15px; font-weight: 700; color: var(--text-primary); letter-spacing: -.3px; }
+    .logo-wordmark span { color: var(--accent); }
+    .header-meta { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 12px; }
+    .header-meta a { color: var(--text-muted); text-decoration: none; }
+    .header-meta a:hover { color: var(--accent); }
+    .theme-toggle {
+      display: inline-flex; align-items: center; justify-content: center;
+      flex: 0 0 32px; width: 32px; height: 32px; min-width: 32px;
+      border-radius: 6px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text-primary); cursor: pointer;
+    }
+    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-faint); }
+    .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .theme-toggle .icon-sun, html[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+    html[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .theme-toggle .icon-moon { display: none; }
+      html:not([data-theme]) .theme-toggle .icon-sun { display: block; }
+    }
+
+    /* ── CONTENT ── */
+    .docs { max-width: 880px; margin: 0 auto; padding: 32px 24px 64px; }
+    .docs h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .docs .lede { font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; }
+    .docs h2 { font-size: 17px; font-weight: 700; margin: 36px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); scroll-margin-top: 72px; }
+    .docs h2 .anchor { color: var(--accent); text-decoration: none; font-weight: 600; margin-right: 6px; }
+    .docs h3 { font-size: 14px; font-weight: 700; margin: 22px 0 8px; color: var(--text-primary); }
+    .docs h3 code { font-size: 13px; background: var(--accent-faint); color: var(--text-primary); padding: 2px 7px; border-radius: 4px; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
+    .docs p { margin-bottom: 10px; color: var(--text-secondary); }
+    .docs p strong, .docs li strong { color: var(--text-primary); }
+    .docs a { color: var(--accent); }
+    .docs ul { margin: 0 0 10px 22px; color: var(--text-secondary); }
+    .docs li { margin-bottom: 4px; }
+    .docs .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow-sm); padding: 14px 18px; margin-bottom: 12px; }
+
+    pre { background: var(--code-bg); color: var(--code-text); border-radius: var(--radius); padding: 12px 14px; overflow-x: auto; margin: 10px 0 14px; font-size: 12.5px; line-height: 1.55; }
+    pre, code { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
+    pre code { background: none; padding: 0; border: none; color: inherit; }
+    p code, li code, td code, h3 code { background: var(--accent-faint); color: var(--text-primary); padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }
+
+    .docs table { width: 100%; border-collapse: collapse; margin: 10px 0 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; box-shadow: var(--shadow-sm); }
+    .docs thead { background: var(--table-head); }
+    .docs th { padding: 9px 12px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; border-bottom: 1px solid var(--border); }
+    .docs td { padding: 9px 12px; font-size: 13px; color: var(--text-secondary); vertical-align: top; border-bottom: 1px solid var(--border-light); }
+    .docs tr:last-child td { border-bottom: none; }
+    .docs td:first-child { white-space: nowrap; }
+    .docs td:first-child code { background: var(--accent-faint); color: var(--text-primary); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+
+    .rating-line { display: flex; gap: 14px; flex-wrap: wrap; margin: 8px 0 12px; }
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .badge-clean { background: var(--clean-bg); color: var(--clean-text); }
+    .badge-guarded { background: var(--guarded-bg); color: var(--guarded-text); }
+    .badge-caution { background: var(--caution-bg); color: var(--caution-text); }
+    .badge-high-risk { background: var(--high-risk-bg); color: var(--high-risk-text); }
+    .badge-unverified { background: var(--unverified-bg); color: var(--unverified-text); }
+
+    .note { padding: 10px 12px; background: var(--surface); border: 1px solid var(--border-light); border-left: 3px solid var(--accent); border-radius: var(--radius); font-size: 13px; color: var(--text-secondary); margin: 12px 0; }
+
+    /* ── FOOTER ── */
+    footer { border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { max-width: 1280px; margin: 0 auto; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-left { font-size: 12px; color: var(--text-muted); }
+    .footer-left a { color: var(--text-muted); text-decoration: none; }
+    .footer-left a:hover { color: var(--accent); }
+
+    /* ── DARK MODE ── */
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0D1725;
+      --surface: #152233;
+      --surface-hover: #1A2B3F;
+      --border: #2A3F55;
+      --border-light: #1A2B3F;
+      --text-primary: #F8F5F0;
+      --text-secondary: #9BB3C4;
+      --text-muted: #7A93A8;
+      --accent: #4BA3C3;
+      --accent-hover: #6BB5CE;
+      --accent-faint: rgba(75,163,195,.18);
+      --clean-bg: #14532d; --clean-text: #86efac;
+      --guarded-bg: #422006; --guarded-text: #fcd34d;
+      --caution-bg: #431407; --caution-text: #fdba74;
+      --high-risk-bg: #450a0a; --high-risk-text: #fca5a5;
+      --unverified-bg: #1A2B3F; --unverified-text: #9BB3C4;
+      --table-head: #152233;
+      --logo-mark-bg: #0D1725;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.2);
+      --code-bg: #0A1420;
+      --code-text: #C9D8E4;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) {
+        color-scheme: dark;
+        --bg: #0D1725;
+        --surface: #152233;
+        --surface-hover: #1A2B3F;
+        --border: #2A3F55;
+        --border-light: #1A2B3F;
+        --text-primary: #F8F5F0;
+        --text-secondary: #9BB3C4;
+        --text-muted: #7A93A8;
+        --accent: #4BA3C3;
+        --accent-hover: #6BB5CE;
+        --accent-faint: rgba(75,163,195,.18);
+        --clean-bg: #14532d; --clean-text: #86efac;
+        --guarded-bg: #422006; --guarded-text: #fcd34d;
+        --caution-bg: #431407; --caution-text: #fdba74;
+        --high-risk-bg: #450a0a; --high-risk-text: #fca5a5;
+        --unverified-bg: #1A2B3F; --unverified-text: #9BB3C4;
+        --table-head: #152233;
+        --logo-mark-bg: #0D1725;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.2);
+        --code-bg: #0A1420;
+        --code-text: #C9D8E4;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-inner { padding: 0 16px; }
+      .docs { padding: 24px 16px 48px; }
+      .docs td:first-child { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo" title="Back to the tracker">
+      <svg class="logo-mark" viewBox="0 0 28 28" fill="none">
+        <rect width="28" height="28" rx="6" fill="var(--logo-mark-bg)"/>
+        <path d="M6 22L14 6L22 22M9 16H19" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="logo-wordmark">Privacy<span>Watch</span></span>
+    </a>
+    <div class="header-meta">
+      <a href="https://github.com/WyrdWerk/PrivacyWatch" target="_blank" rel="noopener">GitHub ↗</a>
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch theme">
+        <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 14.3A9 9 0 1 1 9.7 3 7 7 0 0 0 21 14.3z"/></svg>
+        <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="docs">
+  <h1>API</h1>
+  <p class="lede">Read-only JSON API over the PrivacyWatch dataset: 96 LLM provider surfaces with data privacy, retention, model-training, and zero-data-retention fields, each backed by verbatim evidence quotes. No API key, no account, no writes. The same reference is available as <a href="https://github.com/WyrdWerk/PrivacyWatch/blob/main/docs/API.md"><code>docs/API.md</code></a> in the repository.</p>
+
+  <div class="card">
+    <ul style="margin-bottom:0;">
+      <li><strong>Base URL:</strong> <code>https://privacywatch.wyrdwerk.com</code></li>
+      <li><strong>CORS:</strong> <code>Access-Control-Allow-Origin: *</code> on all API responses</li>
+      <li><strong>Caching:</strong> <code>public, max-age=3600, stale-while-revalidate=86400</code> — responses may be up to an hour stale</li>
+      <li><strong>Cost:</strong> free. Be reasonable with request volume — there are no keys or rate-limit tiers; Cloudflare's default edge protection is the only guard.</li>
+      <li><strong>Spec:</strong> OpenAPI 3.1 at <a href="/api/v1/openapi.json"><code>/api/v1/openapi.json</code></a></li>
+    </ul>
+  </div>
+
+  <h2 id="quick-start"><a class="anchor" href="#quick-start">#</a>Quick start</h2>
+<pre><code># Providers that don't train on API data by default and offer self-serve ZDR
+curl "https://privacywatch.wyrdwerk.com/api/v1/providers?training=off&amp;zdr=self-serve"
+
+# One full provider row, including evidence quotes and incidents
+curl "https://privacywatch.wyrdwerk.com/api/v1/providers/anthropic-api"
+
+# Dataset version, counts, and the exact filter vocabularies
+curl "https://privacywatch.wyrdwerk.com/api/v1/meta"</code></pre>
+  <p>Every response is JSON. List endpoints wrap rows in <code>{ "meta": { version, lastUpdated, count, license }, "data": [...] }</code>.</p>
+
+  <h2 id="endpoints"><a class="anchor" href="#endpoints">#</a>Endpoints</h2>
+
+  <h3><code>GET /api/v1/providers</code></h3>
+  <p>Summary rows for all 96 provider surfaces, filtered in memory. Use this for comparisons, dashboards, and &ldquo;show me providers that&hellip;&rdquo; queries. Parameters are listed in the <a href="#filters">filters table</a>; all are optional. Add <code>fields=full</code> for complete rows (same shape as <code>/api/v1/providers/{id}</code>) or <code>ids=a,b,c</code> to compare a few providers side by side.</p>
+  <p>Example response (<code>?training=off&amp;zdr=default&amp;rating=clean</code>, trimmed to 1 of 3 matches):</p>
+<pre><code>{
+  "meta": { "version": "1.13.0", "lastUpdated": "2026-09-30", "count": 3, "license": "CC-BY-4.0" },
+  "data": [
+    {
+      "id": "fireworks-ai", "name": "Fireworks AI", "surface": "API", "surfaceType": "api",
+      "category": "inference", "rating": "clean", "incident": false,
+      "training": "off", "trainingOptOut": "not-needed",
+      "retention": "fixed", "retentionDays": 30, "zdr": "default",
+      "regions": ["GLOBAL", "US", "CA", "EU"], "sourceDate": "2026-09-30",
+      "url": "/api/v1/providers/fireworks-ai"
+    }
+  ]
+}</code></pre>
+  <p><strong>Errors:</strong></p>
+  <ul>
+    <li><code>400</code> — unknown filter value or unknown parameter. The response lists what is allowed: <code>{"error": "rating \"great\" is not valid; allowed: clean, guarded, caution, high-risk, unverified"}</code></li>
+    <li><code>502</code> — <code>{"error": "dataset unavailable"}</code> (the deployed <code>providers.json</code> could not be read)</li>
+  </ul>
+
+  <h3><code>GET /api/v1/providers/{id}</code></h3>
+  <p>One full provider row, including <code>evidence[]</code> (source URL + verbatim quote + retrieval date), <code>incidents[]</code>, and compliance fields. IDs are stable and lowercase, e.g. <code>openai-api</code>, <code>anthropic-api</code>, <code>deepseek-api</code>.</p>
+  <p>Example response (<code>anthropic-api</code>, trimmed):</p>
+<pre><code>{
+  "meta": { "version": "1.13.0", "lastUpdated": "2026-09-30", "license": "CC-BY-4.0" },
+  "data": {
+    "id": "anthropic-api", "name": "Anthropic", "surface": "API", "surfaceType": "api",
+    "category": "us-frontier", "rating": "clean", "incident": false,
+    "training": { "label": "Off by default", "default": "off", "optOut": "not-needed",
+                  "detail": "No training on commercial API data. Opt-in via feedback submission only." },
+    "retention": { "label": "30 days auto-delete", "kind": "fixed", "days": 30,
+                   "detail": "Inputs/outputs auto-deleted within 30 days. ZDR = immediate post-response." },
+    "zdr": { "label": "Yes — enterprise approval", "status": "full", "access": "approval",
+             "detail": "ZDR available for enterprise API customers. Requires Anthropic account team + per-org enablement." },
+    "location": { "label": "US storage; global inference", "regions": ["GLOBAL", "US"],
+                  "detail": "Data stored in the US. Inference may run in any geography by default; US-only inference available at 1.1x pricing." },
+    "compliance": { "dpa": "public", "soc2": "type2", "hipaaBaa": "available" },
+    "incidents": [],
+    "evidence": [
+      {
+        "field": "training",
+        "url": "https://privacy.claude.com/en/articles/7996868",
+        "quote": "By default, we will not use your inputs or outputs from our commercial products (e.g. Claude for Work, Anthropic API, Claude Gov, etc.) to train our models.",
+        "retrieved": "2026-09-30"
+      }
+    ],
+    "sourceUrl": "https://www.anthropic.com/legal/commercial-terms",
+    "sourceDate": "2026-09-30"
+  }
+}</code></pre>
+  <p><strong>Errors:</strong></p>
+  <ul>
+    <li><code>404</code> — <code>{"error": "unknown provider id \"&hellip;\""}</code>. Valid IDs are listed by <code>/api/v1/providers</code> and <code>/providers.json</code>.</li>
+    <li><code>502</code> — <code>{"error": "dataset unavailable"}</code></li>
+  </ul>
+
+  <h3><code>GET /api/v1/meta</code></h3>
+  <p>Dataset version, licence, counts by rating and category, the exact filter vocabularies, and an endpoint map. Use it to validate filter values client-side or to detect dataset updates.</p>
+<pre><code>{
+  "version": "1.13.0",
+  "lastUpdated": "2026-09-30",
+  "count": 96,
+  "license": "CC-BY-4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "attribution": "PrivacyWatch by WyrdWerk (https://privacywatch.wyrdwerk.com)",
+  "counts": { "rating": { "clean": 21, "guarded": 23, "caution": 38, "high-risk": 13, "unverified": 1 },
+              "category": { "us-frontier": 8, "chinese": 10, "inference": 69, "coding": 9 } },
+  "endpoints": { "list": "/api/v1/providers", "provider": "/api/v1/providers/{id}",
+                 "meta": "/api/v1/meta", "openapi": "/api/v1/openapi.json",
+                 "search": "/api/search?q=", "dataset": "/providers.json" }
+}</code></pre>
+  <p><strong>Errors:</strong> <code>502</code> — <code>{"error": "dataset unavailable"}</code></p>
+
+  <h3><code>GET /api/v1/openapi.json</code></h3>
+  <p>OpenAPI 3.1 spec for the API, with the dataset version injected as <code>info.version</code>. Machine-readable; import it into tooling or code generators.</p>
+
+  <h3><code>GET /api/search?q=</code></h3>
+  <p>Semantic search over the archived policy corpus (privacy policies, ToS, DPAs behind the dataset). Returns the top matching text chunks with source URLs and provider IDs. Not a provider filter — it searches documents, not the structured fields.</p>
+  <p><strong>Parameters:</strong> <code>q</code> (required, free text, max 512 chars), <code>k</code> (optional, results 1&ndash;25, default 8).</p>
+  <p>Example response (<code>?q=zero+data+retention</code>, trimmed):</p>
+<pre><code>{
+  "query": "zero data retention",
+  "count": 42,
+  "results": [
+    {
+      "providerIds": ["anthropic-api"],
+      "url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+      "score": 0.822,
+      "snippet": "ZDR is enabled per organization; each new organization requires ZDR to be enabled separately by your account team…"
+    }
+  ]
+}</code></pre>
+  <p><strong>Errors:</strong></p>
+  <ul>
+    <li><code>400</code> — <code>{"error": "missing q parameter"}</code></li>
+    <li><code>502</code> — embedding or index errors: <code>{"error": "embedding failed"}</code> / <code>{"error": "internal error"}</code></li>
+  </ul>
+
+  <h3><code>GET /providers.json</code></h3>
+  <p>The full raw dataset — <code>meta</code> plus all 96 complete provider rows. Same data the API reads, served as a static file. Use it for bulk processing or offline analysis; use the API for filtered/point queries. CORS-enabled, cached for an hour.</p>
+
+  <h2 id="filters"><a class="anchor" href="#filters">#</a>Filters</h2>
+  <p>All filters are optional and combine with <strong>AND</strong>. Within one filter, comma-separated values or repeated parameters mean <strong>OR</strong>. The vocabularies come from <code>scripts/lib/v2-fields.mjs</code>; <code>/api/v1/meta</code> returns the same lists at runtime.</p>
+  <table>
+    <thead><tr><th>Parameter</th><th>Matches</th><th>Allowed values</th></tr></thead>
+    <tbody>
+      <tr><td>category</td><td><code>row.category</code></td><td><code>us-frontier</code>, <code>chinese</code>, <code>inference</code>, <code>coding</code></td></tr>
+      <tr><td>rating</td><td><code>row.rating</code></td><td><code>clean</code>, <code>guarded</code>, <code>caution</code>, <code>high-risk</code>, <code>unverified</code></td></tr>
+      <tr><td>surfaceType</td><td><code>row.surfaceType</code></td><td><code>api</code>, <code>consumer</code></td></tr>
+      <tr><td>training</td><td><code>training.default</code></td><td><code>off</code>, <code>on</code>, <code>opt-in</code>, <code>tier-dependent</code>, <code>silent</code>, <code>conflicting</code></td></tr>
+      <tr><td>zdr</td><td><code>zdr.access</code></td><td><code>default</code>, <code>self-serve</code>, <code>approval</code>, <code>enterprise</code>, <code>none</code>, <code>silent</code></td></tr>
+      <tr><td>retention</td><td><code>retention.kind</code></td><td><code>none</code>, <code>transient</code>, <code>fixed</code>, <code>until-deleted</code>, <code>indefinite</code>, <code>silent</code></td></tr>
+      <tr><td>region</td><td>value appears in <code>location.regions</code></td><td>ISO 3166-1 alpha-2 code (e.g. <code>US</code>, <code>DE</code>), <code>EU</code>, or <code>GLOBAL</code></td></tr>
+      <tr><td>maxRetentionDays</td><td><code>retention.kind</code> is <code>fixed</code> <strong>and</strong> <code>retention.days &le; N</code></td><td>non-negative integer. Only <code>fixed</code> retention can match; <code>silent</code>, <code>indefinite</code>, etc. never do</td></tr>
+      <tr><td>incident</td><td><code>row.incident</code></td><td><code>true</code>, <code>false</code></td></tr>
+      <tr><td>ids</td><td><code>row.id</code> in the list</td><td>comma-separated provider IDs (use to compare rows side by side)</td></tr>
+      <tr><td>fields</td><td>response shape</td><td><code>summary</code> (default), <code>full</code></td></tr>
+    </tbody>
+  </table>
+  <p>Invalid values return <code>400</code> with the allowed list, so a client can self-correct from the error alone:</p>
+<pre><code>GET /api/v1/providers?rating=great
+&rarr; 400 {"error": "rating \"great\" is not valid; allowed: clean, guarded, caution, high-risk, unverified"}</code></pre>
+
+  <h2 id="glossary"><a class="anchor" href="#glossary">#</a>Field glossary</h2>
+
+  <h3>Summary row</h3>
+  <table>
+    <thead><tr><th>Field</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>id, name, surface, surfaceType</td><td>Stable ID, display name, product surface (&ldquo;API&rdquo;, &ldquo;Consumer&rdquo;&hellip;) and its type (<code>api</code>/<code>consumer</code>)</td></tr>
+      <tr><td>category</td><td><code>us-frontier</code>, <code>chinese</code>, <code>inference</code>, <code>coding</code></td></tr>
+      <tr><td>rating</td><td>Overall assessment — see Ratings below</td></tr>
+      <tr><td>incident</td><td><code>true</code> when a confirmed breach, regulatory action, or government ban is on record</td></tr>
+      <tr><td>training</td><td><code>training.default</code>: what a new account gets</td></tr>
+      <tr><td>trainingOptOut</td><td><code>training.optOut</code>: how to turn training off when it's on</td></tr>
+      <tr><td>retention / retentionDays</td><td><code>retention.kind</code>; <code>retentionDays</code> is only set when kind is <code>fixed</code>, otherwise <code>null</code></td></tr>
+      <tr><td>zdr</td><td><code>zdr.access</code>: whether a zero-data-retention option exists and what unlocks it</td></tr>
+      <tr><td>regions</td><td><code>location.regions</code></td></tr>
+      <tr><td>sourceDate</td><td>When this row was last verified against the primary source</td></tr>
+      <tr><td>url</td><td>Path to the full row for this provider</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Structured fields (full rows)</h3>
+  <table>
+    <thead><tr><th>Field</th><th>Values</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>training.default</td><td><code>off</code> &middot; <code>on</code> &middot; <code>opt-in</code> &middot; <code>tier-dependent</code> &middot; <code>silent</code> &middot; <code>conflicting</code></td><td>Training use for a new account by default. <code>tier-dependent</code> = free/paid/enterprise differ (details in <code>training.detail</code>); <code>conflicting</code> = the provider's own documents disagree</td></tr>
+      <tr><td>training.optOut</td><td><code>setting</code> &middot; <code>api-param</code> &middot; <code>email</code> &middot; <code>contract</code> &middot; <code>not-needed</code> &middot; <code>none</code> &middot; <code>silent</code></td><td>How to opt out. <code>not-needed</code> pairs with <code>training.default: off</code>; <code>none</code> = training is on and there is no opt-out</td></tr>
+      <tr><td>retention.kind</td><td><code>none</code> &middot; <code>transient</code> &middot; <code>fixed</code> &middot; <code>until-deleted</code> &middot; <code>indefinite</code> &middot; <code>silent</code></td><td>How long inputs/outputs are kept. <code>transient</code> = only to serve the request</td></tr>
+      <tr><td>retention.days</td><td>positive integer</td><td>Present only when <code>retention.kind</code> is <code>fixed</code></td></tr>
+      <tr><td>zdr.access</td><td><code>default</code> &middot; <code>self-serve</code> &middot; <code>approval</code> &middot; <code>enterprise</code> &middot; <code>none</code> &middot; <code>silent</code></td><td>Zero data retention option: <code>default</code> = on for everyone, <code>self-serve</code> = toggle in settings/console, <code>approval</code> = requires provider sign-off, <code>enterprise</code> = contract-gated, <code>none</code> = no ZDR</td></tr>
+      <tr><td>location.regions</td><td>ISO 3166-1 alpha-2 codes, <code>EU</code>, <code>GLOBAL</code>; <code>[]</code> = silent</td><td>Where data can be processed/stored. <code>GLOBAL</code> = provider states global processing. Empty array = read the docs, they don't say</td></tr>
+      <tr><td>compliance.dpa</td><td><code>public</code> &middot; <code>on-request</code> &middot; <code>enterprise</code> &middot; <code>none</code> &middot; <code>silent</code></td><td>Data processing addendum availability</td></tr>
+      <tr><td>compliance.soc2</td><td><code>type1</code> &middot; <code>type2</code> &middot; <code>none</code> &middot; <code>silent</code></td><td>SOC 2 attestation level</td></tr>
+      <tr><td>compliance.hipaaBaa</td><td><code>available</code> &middot; <code>enterprise</code> &middot; <code>none</code> &middot; <code>silent</code></td><td>HIPAA business associate agreement availability</td></tr>
+      <tr><td>incidents[]</td><td><code>{ date, type, confirmed, summary, sourceUrl }</code></td><td><code>type</code>: <code>breach</code>, <code>regulatory</code>, <code>ban</code>, <code>allegation</code>. <code>date</code> is <code>YYYY-MM</code> or <code>YYYY-MM-DD</code>. Only confirmed non-allegation entries set the row's <code>incident</code> flag</td></tr>
+      <tr><td>evidence[]</td><td><code>{ field, url, quote, retrieved }</code></td><td>The backing for a structured field: verbatim quote from the source URL, with the date we retrieved it. <code>field</code> is one of <code>training</code>, <code>retention</code>, <code>zdr</code>, <code>location</code>, <code>compliance</code>, <code>incidents</code>. Quotes are omitted only when the value is <code>silent</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>&ldquo;silent&rdquo; vs missing</h3>
+  <div class="note">
+    <strong>silent</strong> — we read the provider's documents and they don't address this field. A finding of opacity, not an absence of research, and <strong>not</strong> evidence the provider trains or retains anything.<br>
+    <strong>Missing</strong> — not researched yet. Never conflate the two.
+  </div>
+
+  <h3>Ratings</h3>
+  <div class="rating-line">
+    <span class="badge badge-clean">🟢 Clean</span>
+    <span class="badge badge-guarded">🟡 Guarded</span>
+    <span class="badge badge-caution">🟠 Caution</span>
+    <span class="badge badge-high-risk">🔴 High Risk</span>
+    <span class="badge badge-unverified">⚫ Unverified</span>
+  </div>
+  <p><strong>Clean</strong>: training off by default, ZDR documented, clear policy. <strong>Guarded</strong>: generally safe with documented caveats. <strong>Caution</strong>: training on by default, vague retention, or docs that stay opaque after a live check. <strong>High Risk</strong>: training on with weak opt-out, China storage, confirmed breach or government bans. <strong>Unverified</strong>: the cited document never addresses API data at all. The 🚩 <code>incident</code> flag is additive on top of the base rating. Full definitions with caveats: <a href="https://github.com/WyrdWerk/PrivacyWatch#rating-system">README rating system</a>.</p>
+
+  <h2 id="versioning"><a class="anchor" href="#versioning">#</a>Versioning policy</h2>
+  <ul>
+    <li><strong>Fields may be added at any time.</strong> Treat unknown new fields in responses as normal.</li>
+    <li><strong>Removing or renaming a field, or changing what a value means, is announced in <a href="https://github.com/WyrdWerk/PrivacyWatch/blob/main/CHANGELOG.md">CHANGELOG.md</a> at least 30 days ahead, and the old field keeps working during that notice period.</strong></li>
+    <li>Large or incompatible changes ship under <code>/api/v2</code> instead, leaving <code>/api/v1</code> working.</li>
+  </ul>
+  <p><code>meta.version</code> (also in every response's <code>meta</code>) is the dataset version; <code>/api/v1/meta</code>'s <code>lastUpdated</code> is the research date.</p>
+
+  <h2 id="licence"><a class="anchor" href="#licence">#</a>Licence &amp; attribution</h2>
+  <ul>
+    <li><strong>Data</strong> (<code>providers.json</code>, API responses, research notes): <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> — credit <strong>&ldquo;PrivacyWatch by WyrdWerk — https://privacywatch.wyrdwerk.com&rdquo;</strong>. See <a href="https://github.com/WyrdWerk/PrivacyWatch/blob/main/LICENSE-DATA.md">LICENSE-DATA.md</a>.</li>
+    <li><strong>Quoted policy text and logos</strong> belong to their respective owners and are excluded from the data licence.</li>
+    <li><strong>Code</strong> (including the API functions): <a href="https://github.com/WyrdWerk/PrivacyWatch/blob/main/LICENSE">MIT</a>.</li>
+  </ul>
+  <p class="note"><strong>Not legal advice.</strong> This is a good-faith summary of public policy documents. Policies change — verify with primary sources (each row's <code>evidence[]</code> links them) before making compliance decisions.</p>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      Maintained by <a href="https://wyrdwerk.com" target="_blank" rel="noopener">WyrdWerk</a> ·
+      <a href="https://github.com/WyrdWerk/PrivacyWatch" target="_blank" rel="noopener">GitHub</a> ·
+      <a href="/">Tracker</a> ·
+      Not legal advice · Policies change — always verify with primary sources
+    </div>
+  </div>
+</footer>
+
+<script>
+  function currentTheme() {
+    return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+  }
+  function syncThemeToggle() {
+    const btn = document.getElementById('themeToggle');
+    if (!btn) return;
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    btn.setAttribute('aria-label', 'Switch to ' + next + ' mode');
+    btn.title = 'Switch to ' + next + ' mode';
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', currentTheme() === 'dark' ? '#0D1725' : '#F8F5F0');
+  }
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const theme = currentTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = theme;
+    try { localStorage.setItem('pw-theme', theme); } catch (_) { /* ignore */ }
+    syncThemeToggle();
+  });
+  syncThemeToggle();
+</script>
+</body>
+</html>

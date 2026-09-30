@@ -1,7 +1,7 @@
 {
   "meta": {
     "lastUpdated": "2026-09-30",
-    "version": "1.7.0",
+    "version": "1.8.0",
     "description": "PrivacyWatch — LLM data privacy, retention, and model training tracker",
     "maintainer": "WyrdWerk (github.com/WyrdWerk/PrivacyWatch)"
   },
@@ -926,28 +926,138 @@
       "incident": false,
       "training": {
         "label": "Off — explicit",
-        "detail": "'Qwen Cloud does not use your API inputs or outputs to train or improve models.' Training data sourced from public data, partners, synthetic data only."
+        "detail": "Product Terms §4.48 (updated Aug 28, 2026): \"Alibaba Cloud will not use your Member Content to develop or improve the models on Model Studio, unless you separately provide your consent.\" Model Studio privacy notice: \"will never use your data for model training.\"",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
-        "label": "ZDR baseline; 7-day (Responses API)",
-        "detail": "Standard inference: memory-only, not persisted post-response. Responses API: 7-day conversation storage. Metadata (billing): duration unspecified. CRITICAL: Model Studio assistant API retains conversation history with NO expiration date — materially different product."
+        "label": "Stored in region; duration unstated",
+        "detail": "Model Studio privacy notice (Sep 28, 2026): \"Alibaba Cloud Model Studio stores data generated from model and application calls.\" Regions page: request data and inference results are stored in the selected region. No retention period is published. The separate QwenCloud product (qwencloud.com) says inputs/outputs are processed in memory only, but its Responses API stores conversations for 30 days by default (store=true).",
+        "kind": "silent"
       },
       "zdr": {
-        "label": "Yes — built-in baseline",
-        "detail": "ZDR documented as baseline on Qwen Cloud. Separate regional endpoints: CN/SG/US/EU. Responses API 7-day retention is an exception.",
-        "status": "full"
+        "label": "Not documented for Model Studio",
+        "detail": "The Qwen Cloud 'Zero data retention' page cited previously now redirects (302) to a general data-security page with no ZDR commitment. Model Studio documentation says call data is stored in-region and offers no ZDR option. QwenCloud's Safety guide still describes in-memory processing for its own API.",
+        "status": "none",
+        "access": "silent"
       },
       "location": {
-        "label": "Multi-region (Frankfurt = genuine EU)",
+        "label": "Multi-region (in-region storage)",
         "flag": "🌐",
-        "detail": "Separate endpoints: China (Beijing), Singapore, US (Virginia), EU (Frankfurt), Hong Kong. Frankfurt endpoint uses ONLY Frankfurt computing resources — genuine EU data residency with German BSI C5 + AIC4 certifications. Data stays in selected region. CAVEAT (May 29, 2026 Product ToS): Alibaba Cloud's overarching Product Terms for Model Studio use generic language — 'transferred to, stored, and processed in the country where Alibaba Cloud, its affiliates, or its sub-contractors maintain facilities' — with no specific regional binding. Specific endpoint guarantees are in Qwen Cloud ZDR docs only."
+        "detail": "Model Studio regions: China (Beijing), Singapore, Germany (Frankfurt), Japan (Tokyo), China (Hong Kong), US (Virginia). \"Your static data always remains in the selected region\"; inference runs in the selected deployment scope (e.g. Frankfurt: Global or EU), so choose a geographic scope rather than Global if residency matters. Product Terms still use generic transfer language (\"stored, and processed in the country where Alibaba Cloud, its affiliates, or its sub-contractors maintain facilities\").",
+        "regions": [
+          "CN",
+          "SG",
+          "DE",
+          "JP",
+          "HK",
+          "US"
+        ]
       },
       "sourceUrl": "https://www.alibabacloud.com/help/en/legal/latest/alibaba-cloud-international-website-product-terms-of-service-v-3-8-0",
       "privacyUrl": "https://www.alibabacloud.com/help/en/legal/latest/alibaba-cloud-international-website-privacy-policy",
-      "sourceDate": "2026-06-07",
-      "notes": "Strongest Chinese provider on data governance. Frankfurt is genuine EU residency (not just routing). GDPR compliance via EU Standard Contractual Clauses (Implementing Decision 2021/914/EU) + UK Addendum. China-based subprocessors in transfer chain: iSoftStone, Beyondsoft, Hangzhou Xutian Technology, Accenture Enterprise Cloud Hangzhou. Model Studio assistant has indefinite retention — avoid for sensitive data. NOTE (May 29, 2026 Product ToS): Overarching Alibaba Cloud Product Terms for Model Studio use generic location language with no specific regional binding; specific endpoint guarantees are in Qwen Cloud ZDR documentation. Alibaba Cloud Product ToS via OpenRouter; ZDR docs at docs.qwencloud.com.",
+      "sourceDate": "2026-09-30",
+      "notes": "Re-verified 2026-09-30. Training exclusion is explicit in Product Terms and Model Studio docs. The previously cited ZDR page (docs.qwencloud.com) has been retired; QwenCloud (maas.qwencloudapi.com) is a separate product from DashScope/Model Studio. Public Data Processing Addendum (plus EEA/UK addenda with SCCs); Alibaba Cloud holds a SOC 2 Type 2 report and Model Studio states SOC 2 compliance. China-based subprocessors in transfer chain: iSoftStone, Beyondsoft, Hangzhou Xutian Technology, Accenture Enterprise Cloud Hangzhou (not re-verified). Model Studio assistant/application features retain data — avoid for sensitive data.",
       "relatedUrls": [
         "https://www.alibabacloud.com/help/en/legal/latest/alibaba-cloud-international-website-product-terms-of-service-v-3-8-0"
+      ],
+      "compliance": {
+        "dpa": "public",
+        "soc2": "type2",
+        "hipaaBaa": "silent"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://www.alibabacloud.com/help/en/legal/latest/alibaba-cloud-international-website-product-terms-of-service-v-3-8-0",
+          "quote": "Alibaba Cloud will not use your Member Content to develop or improve the models on Model Studio, unless you separately provide your consent.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/privacy-notice",
+          "quote": "Alibaba Cloud strictly protects your data privacy and will never use your data for model training.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/qwen-and-wan-training-data-disclosure",
+          "quote": "Alibaba Cloud Model Studio does not use customer business data to develop or improve models without explicit consent.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/privacy-notice",
+          "quote": "In compliance with relevant laws and regulations, Alibaba Cloud Model Studio stores data generated from model and application calls.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/regions",
+          "quote": "Request data is stored in that region. The region forwards the request to inference nodes within the service deployment scope for computation (all transmissions are encrypted). The inference result is returned to the region for storage and then sent back to your application.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://docs.qwencloud.com/developer-guides/run-and-scale/safety",
+          "quote": "When using the Responses API with store=true (default), conversation data is stored for 30 days. Set store=false to disable conversation retention.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://docs.qwencloud.com/developer-guides/run-and-scale/safety",
+          "quote": "Inputs and outputs are processed in memory only during the request and are not stored in persistent storage after the response is returned.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/privacy-notice",
+          "quote": "In compliance with relevant laws and regulations, Alibaba Cloud Model Studio stores data generated from model and application calls.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/regions",
+          "quote": "Regions determine the access point and data storage location.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/regions",
+          "quote": "Your static data always remains in the selected region.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/regions",
+          "quote": "For example, US (Virginia) supports Global and US, and Germany (Frankfurt) supports Global and EU.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://www.alibabacloud.com/help/en/legal/latest/alibaba-cloud-international-website-product-terms-of-service-v-3-8-0",
+          "quote": "the Member Content you provide to Alibaba Cloud will be transferred to, stored, and processed in the country where Alibaba Cloud, its affiliates, or its sub-contractors maintain facilities for Model Studio Service.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://www.alibabacloud.com/help/en/legal/latest/fe2cxg",
+          "quote": "This Addendum forms part of Alibaba Cloud International Website Membership Agreement or other equivalent agreement between You and Alibaba Cloud in relation to Your use of Alibaba Cloud Services",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/privacy-notice",
+          "quote": "Alibaba Cloud Model Studio has achieved SOC 2 compliance with an unqualified opinion",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://www.alibabacloud.com/en/trust-center/compliance",
+          "quote": "SOC 2 Report Service Organization Controls - SOC 2 Type 2 Report",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {
@@ -960,30 +1070,132 @@
       "rating": "caution",
       "incident": false,
       "training": {
-        "label": "On by default — CRITICAL",
-        "detail": "Privacy Policy Section 2 (April 30, 2025): 'We process this information to provide and improve the Services, including training and optimizing our models.' NO legally operative document (Privacy Policy, ToS, DPA, Model Use Agreement) explicitly carves out API data from this training clause. FAQ claim of 'no training' is NOT referenced in any legal document and has no contractual force."
+        "label": "Legal terms allow training; FAQ says no",
+        "detail": "ToS (Jul 30, 2026): 'Unless otherwise expressly agreed in writing, Customer Content may be used for the foregoing purposes'. Those purposes include training, and restrictions require 'enterprise arrangements or separate written agreements'. Privacy Policy (Apr 30, 2025): 'This includes training and refining our underlying technology, such as machine learning models and algorithms.' The Kimi help-center FAQ and the ZDR page say API data is not used for training, but neither is incorporated into the ToS.",
+        "default": "conflicting",
+        "optOut": "contract"
       },
       "retention": {
-        "label": "Vague — 'as necessary'",
-        "detail": "No specific duration. 'As long as necessary to provide services and legitimate business purposes.' Post-account-deletion: transaction/billing records may be retained indefinitely for tax/fraud/legal."
+        "label": "While account is active",
+        "detail": "Privacy Policy: 'account, input, and payment information are retained while your account is active.' No fixed period. ToS: after termination, content is deleted 'in accordance with the requirements of applicable laws and regulations.' Uploaded files can be deleted via the Files API.",
+        "kind": "until-deleted"
       },
       "zdr": {
-        "label": "Via 3rd party only (limited models)",
-        "detail": "ZDR via Vercel AI Gateway for K2.6 and Thinking Turbo ONLY — NOT for K2 Instruct. Not available directly from Moonshot platform.",
-        "status": "partial"
+        "label": "Enterprise only, on request",
+        "detail": "ZDR 'is available on request to enterprise customers' via sales. Under ZDR, prompts and responses are deleted once the response is returned. It 'cannot be guaranteed for images or videos submitted through direct file uploads' and excludes security logs, billing records and third-party models. Not self-serve.",
+        "status": "partial",
+        "access": "enterprise"
       },
       "location": {
         "label": "Singapore entity; Beijing parent",
         "flag": "🇸🇬",
-        "detail": "Corporate entity: Moonshot AI PTE. LTD. (Singapore). Parent: Beijing (北京月之暗面). Chinese-language policy states data stored within PRC for domestic users."
+        "detail": "Contracting entity: Moonshot AI PTE. LTD. (Singapore). Privacy Policy: 'We store the information we collect in secure servers located in Singapore.' Parent company: Beijing Moonshot (北京月之暗面). The Kimi API help pages are published under the Beijing entity.",
+        "regions": [
+          "SG"
+        ]
       },
       "sourceUrl": "https://platform.moonshot.ai/docs/agreement/modeluse",
       "privacyUrl": "https://platform.kimi.ai/docs/agreement/userprivacy",
-      "sourceDate": "2026-05-27",
-      "notes": "CRITICAL: Privacy Policy governs. API data CAN be used for training under current legal documentation. FAQ claim is not legally operative. English policy omits PIPL; Chinese policy includes cross-border consent requirements. OpenRouter lists Moonshot as 'zero retention, does not train' — reflects routing contract, contradicts Privacy Policy. Model Use Agreement via OpenRouter; Privacy Policy at platform.kimi.ai.",
+      "sourceDate": "2026-09-30",
+      "notes": "Legally operative documents (ToS Jul 2026 and Privacy Policy) permit training on API content unless a separate written agreement says otherwise. The help-center FAQ and the ZDR page claim no training, but neither is incorporated into the ToS. ToS forbids processing HIPAA PHI. Enterprise ZDR is now offered directly by Moonshot. OpenRouter's 'zero retention, does not train' listing reflects its routing contract, not Moonshot's public terms. Sep 2026: Anthropic alleged Moonshot routed Kimi user requests to Claude, and China's CAC reportedly questioned Moonshot about it (unconfirmed).",
       "relatedUrls": [
         "https://platform.moonshot.ai/docs/agreement/modeluse",
         "https://www.kimi.com/help/kimi-api/api-data-security"
+      ],
+      "compliance": {
+        "dpa": "silent",
+        "soc2": "silent",
+        "hipaaBaa": "none"
+      },
+      "incidents": [
+        {
+          "date": "2026-09",
+          "type": "allegation",
+          "confirmed": false,
+          "summary": "Anthropic's Sept 10, 2026 threat report alleges Moonshot silently forwarded some Kimi customer requests to Claude via ~5,380 fraudulent accounts (nearly 300,000 requests in one 10-day window; 23M+ exchanges May-Jul), showed Claude's answers as Kimi output and used the exchanges as training data; some requests contained sensitive personal data. Moonshot has not publicly confirmed.",
+          "sourceUrl": "https://www.cnbc.com/2026/09/11/chinese-ai-labs-moonshot-deepseek-alibaba-anthropic.html"
+        },
+        {
+          "date": "2026-09",
+          "type": "regulatory",
+          "confirmed": false,
+          "summary": "The Information reported (via The Standard, Sept 23, 2026) that the Cyberspace Administration of China sent officials to interview Moonshot executives over the alleged routing of user prompts and data to Claude. No official CAC statement or penalty announced.",
+          "sourceUrl": "https://www.thestandard.com.hk/innovation/article/343563/DeepSeek-and-Moonshot-AI-face-Beijings-probe-over-potential-data-leaks-to-Anthropic"
+        }
+      ],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://platform.kimi.ai/docs/agreement/modeluse",
+          "quote": "Customer who requires restrictions on the use of Customer Content for training or improving Moonshot AI models may contact Moonshot AI to discuss available enterprise arrangements or separate written agreements.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://platform.kimi.ai/docs/agreement/modeluse",
+          "quote": "Unless otherwise expressly agreed in writing, Customer Content may be used for the foregoing purposes.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://platform.kimi.ai/docs/agreement/userprivacy",
+          "quote": "We analyze how you use the services to identify areas for improvement, develop new features, and enhance the overall user experience. This includes training and refining our underlying technology, such as machine learning models and algorithms.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://www.kimi.com/help/kimi-api/api-data-security",
+          "quote": "不会。 通过 API 提交的用户数据（包括输入内容和模型输出）不会被用于训练或改进 Kimi 的模型。 [No. User data submitted via the API (including inputs and model outputs) will not be used to train or improve Kimi's models.]",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://platform.kimi.ai/docs/guide/zero-data-retention",
+          "quote": "By default, the Kimi Open Platform does not use enterprise customer data to train models.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://platform.kimi.ai/docs/agreement/userprivacy",
+          "quote": "For example, account, input, and payment information are retained while your account is active.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://platform.kimi.ai/docs/guide/zero-data-retention",
+          "quote": "ZDR is available on request to enterprise customers. If your business handles sensitive data or operates in an industry with data-retention requirements, contact our sales team to request an evaluation.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://platform.kimi.ai/docs/guide/zero-data-retention",
+          "quote": "ZDR cannot be guaranteed for images or videos submitted through direct file uploads.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://platform.kimi.ai/docs/agreement/userprivacy",
+          "quote": "We store the information we collect in secure servers located in Singapore.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://platform.kimi.ai/docs/agreement/modeluse",
+          "quote": "You commit to not utilizing the Services for the creation, reception, maintenance, transmission, or any other processing of information that encompasses or qualifies as “Protected Health Information” as delineated by the HIPAA Privacy Rule.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.cnbc.com/2026/09/11/chinese-ai-labs-moonshot-deepseek-alibaba-anthropic.html",
+          "quote": "Moonshot silently forwarded some customer requests intended for Kimi to Claude and then displayed Claude's responses to users, who thought they were using a Kimi model, according to the report.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.thestandard.com.hk/innovation/article/343563/DeepSeek-and-Moonshot-AI-face-Beijings-probe-over-potential-data-leaks-to-Anthropic",
+          "quote": "China's internet regulator has investigated DeepSeek and Kimi chatbot creator Moonshot AI over accusations that the artificial intelligence companies are routing user prompts and data to Anthropic's Claude, according to The Information.",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {
@@ -993,33 +1205,129 @@
       "surfaceType": "consumer",
       "category": "chinese",
       "categoryLabel": "Chinese",
-      "rating": "caution",
-      "incident": false,
+      "rating": "high-risk",
+      "incident": true,
       "training": {
         "label": "On by default",
-        "detail": "Policy: 'We process this information to...training and optimizing our models.' Opt-out via email to membership@moonshot.ai only — no in-app toggle documented."
+        "detail": "Kimi Privacy Policy (effective Aug 31, 2026): '在经安全加密技术处理、严格去标识化且无法重新识别特定个人的前提下，我们会将您输入输出的内容用来优化模型' [after encryption and strict de-identification, we will use your inputs and outputs to optimize models]. Opt-out: contact customer service (Section 11: in-product feedback or email) and pass identity verification. No in-app training toggle.",
+        "default": "on",
+        "optOut": "email"
       },
       "retention": {
         "label": "Vague — 'as necessary'",
-        "detail": "No specific duration."
+        "detail": "'我们仅在为实现服务目的所必需的时间内保留您的个人信息' [we retain personal information only for the time necessary to achieve the service purposes]. No fixed period. Users can delete chat history in-app and delete their account.",
+        "kind": "indefinite"
       },
       "zdr": {
         "label": "Not available",
         "detail": "No ZDR for consumer app.",
-        "status": "none"
+        "status": "none",
+        "access": "silent"
       },
       "location": {
-        "label": "Singapore entity; Beijing parent",
-        "flag": "🇸🇬",
-        "detail": "Singapore entity for international. PRC storage confirmed for domestic users in Chinese-language policy."
+        "label": "China (Beijing entity)",
+        "flag": "🇨🇳",
+        "detail": "Controller: 北京月之暗面科技股份有限公司 (Beijing Moonshot). Policy: '我们将您的个人信息存储于中华人民共和国境内' [we store your personal information within the PRC]. No cross-border transfer without separate consent. The English version on kimi.com names the same Beijing entity and PRC storage, and the Chinese text prevails.",
+        "regions": [
+          "CN"
+        ]
       },
-      "sourceUrl": "https://www.kimi.com/user/agreement/userprivacy",
-      "privacyUrl": "https://www.kimi.com/user/agreement/userprivacy",
-      "sourceDate": "2026-05-27",
-      "notes": "Opt-out is email-only with no documented technical implementation.",
+      "sourceUrl": "https://www.kimi.com/user/agreement/userPrivacy?version=v2",
+      "privacyUrl": "https://www.kimi.com/user/agreement/userPrivacy?version=v2",
+      "sourceDate": "2026-09-30",
+      "notes": "Current policy is the v2 Kimi Privacy Policy (effective Aug 31, 2026) linked from the kimi.com app menu. The legacy URL without ?version=v2 still serves the Dec 2024 text. Training opt-out requires contacting customer service and identity verification. May 2025: Kimi app named by a Chinese regulator for collecting personal data unrelated to its functions. Sep 2026: alleged routing of user requests to Claude (Anthropic report) and reported CAC questioning.",
       "relatedUrls": [
         "https://platform.moonshot.ai/docs/agreement/modeluse"
-      ]
+      ],
+      "compliance": {
+        "dpa": "silent",
+        "soc2": "silent",
+        "hipaaBaa": "silent"
+      },
+      "incidents": [
+        {
+          "date": "2025-05",
+          "type": "regulatory",
+          "confirmed": true,
+          "summary": "China's National Network and Information Security Information Notification Center (国家网络与信息安全信息通报中心) named Kimi app v2.0.8 among 35 apps illegally collecting/using personal information: 'personal information actually collected has no direct relevance to business functions' (testing Apr 16-May 15, 2025).",
+          "sourceUrl": "https://m.jiemian.com/article/12803733.html"
+        },
+        {
+          "date": "2026-09",
+          "type": "allegation",
+          "confirmed": false,
+          "summary": "Anthropic's Sept 10, 2026 threat report alleges Moonshot silently forwarded some Kimi customer requests to Claude via ~5,380 fraudulent accounts (nearly 300,000 requests in one 10-day window; 23M+ exchanges May-Jul), showed Claude's answers as Kimi output and used the exchanges as training data; some requests contained sensitive personal data. Moonshot has not publicly confirmed.",
+          "sourceUrl": "https://www.cnbc.com/2026/09/11/chinese-ai-labs-moonshot-deepseek-alibaba-anthropic.html"
+        },
+        {
+          "date": "2026-09",
+          "type": "regulatory",
+          "confirmed": false,
+          "summary": "The Information reported (via The Standard, Sept 23, 2026) that the Cyberspace Administration of China sent officials to interview Moonshot executives over the alleged routing of user prompts and data to Claude. No official CAC statement or penalty announced.",
+          "sourceUrl": "https://www.thestandard.com.hk/innovation/article/343563/DeepSeek-and-Moonshot-AI-face-Beijings-probe-over-potential-data-leaks-to-Anthropic"
+        }
+      ],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://www.kimi.com/user/agreement/userPrivacy?version=v2",
+          "quote": "在经安全加密技术处理、严格去标识化且无法重新识别特定个人的前提下，我们会将您输入输出的内容用来优化模型 [On the premise of secure encryption and strict de-identification such that no specific individual can be re-identified, we will use the content you input and output to optimize models]",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://www.kimi.com/user/agreement/userPrivacy?version=v2",
+          "quote": "如您不希望您的内容被用于模型训练，您可以通过本协议第11节所载的联系方式联系我们的客服并提出要求；我们将在验证您的身份后，停止将您的内容用于模型训练。 [If you do not want your content used for model training, contact customer service via Section 11; after verifying your identity we will stop using your content for model training.]",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://www.kimi.com/user/agreement/userPrivacy?version=v2",
+          "quote": "除国家法律法规另有规定外，我们仅在为实现服务目的所必需的时间内保留您的个人信息。 [Unless otherwise provided by national laws and regulations, we retain your personal information only for the time necessary to achieve the service purposes.]",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://www.kimi.com/user/agreement/userPrivacy?version=v2",
+          "quote": "我们将您的个人信息存储于中华人民共和国境内。除非取得您的单独同意，并且符合国家相关法律法规的规定，我们不会向境外提供您的任何个人信息。 [We store your personal information within the PRC. Unless we obtain your separate consent and comply with relevant laws, we will not provide any of your personal information outside China.]",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://www.kimi.com/user/agreement/userPrivacy?version=v2",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://www.kimi.com/user/agreement/userPrivacy?version=v2",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://www.kimi.com/user/agreement/en/userPrivacy?version=v2",
+          "quote": "This Policy is executed in both Chinese and English. Both language versions shall have equal legal effect. In case of any discrepancy, ambiguity or conflict between the two language versions, the Chinese version shall prevail.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://m.jiemian.com/article/12803733.html",
+          "quote": "另一款被通报的AI应用Kimi (版本 2.0.8) 则是因“实际收集的个人信息与业务功能没有直接关联”。 [Another notified AI app, Kimi (v2.0.8), was cited because 'personal information actually collected has no direct relevance to business functions'.]",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.cnbc.com/2026/09/11/chinese-ai-labs-moonshot-deepseek-alibaba-anthropic.html",
+          "quote": "Moonshot silently forwarded some customer requests intended for Kimi to Claude and then displayed Claude's responses to users, who thought they were using a Kimi model, according to the report.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.thestandard.com.hk/innovation/article/343563/DeepSeek-and-Moonshot-AI-face-Beijings-probe-over-potential-data-leaks-to-Anthropic",
+          "quote": "China's internet regulator has investigated DeepSeek and Kimi chatbot creator Moonshot AI over accusations that the artificial intelligence companies are routing user prompts and data to Anthropic's Claude, according to The Information.",
+          "retrieved": "2026-09-30"
+        }
+      ],
+      "incidentDetail": "May 2025: China's National Network and Information Security Information Notification Center named the Kimi app (v2.0.8) among 35 apps illegally collecting personal information unrelated to business functions. Sep 2026 (unconfirmed): Anthropic alleged Moonshot silently routed Kimi user requests to Claude, and the CAC reportedly questioned Moonshot executives."
     },
     {
       "id": "zhipu-bigmodel",
@@ -1028,32 +1336,105 @@
       "surfaceType": "api",
       "category": "chinese",
       "categoryLabel": "Chinese",
-      "rating": "caution",
+      "rating": "high-risk",
       "incident": false,
       "training": {
-        "label": "On by default",
-        "detail": "BigModel API: data used for service improvement by default. No public opt-out mechanism. Separate agreement required to restrict use."
+        "label": "On by default (unless agreed otherwise)",
+        "detail": "User Agreement (effective Sep 4, 2026): Zhipu may use data generated while you use the platform to 'maintain and optimize' services '但是您与智谱另有约定的除外' [unless otherwise agreed with Zhipu]. Anonymized content may be used for 'machine learning or model algorithm training' without further consent. Users also grant a '永久的、免费的' [perpetual, free] sub-licensable licence over non-personal content. Service Agreement §4.5 says no unauthorized use of 'your data' beyond providing the service, which is in tension with these clauses. No self-serve opt-out.",
+        "default": "on",
+        "optOut": "contract"
       },
       "retention": {
         "label": "30-day (batch); vague (general)",
-        "detail": "Batch API files: 30-day auto-delete. General API data: 'minimum necessary period' — no specific number."
+        "detail": "Batch API files: 30-day auto-delete. General API data: 'minimum necessary period' — no specific number.",
+        "kind": "indefinite"
       },
       "zdr": {
         "label": "None documented",
         "detail": "No ZDR option found for BigModel API.",
-        "status": "none"
+        "status": "none",
+        "access": "silent"
       },
       "location": {
         "label": "China only",
         "flag": "🇨🇳",
-        "detail": "Policy: all data stored within PRC. No cross-border transfer currently. English policy not published — Chinese only."
+        "detail": "Policy: all data stored within PRC. No cross-border transfer currently. English policy not published — Chinese only.",
+        "regions": [
+          "CN"
+        ]
       },
       "sourceUrl": "https://docs.bigmodel.cn/cn/terms/privacy-policy",
       "privacyUrl": "https://docs.bigmodel.cn/cn/terms/privacy-policy",
-      "sourceDate": "2026-05-27",
-      "notes": "Privacy policy available in Chinese only. No public DPA. International users should use Z.ai (Singapore entity) instead.",
+      "sourceDate": "2026-09-30",
+      "notes": "Privacy policy (May 20, 2025) available in Chinese only. No public DPA. Operator Beijing Zhipu Huazhang Technology has been on the US Entity List since Jan 2025. A US-analysis view is that sending controlled technology to its hosted API may itself be an export. International users should look at Z.ai (Singapore entity) instead.",
       "relatedUrls": [
         "https://docs.z.ai/legal-agreement/privacy-policy"
+      ],
+      "compliance": {
+        "dpa": "silent",
+        "soc2": "silent",
+        "hipaaBaa": "silent"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://docs.bigmodel.cn/cn/terms/user-agreement",
+          "quote": "为了改善我们向您提供的产品和服务的质量，我们可能利用您使用大模型平台或平台内模型过程中产生的数据，定位、维护和优化我们的产品和服务，但是您与智谱另有约定的除外。 [To improve quality, we may use data generated while you use the platform or its models to locate, maintain and optimize our products and services, unless you and Zhipu agree otherwise.]",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://docs.bigmodel.cn/cn/terms/user-agreement",
+          "quote": "改进我们的产品和服务（包括使用匿名数据进行机器学习或模型算法训练），按照相关法律法规规定，此类数据已不属于个人信息范畴，因此此类处理后的数据的使用无需另行征得您的同意。 [improve our products and services (including using anonymized data for machine learning or model algorithm training); such data is no longer personal information, so its use needs no further consent.]",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://docs.bigmodel.cn/cn/terms/user-agreement",
+          "quote": "在法律允许的范围内，您免费授予智谱及其关联公司非排他的、无地域限制的、永久的、免费的许可使用 [to the extent permitted by law, you grant Zhipu and its affiliates a non-exclusive, worldwide, perpetual, free licence]",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://docs.bigmodel.cn/cn/terms/service-agreement",
+          "quote": "4.5 就您的数据，除为您提供服务所必需外，智谱不会进行任何未获授权的使用及披露 [Regarding your data, Zhipu will not make any unauthorized use or disclosure except as necessary to provide the service]",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://docs.bigmodel.cn/cn/terms/privacy-policy",
+          "quote": "我们只会在达成本政策所述目的所需的最短必要期限内保留您的个人信息，除非法律法规另有强制的留存时间要求。 [We retain personal information only for the shortest period necessary for the purposes in this policy, unless laws require longer.]",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://docs.bigmodel.cn/cn/guide/tools/batch",
+          "quote": "系统只保留您的数据 30 天。请及时下载和备份您的数据，过期后文件将自动删除，无法恢复。 [The system keeps your data for only 30 days; files are automatically deleted after expiry.]",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://docs.bigmodel.cn/cn/terms/privacy-policy",
+          "quote": "我们在中国境内运营中收集和产生的个人信息存储在中国境内。 [Personal information collected and generated in our operations in China is stored in China.]",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://docs.bigmodel.cn/cn/terms/privacy-policy",
+          "quote": "目前我们不会跨境传输或存储您的个人信息 [We currently do not transfer or store your personal information across borders]",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://docs.bigmodel.cn/cn/terms/privacy-policy",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://docs.bigmodel.cn/cn/terms/service-agreement",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {
@@ -1067,31 +1448,88 @@
       "incident": false,
       "training": {
         "label": "Off by default",
-        "detail": "Z.ai API (Singapore entity): 'We will not use your User Content for developing or improving Services unless you explicitly agree.' Privacy Policy (Sept 29, 2025) explicitly states: 'The Company do not store any of the content the Customer or its End Users provide or generate while using our Services...processed in real-time...not saved on our servers.' API users governed by DPA, not consumer policy."
+        "detail": "Z.ai API (Singapore entity): 'We will not use your User Content for developing or improving Services unless you explicitly agree.' Privacy Policy (Sept 29, 2025) explicitly states: 'The Company do not store any of the content the Customer or its End Users provide or generate while using our Services...processed in real-time...not saved on our servers.' API users governed by DPA, not consumer policy.",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
         "label": "Real-time only (no storage)",
-        "detail": "DPA embedded in Privacy Policy: no storage of API content. Processed in real-time, not saved on servers. Functionally equivalent to ZDR with legal backing. Consumer policy: 'minimum necessary period' — different (and weaker) commitment."
+        "detail": "DPA (embedded in the Privacy Policy, Sep 29, 2025): API content 'is processed in real-time ... and is not saved on our servers.' Other Customer Data is stored temporarily and deleted after termination of the Terms. The individual-user policy is weaker: input is retained 'as long as you have an account'.",
+        "kind": "none"
       },
       "zdr": {
         "label": "Yes — legally operative",
         "detail": "DPA explicitly confirms real-time processing with no storage. This is a legally operative commitment (embedded in Privacy Policy, Additional Terms for API Services prevail in conflict). Not marketed as 'ZDR' but functionally and legally equivalent.",
-        "status": "full"
+        "status": "full",
+        "access": "default"
       },
       "location": {
         "label": "Singapore",
         "flag": "🇸🇬",
-        "detail": "Z.ai: JINGSHENG HENGXING TECHNOLOGY PTE. LTD., Singapore. Data processed in Singapore. Separate from BigModel China entity."
+        "detail": "Z.ai: JINGSHENG HENGXING TECHNOLOGY PTE. LTD., Singapore. Data processed in Singapore. Separate from BigModel China entity.",
+        "regions": [
+          "SG"
+        ]
       },
       "sourceUrl": "https://chat.z.ai/legal-agreement/terms-of-service",
       "privacyUrl": "https://chat.z.ai/legal-agreement/privacy-policy",
-      "sourceDate": "2026-05-27",
-      "notes": "STRONG UPDATE: DPA in Privacy Policy explicitly states 'no storage of API content' — legally operative. API and consumer explicitly separated. Consumer policy is weaker. BigModel China has perpetual licence clause — different entity, same underlying models. ToS via OpenRouter; Privacy Policy at docs.z.ai.",
+      "sourceDate": "2026-09-30",
+      "notes": "DPA in the Privacy Policy explicitly states no storage of API content, and it is legally operative. API and individual users are explicitly separated; individual users grant a perpetual licence and consent to training on non-personal content. The Terms of Use (Apr 14, 2026) prohibit HIPAA PHI for US use. The Z.ai docs describe automatic implicit context caching, which the DPA does not reconcile. Parent Zhipu (Beijing) has been on the US Entity List since Jan 2025; the Singapore operator is not itself listed. BigModel China has a perpetual licence clause: a different entity, same underlying models.",
       "relatedUrls": [
         "https://docs.z.ai/legal-agreement/privacy-policy",
         "https://docs.z.ai/legal-agreement/dpa",
         "https://docs.z.ai/legal-agreement/terms-of-use",
         "https://chat.z.ai/legal-agreement/terms-of-service"
+      ],
+      "compliance": {
+        "dpa": "public",
+        "soc2": "silent",
+        "hipaaBaa": "none"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://docs.z.ai/legal-agreement/terms-of-use",
+          "quote": "b) We will only use End User Content as necessary to provide you with the API Services, comply with applicable law, enforce our policies, and prevent abuse. [We will not use End User Content to develop or improve Services, unless you explicitly agree to such use.]",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://docs.z.ai/legal-agreement/terms-of-use",
+          "quote": "For enterprises and developers using API Services, we will not use your User Content for developing or improving Services unless you explicitly agree to such use.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://docs.z.ai/legal-agreement/privacy-policy",
+          "quote": "This information is processed in real-time to provide the Customer and End Users with the API Service and is not saved on our servers.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://docs.z.ai/legal-agreement/privacy-policy",
+          "quote": "The Company do not store any of the content the Customer or its End Users provide or generate while using our Services.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://docs.z.ai/legal-agreement/privacy-policy",
+          "quote": "Company generally provide the Services from Singapore, and our group companies and their designated service providers are typically located in Singapore. As a result, Customer Data is generally processed in Singapore.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://docs.z.ai/legal-agreement/privacy-policy",
+          "quote": "This Data Processing Addendum (“DPA”) governs the processing of the data provided by business and enterprises users (“Customers”) through API Services offered by JINGSHENG HENGXING TECHNOLOGY PTE.LTD",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://docs.z.ai/legal-agreement/terms-of-use",
+          "quote": "process, store, or transmit any Protected Health Information (PHI) or other data regulated under the Health Insurance Portability and Accountability Act （HIPAA）",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {
@@ -1104,29 +1542,92 @@
       "rating": "caution",
       "incident": false,
       "training": {
-        "label": "Ambiguous — profiling only excluded",
-        "detail": "Privacy Policy (March 30, 2026): 'We do not use your input personal data to infer characteristics about an individual, nor use personal data for training to profile or target consumers.' This ONLY prohibits training for PROFILING/TARGETING. Completely SILENT on whether inference data can be used for general model improvement. No other document in 6 retrieved addresses this. Service Rules (governing privacy/security) require platform login to access."
+        "label": "On — ToS allows use to improve Services",
+        "detail": "Terms of Service (Mar 30, 2026): \"We may use the input and generated content to provide, maintain, develop, and improve our Services\". No opt-out mechanism is documented. The Privacy Policy only excludes \"training to profile or target consumers\".",
+        "default": "on",
+        "optOut": "silent"
       },
       "retention": {
         "label": "Vague (general); specific for audio/voice",
-        "detail": "General inference data: 'as long as necessary / as soon as reasonable' — still vague. ONLY specific durations found: audio generation URLs expire in 9 hours; temporary voice assets valid for 7 days maximum."
+        "detail": "Privacy Policy §8: \"We may retain and use your personal data for as long as it is necessary or permitted by law or to fulfil the purpose for which it was collected.\" Only specific durations are in API docs: audio download URLs expire after 9 hours; uploaded files/unactivated voice IDs 7 days.",
+        "kind": "silent"
       },
       "zdr": {
-        "label": "Undocumented officially",
-        "detail": "No formal ZDR offering documented in any of 6 retrieved documents. Third-party review (Oct 2025) confirms zero-retention mode for MiniMax M2, but not in official policy.",
-        "status": "none"
+        "label": "Not documented",
+        "detail": "No ZDR offering in the Terms of Service, Privacy Policy or API docs.",
+        "status": "none",
+        "access": "silent"
       },
       "location": {
-        "label": "Undisclosed (inferred US)",
+        "label": "United States (stated)",
         "flag": "🇺🇸",
-        "detail": "Privacy Policy does not specify server locations. EU-US Privacy Framework certification implies US data center for international API, but not explicitly stated. China domestic apps: stored in PRC."
+        "detail": "Privacy Policy §9: \"Your personal data described in this Policy are stored in the data center located in the United States\" (cloud provider's US data center, EU-US Data Privacy Framework-certified). Operator: Nanonoble Pte. Ltd. (Singapore). ToS forbids HIPAA-regulated and ITAR data in the US service region. China domestic apps: stored in PRC.",
+        "regions": [
+          "US"
+        ]
       },
       "sourceUrl": "https://www.minimax.io/platform/protocol/terms-of-service",
       "privacyUrl": "https://www.minimax.io/platform/protocol/privacy-policy",
-      "sourceDate": "2026-05-27",
-      "notes": "Nanonoble Pte. Ltd. (Singapore entity) for international API. Training policy gap confirmed across 6 retrieved documents — only profiling/targeting excluded, general improvement not addressed. Service Rules inaccessible without login. SOC 2 / ISO potentially available under NDA for enterprise. ToS via OpenRouter; Privacy Policy at platform.minimax.io.",
+      "sourceDate": "2026-09-30",
+      "notes": "Nanonoble Pte. Ltd. (Singapore entity) for international API. Re-verified 2026-09-30: the ToS (Mar 30, 2026) grants use of inputs/outputs to \"develop, and improve our Services\" with no documented opt-out; the Privacy Policy explicitly states US data-center storage. No public DPA, SOC 2 report or HIPAA BAA; ToS prohibits HIPAA data. Service Rules require platform login.",
       "relatedUrls": [
         "https://www.minimax.io/platform/protocol/terms-of-service"
+      ],
+      "compliance": {
+        "dpa": "silent",
+        "soc2": "silent",
+        "hipaaBaa": "none"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://www.minimax.io/platform/protocol/terms-of-service",
+          "quote": "As between you and us, and to the extent permitted by applicable laws, you retain your ownership rights in Client input and generated content. We may use the input and generated content to provide, maintain, develop, and improve our Services",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://www.minimax.io/platform/protocol/privacy-policy",
+          "quote": "Please note that we do not use your input personal data to infer characteristics about an individual, nor use personal data for training to profile or target consumers.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://www.minimax.io/platform/protocol/privacy-policy",
+          "quote": "We may retain and use your personal data for as long as it is necessary or permitted by law or to fulfil the purpose for which it was collected.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://www.minimax.io/platform/protocol/terms-of-service",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://www.minimax.io/platform/protocol/privacy-policy",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://www.minimax.io/platform/protocol/privacy-policy",
+          "quote": "Your personal data described in this Policy are stored in the data center located in the United States",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://www.minimax.io/platform/protocol/privacy-policy",
+          "quote": "We store your data cross-border in Cloud's US data center in a manner certified under the EU-US Privacy Framework.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://www.minimax.io/platform/protocol/terms-of-service",
+          "quote": "Process or store any Client Data subject to the Health Insurance Portability and Accountability Act of 1996 (HIPAA)",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {
@@ -1139,29 +1640,85 @@
       "rating": "caution",
       "incident": false,
       "training": {
-        "label": "Vague 'service improvement'",
-        "detail": "Consumer prompts 'may be retained for service improvement, anonymized where possible.' No explicit prohibition on training use."
+        "label": "Not addressed; broad content licence",
+        "detail": "The Hailuo AI privacy policy (Nanonoble Pte. Ltd., updated Dec 9, 2025) never mentions model training or service improvement using prompts. The Terms of Service (Aug 19, 2026) grant a 'royalty-free, perpetual, irrevocable, worldwide, non-exclusive right ... to use, license, reproduce, modify, adapt ... create derivative works from' User Contributions and generated content. No opt-out documented.",
+        "default": "silent",
+        "optOut": "silent"
       },
       "retention": {
-        "label": "30 days post-deletion",
-        "detail": "Active accounts: indefinite. Deletion: cleared within 30 days. Facial data (video): permanently deleted on completion."
+        "label": "Vague — 'as long as necessary'",
+        "detail": "Policy: 'We may retain and use your personal data for as long as it is necessary or permitted by law or to fulfil the purpose for which it was collected.' No fixed period and no post-deletion window stated. Face data from uploaded photos: 'not stored, not retained after processing' and permanently deleted once video generation completes.",
+        "kind": "indefinite"
       },
       "zdr": {
         "label": "Not available",
-        "detail": "No ZDR for consumer product.",
-        "status": "none"
+        "detail": "No ZDR or no-retention option for prompts or generated content. The only no-retention commitment covers facial data derived from uploaded photos.",
+        "status": "none",
+        "access": "silent"
       },
       "location": {
-        "label": "China (domestic apps)",
-        "flag": "🇨🇳",
-        "detail": "Chinese consumer apps stored within PRC per PIPL compliance."
+        "label": "Singapore",
+        "flag": "🇸🇬",
+        "detail": "Operator: Nanonoble Pte. Ltd., 152 Beach Road, Singapore. Policy: 'we generally do not transfer your personal data to countries outside Singapore', but transfers to affiliates and third parties abroad are allowed with PDPA-comparable safeguards. The policy does not mention China or PIPL.",
+        "regions": [
+          "SG"
+        ]
       },
       "sourceUrl": "https://hailuoai.com/doc/privacy-policy.html",
       "privacyUrl": "https://hailuoai.com/doc/privacy-policy.html",
-      "sourceDate": "2026-05-27",
-      "notes": "Facial data explicitly non-retained post-generation — a positive specific commitment.",
+      "sourceDate": "2026-09-30",
+      "notes": "Face data explicitly non-retained after generation, a specific positive commitment. Otherwise the policy is generic website boilerplate: silent on training, vague on retention. ToS grants a perpetual, irrevocable licence over user content. Operator Nanonoble Pte. Ltd. is also a defendant in the Disney/Universal/WBD copyright suit (C.D. Cal., filed Sep 2025), which is not a privacy incident.",
       "relatedUrls": [
         "https://www.minimax.io/platform/protocol/terms-of-service"
+      ],
+      "compliance": {
+        "dpa": "silent",
+        "soc2": "silent",
+        "hipaaBaa": "silent"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://hailuoai.com/doc/privacy-policy.html",
+          "quote": "We use information that we collect about you or that you provide to us, including any personal information:",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://hailuoai.video/doc/terms-of-service.html",
+          "quote": "grant to us, our affiliates, successors, and assigns a royalty-free, perpetual, irrevocable, worldwide, non-exclusive right (including any moral rights) and license to use, license, reproduce, modify, adapt, publish, translate, create derivative works from, distribute",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://hailuoai.com/doc/privacy-policy.html",
+          "quote": "We may retain and use your personal data for as long as it is necessary or permitted by law or to fulfil the purpose for which it was collected.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://hailuoai.com/doc/privacy-policy.html",
+          "quote": "Once the video generation process is completed, both the uploaded photos and all derived facial data are permanently deleted from our systems.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://hailuoai.com/doc/privacy-policy.html",
+          "quote": "While we generally do not transfer your personal data to countries outside Singapore, if we need to transfer your personal data to our affiliates and/or third parties outside Singapore",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://hailuoai.com/doc/privacy-policy.html",
+          "quote": "Nanonoble Pte. Ltd. with a registered address at 152 Beach Road, #14-02 Gateway East, Singapore (189721).",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://hailuoai.com/doc/privacy-policy.html",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {
@@ -1173,32 +1730,211 @@
       "categoryLabel": "Chinese",
       "rating": "high-risk",
       "incident": true,
-      "incidentDetail": "Jan 2025: ClickHouse DB breach exposing 1M+ records (chat logs, API keys). Korea PIPC (Apr 2025): unauthorized data transfers to ByteDance-affiliated entity. Italy Garante: ongoing GDPR investigation. Gov bans: NASA, DoD, Congress (US), Australia, Italy, Taiwan.",
+      "incidentDetail": "Jan 2025: exposed ClickHouse DB (Wiz) leaked 1M+ log lines incl. chat history and API secrets. Jan 2025: Italy Garante limitation order blocks DeepSeek in Italy. Korea PIPC (Apr 2025): prompts and device data transferred to China/US firms incl. ByteDance-affiliated Volcano Engine without consent; corrective recommendations issued. Jun 2025: Berlin DPA reported the app to Apple/Google as illegal content under the DSA. Gov bans: NASA, Navy, Pentagon, House (US), Australia, Taiwan.",
       "training": {
-        "label": "On by default; API opt-out not documented",
-        "detail": "ToS Section 4.3 (March 27, 2026): 'we may use Inputs and Outputs to provide, maintain, operate, develop or improve the Services.' Consumer product has opt-out toggle ('Improve the model for everyone'). NO equivalent opt-out is documented for API tier."
+        "label": "On by default; opt-out via chat toggle or privacy email",
+        "detail": "The Open Platform Terms (effective Apr 29, 2026) are a \"Specific Agreement to the DeepSeek Terms of Use\" and add no data-use carve-out, so ToU §4.3 applies to the API: \"we may, to a minimal extent, use Inputs and Outputs to provide, maintain, operate, develop or improve the Services\" (de-identified). The only opt-out is the account-level \"Improve the model for everyone\" toggle (shared chat/API account) or a rights request to privacy@deepseek.com; no API-specific control is documented.",
+        "default": "on",
+        "optOut": "email"
       },
       "retention": {
-        "label": "Indefinite (post-deletion rights reserved)",
-        "detail": "ToS Section 2.5: 'Retain certain data as required by laws and regulations' — indefinite. Shared conversation links may be crawled despite anti-scraping measures — risk 'cannot be entirely eliminated.'"
+        "label": "Account lifetime; legal holds after deletion",
+        "detail": "Privacy Policy (Feb 10, 2026): \"we keep this Personal Data for as long as you have an account. This Personal Data includes your account Personal Data, input and payment Personal Data.\" ToU §2.5: after account deletion DeepSeek may still \"Retain certain data of the user as required by laws and regulations.\"",
+        "kind": "until-deleted"
       },
       "zdr": {
         "label": "Not available",
-        "detail": "No ZDR tier or enterprise agreement. Alternatives: self-host open weights (MIT license), or use Google Cloud / Azure hosting (their policies apply).",
-        "status": "none"
+        "detail": "No ZDR tier, retention control or enterprise agreement documented; inputs are kept for the life of the account. Alternatives: self-host open weights (MIT license), or use a third-party host (their policies apply).",
+        "status": "none",
+        "access": "none"
       },
       "location": {
         "label": "China — all users",
         "flag": "🇨🇳",
-        "detail": "ToS Section 10.1: Governed by People's Republic of China law. Policy (explicit): 'we directly collect, process and store your Personal Data in People's Republic of China.' All global users — no separate international infrastructure."
+        "detail": "Privacy Policy: \"we directly collect, process and store your Personal Data in People's Republic of China.\" Open Platform Terms §10.1: governed by the laws of the People's Republic of China in the mainland. No separate international infrastructure.",
+        "regions": [
+          "CN"
+        ]
       },
       "sourceUrl": "https://chat.deepseek.com/downloads/DeepSeek%20Terms%20of%20Use.html",
       "privacyUrl": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html?locale=en_US",
-      "sourceDate": "2026-05-27",
-      "notes": "Updated to official March 27, 2026 ToS. Korea PIPC investigation concluded November 2025 with minor remediations (Korean-language policy added, Volcano/ByteDance transfers blocked, opt-out toggle added). Core China storage and training policy unchanged. Italy Garante ban still in force. No DPA, no SOC 2, no enterprise ZDR as of May 2026. Open-source weights (MIT license) self-hosted removes all these concerns.",
+      "sourceDate": "2026-09-30",
+      "notes": "Re-verified 2026-09-30 against the Terms of Use (Mar 27, 2026), new Open Platform Terms of Service (effective Apr 29, 2026) and Privacy Policy (Feb 10, 2026). Korea PIPC published findings Apr 24, 2025 (unconsented transfers incl. to ByteDance-affiliated Volcano Engine; transfers halted Apr 10, 2025; training opt-out added after PIPC review). No DPA, SOC 2 or HIPAA terms published; no enterprise ZDR. Open-source weights (MIT license) self-hosted remove these concerns.",
       "relatedUrls": [
         "https://chat.deepseek.com/downloads/DeepSeek%20Terms%20of%20Use.html",
         "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html"
+      ],
+      "compliance": {
+        "dpa": "silent",
+        "soc2": "silent",
+        "hipaaBaa": "silent"
+      },
+      "incidents": [
+        {
+          "date": "2025-01",
+          "type": "breach",
+          "confirmed": true,
+          "summary": "Wiz Research found a publicly accessible, unauthenticated DeepSeek ClickHouse database exposing over a million log lines including chat history, API secrets and backend details; DeepSeek secured it after disclosure.",
+          "sourceUrl": "https://www.wiz.io/blog/wiz-research-uncovers-exposed-deepseek-database-leak"
+        },
+        {
+          "date": "2025-01",
+          "type": "regulatory",
+          "confirmed": true,
+          "summary": "Italian Garante ordered, with immediate effect, a limitation on processing of Italian users' data by Hangzhou and Beijing DeepSeek (effectively blocking the service in Italy) and opened an investigation.",
+          "sourceUrl": "https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/10097450"
+        },
+        {
+          "date": "2025-01",
+          "type": "ban",
+          "confirmed": true,
+          "summary": "US federal bodies barred DeepSeek on government devices/networks (NASA memo 31 Jan 2025; Navy, Pentagon, House, Transportation Dept reported the same week).",
+          "sourceUrl": "https://www.cnbc.com/2025/01/31/nasa-becomes-latest-federal-agency-to-block-chinas-deepseek.html"
+        },
+        {
+          "date": "2025-02",
+          "type": "ban",
+          "confirmed": true,
+          "summary": "Taiwan barred public-sector agencies and workers from using DeepSeek over cross-border data leakage concerns.",
+          "sourceUrl": "https://www.rfa.org/english/china/2025/02/03/china-taiwan-deep-seek-ban/"
+        },
+        {
+          "date": "2025-02",
+          "type": "ban",
+          "confirmed": true,
+          "summary": "Australia (PSPF Direction 001-2025, 4 Feb 2025) required removal of DeepSeek products from all federal government systems and devices.",
+          "sourceUrl": "https://www.itnews.com.au/news/australia-bans-deepseek-on-government-devices-614763"
+        },
+        {
+          "date": "2025-04",
+          "type": "regulatory",
+          "confirmed": true,
+          "summary": "South Korea PIPC found DeepSeek transferred Korean users' data (incl. prompt text) to firms in China and the US, including Beijing Volcano Engine, without consent; issued corrective recommendations. App downloads had been suspended since Feb 2025.",
+          "sourceUrl": "https://www.cnbc.com/2025/04/24/south-korea-says-deepseek-transferred-user-data-to-china-us-without-consent.html"
+        },
+        {
+          "date": "2025-06",
+          "type": "regulatory",
+          "confirmed": true,
+          "summary": "Berlin data protection commissioner (with three other German state DPAs) formally notified Apple and Google under DSA Art. 16 that the DeepSeek app is illegal content due to unlawful transfers of personal data to China.",
+          "sourceUrl": "https://techcrunch.com/2025/06/27/germany-tells-apple-google-to-remove-deepseek-from-the-countrys-app-stores/"
+        }
+      ],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-terms-of-use.html",
+          "quote": "use Inputs and Outputs to provide, maintain, operate, develop or improve the Services or the underlying technologies supporting the Services. If you refuse to allow us to process the data in the manner described above, you can opt out by turning off \"Improve the model for everyone\".",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html",
+          "quote": "To improve and develop the Services and to train and improve our technology, such as our machine learning models and algorithms.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-open-platform-terms-of-service.html",
+          "quote": "serves as a Specific Agreement to the \"DeepSeek Terms of Use\" and specifically applies to your use of the application programming interface or other developer tools provided by this platform",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html",
+          "quote": "the right to opt-out of using your Personal Data for training our models or optimizing our technologies.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html",
+          "quote": "To exercise your rights, you or an authorized agent may submit a request by emailing us at privacy@deepseek.com.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html",
+          "quote": "For example, when we process your Personal Data to provide you with the Services, we keep this Personal Data for as long as you have an account. This Personal Data includes your account Personal Data, input and payment Personal Data.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-terms-of-use.html",
+          "quote": "However, even after the user deletes the account, we still have the right to: Retain certain data of the user as required by laws and regulations.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html",
+          "quote": "we keep this Personal Data for as long as you have an account. This Personal Data includes your account Personal Data, input and payment Personal Data.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html",
+          "quote": "To provide you with our services, we directly collect, process and store your Personal Data in People's Republic of China.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-open-platform-terms-of-service.html",
+          "quote": "The establishment, execution, interpretation, and resolution of disputes under these Terms shall be governed by the laws of the People's Republic of China in the mainland.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-open-platform-terms-of-service.html",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.wiz.io/blog/wiz-research-uncovers-exposed-deepseek-database-leak",
+          "quote": "Wiz Research has identified a publicly accessible ClickHouse database belonging to DeepSeek, which allows full control over database operations, including the ability to access internal data.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/10097450",
+          "quote": "The Italian Data Protection Authority has ordered, as a matter of urgency and with immediate effect, the limitation on processing of Italian users' data against Hangzhou DeepSeek Artificial Intelligence and Beijing DeepSeek Artificial Intelligence",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.cnbc.com/2025/01/31/nasa-becomes-latest-federal-agency-to-block-chinas-deepseek.html",
+          "quote": "\"DeepSeek and its products and services are not authorized for use with NASA's data and information or on government-issued devices and networks,\" the memo said.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.rfa.org/english/china/2025/02/03/china-taiwan-deep-seek-ban/",
+          "quote": "Taiwan said its public sector workers would be banned from using DeepSeek, a recently released Chinese artificial intelligence model, due to concerns over data leaks",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.itnews.com.au/news/australia-bans-deepseek-on-government-devices-614763",
+          "quote": "Australia has banned DeepSeek from all government devices over concerns that the Chinese artificial intelligence startup poses security risks.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.cnbc.com/2025/04/24/south-korea-says-deepseek-transferred-user-data-to-china-us-without-consent.html",
+          "quote": "South Korea's data protection authority has concluded that Chinese artificial intelligence startup DeepSeek collected personal information from local users and transferred it overseas without their permission.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://techcrunch.com/2025/06/27/germany-tells-apple-google-to-remove-deepseek-from-the-countrys-app-stores/",
+          "quote": "Germany has told Apple and Google to remove Chinese AI app DeepSeek from their app stores, saying the company transfers users' data to China illegally.",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {
@@ -1210,31 +1946,192 @@
       "categoryLabel": "Chinese",
       "rating": "high-risk",
       "incident": true,
-      "incidentDetail": "See API row — same incidents apply.",
+      "incidentDetail": "See API row — same incidents apply (Jan 2025 exposed database; Italy Garante limitation; Korea PIPC findings; Berlin DPA DSA notice; government bans in US, Australia, Taiwan).",
       "training": {
         "label": "On by default",
-        "detail": "Policy: 'We may use your Personal Data to...train and improve our technology, such as our machine learning models.' Opt-out toggle available in account settings."
+        "detail": "Terms of Use §4.3 (Mar 27, 2026): DeepSeek \"may, to a minimal extent, use Inputs and Outputs to provide, maintain, operate, develop or improve the Services\" (after de-identification); \"you can opt out by turning off 'Improve the model for everyone'\". Privacy Policy: data used \"to train and improve our technology, such as our machine learning models\".",
+        "default": "on",
+        "optOut": "setting"
       },
       "retention": {
-        "label": "Indefinite (account active)",
-        "detail": "Retained for duration of account existence. ToS violations may extend indefinitely."
+        "label": "Account lifetime (chat history deletable)",
+        "detail": "Privacy Policy (Feb 10, 2026): \"we keep this Personal Data for as long as you have an account\", including input. Chat history can be deleted in settings; after account deletion DeepSeek may still retain data \"as required by laws and regulations\" (ToU §2.5). ToS violations may extend retention.",
+        "kind": "until-deleted"
       },
       "zdr": {
         "label": "Not available",
         "detail": "No ZDR option.",
-        "status": "none"
+        "status": "none",
+        "access": "none"
       },
       "location": {
         "label": "China — all users",
         "flag": "🇨🇳",
-        "detail": "Explicit China storage for all global users."
+        "detail": "Privacy Policy: \"we directly collect, process and store your Personal Data in People's Republic of China.\" Applies to all global users.",
+        "regions": [
+          "CN"
+        ]
       },
-      "sourceUrl": "https://deepseek-en.com/privacy-policy.html",
-      "privacyUrl": "https://deepseek-en.com/privacy-policy.html",
-      "sourceDate": "2026-05-27",
-      "notes": "Not appropriate for sensitive or regulated data. Mobile app had hardcoded encryption keys and unencrypted data transmission (NowSecure, 2025).",
+      "sourceUrl": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html",
+      "privacyUrl": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html",
+      "sourceDate": "2026-09-30",
+      "notes": "Not appropriate for sensitive or regulated data. Mobile app had hardcoded encryption keys and unencrypted data transmission (NowSecure, 2025). Re-verified 2026-09-30 against official Terms of Use and Privacy Policy on cdn.deepseek.com (previous source deepseek-en.com is an unofficial site and now returns 404).",
       "relatedUrls": [
         "https://chat.deepseek.com/downloads/DeepSeek%20Terms%20of%20Use.html"
+      ],
+      "compliance": {
+        "dpa": "silent",
+        "soc2": "silent",
+        "hipaaBaa": "silent"
+      },
+      "incidents": [
+        {
+          "date": "2025-01",
+          "type": "breach",
+          "confirmed": true,
+          "summary": "Wiz Research found a publicly accessible, unauthenticated DeepSeek ClickHouse database exposing over a million log lines including chat history, API secrets and backend details; DeepSeek secured it after disclosure.",
+          "sourceUrl": "https://www.wiz.io/blog/wiz-research-uncovers-exposed-deepseek-database-leak"
+        },
+        {
+          "date": "2025-01",
+          "type": "regulatory",
+          "confirmed": true,
+          "summary": "Italian Garante ordered, with immediate effect, a limitation on processing of Italian users' data by Hangzhou and Beijing DeepSeek (effectively blocking the service in Italy) and opened an investigation.",
+          "sourceUrl": "https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/10097450"
+        },
+        {
+          "date": "2025-01",
+          "type": "ban",
+          "confirmed": true,
+          "summary": "US federal bodies barred DeepSeek on government devices/networks (NASA memo 31 Jan 2025; Navy, Pentagon, House, Transportation Dept reported the same week).",
+          "sourceUrl": "https://www.cnbc.com/2025/01/31/nasa-becomes-latest-federal-agency-to-block-chinas-deepseek.html"
+        },
+        {
+          "date": "2025-02",
+          "type": "ban",
+          "confirmed": true,
+          "summary": "Taiwan barred public-sector agencies and workers from using DeepSeek over cross-border data leakage concerns.",
+          "sourceUrl": "https://www.rfa.org/english/china/2025/02/03/china-taiwan-deep-seek-ban/"
+        },
+        {
+          "date": "2025-02",
+          "type": "ban",
+          "confirmed": true,
+          "summary": "Australia (PSPF Direction 001-2025, 4 Feb 2025) required removal of DeepSeek products from all federal government systems and devices.",
+          "sourceUrl": "https://www.itnews.com.au/news/australia-bans-deepseek-on-government-devices-614763"
+        },
+        {
+          "date": "2025-04",
+          "type": "regulatory",
+          "confirmed": true,
+          "summary": "South Korea PIPC found DeepSeek transferred Korean users' data (incl. prompt text) to firms in China and the US, including Beijing Volcano Engine, without consent; issued corrective recommendations. App downloads had been suspended since Feb 2025.",
+          "sourceUrl": "https://www.cnbc.com/2025/04/24/south-korea-says-deepseek-transferred-user-data-to-china-us-without-consent.html"
+        },
+        {
+          "date": "2025-06",
+          "type": "regulatory",
+          "confirmed": true,
+          "summary": "Berlin data protection commissioner (with three other German state DPAs) formally notified Apple and Google under DSA Art. 16 that the DeepSeek app is illegal content due to unlawful transfers of personal data to China.",
+          "sourceUrl": "https://techcrunch.com/2025/06/27/germany-tells-apple-google-to-remove-deepseek-from-the-countrys-app-stores/"
+        }
+      ],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-terms-of-use.html",
+          "quote": "use Inputs and Outputs to provide, maintain, operate, develop or improve the Services or the underlying technologies supporting the Services. If you refuse to allow us to process the data in the manner described above, you can opt out by turning off \"Improve the model for everyone\".",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html",
+          "quote": "To improve and develop the Services and to train and improve our technology, such as our machine learning models and algorithms.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html",
+          "quote": "For example, when we process your Personal Data to provide you with the Services, we keep this Personal Data for as long as you have an account. This Personal Data includes your account Personal Data, input and payment Personal Data.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-terms-of-use.html",
+          "quote": "However, even after the user deletes the account, we still have the right to: Retain certain data of the user as required by laws and regulations.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html",
+          "quote": "Should you choose to do so, you may also copy or delete your chat history via your",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html",
+          "quote": "we keep this Personal Data for as long as you have an account. This Personal Data includes your account Personal Data, input and payment Personal Data.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html",
+          "quote": "To provide you with our services, we directly collect, process and store your Personal Data in People's Republic of China.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-terms-of-use.html",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.wiz.io/blog/wiz-research-uncovers-exposed-deepseek-database-leak",
+          "quote": "Wiz Research has identified a publicly accessible ClickHouse database belonging to DeepSeek, which allows full control over database operations, including the ability to access internal data.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/10097450",
+          "quote": "The Italian Data Protection Authority has ordered, as a matter of urgency and with immediate effect, the limitation on processing of Italian users' data against Hangzhou DeepSeek Artificial Intelligence and Beijing DeepSeek Artificial Intelligence",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.cnbc.com/2025/01/31/nasa-becomes-latest-federal-agency-to-block-chinas-deepseek.html",
+          "quote": "\"DeepSeek and its products and services are not authorized for use with NASA's data and information or on government-issued devices and networks,\" the memo said.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.rfa.org/english/china/2025/02/03/china-taiwan-deep-seek-ban/",
+          "quote": "Taiwan said its public sector workers would be banned from using DeepSeek, a recently released Chinese artificial intelligence model, due to concerns over data leaks",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.itnews.com.au/news/australia-bans-deepseek-on-government-devices-614763",
+          "quote": "Australia has banned DeepSeek from all government devices over concerns that the Chinese artificial intelligence startup poses security risks.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.cnbc.com/2025/04/24/south-korea-says-deepseek-transferred-user-data-to-china-us-without-consent.html",
+          "quote": "South Korea's data protection authority has concluded that Chinese artificial intelligence startup DeepSeek collected personal information from local users and transferred it overseas without their permission.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://techcrunch.com/2025/06/27/germany-tells-apple-google-to-remove-deepseek-from-the-countrys-app-stores/",
+          "quote": "Germany has told Apple and Google to remove Chinese AI app DeepSeek from their app stores, saying the company transfers users' data to China illegally.",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {
@@ -1248,29 +2145,106 @@
       "incident": false,
       "training": {
         "label": "Off — no training on your content",
-        "detail": "Privacy Policy (June 25, 2026 update, verified 2026-09-13): \"Xiaomi will not use the content you provide for model training or any other purposes.\" Resolves the previously inaccessible privacy.mi.com page; OpenRouter's 'Does not train' listing independently agrees."
+        "detail": "International Privacy Policy (updated June 25, 2026; privacy.mi.com/XiaomiMiMoPlatformos): \"Xiaomi will not use the content you provide for model training or any other purposes.\" The mainland-China version (v20260806) is narrower: \"Without your prior consent, Xiaomi will not use the text content provided by you for model training\".",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
-        "label": "Reasonable period",
-        "detail": "Service Agreement: 'permanently delete personal information within a reasonable period' upon service expiration or user request. Privacy Policy §6: retained for the period necessary for the stated purposes, then deleted or anonymized once legal hold periods elapse."
+        "label": "Until purpose fulfilled or deletion request",
+        "detail": "Service Agreement §4.4 (July 7, 2026): at service expiration, purpose completion or your request, Xiaomi will \"cease processing or permanently delete the personal information within a reasonable period.\" Privacy Policy §6: deleted or anonymized once the purpose is fulfilled or an erasure request is confirmed. Batch API input/result files: 30 days by default.",
+        "kind": "until-deleted"
       },
       "zdr": {
         "label": "Not available",
-        "detail": "Confirmed absent by Vercel AI Gateway: 'Zero Data Retention is not currently available for this model.'",
-        "status": "none"
+        "detail": "No ZDR option in the Service Agreement, Privacy Policy or API docs. (Vercel AI Gateway also lists ZDR as unavailable for MiMo models.)",
+        "status": "none",
+        "access": "silent"
       },
       "location": {
-        "label": "EU + Singapore (international)",
-        "flag": "🇪🇺🇸🇬",
-        "detail": "CRITICAL UPDATE: Service Agreement explicitly states international user data is stored on servers in Europe and Singapore — NOT mainland China. User is Data Controller, Xiaomi is Data Processor. Domestic China users: data in PRC."
+        "label": "Netherlands + Singapore (international)",
+        "flag": "🇳🇱🇸🇬",
+        "detail": "International Privacy Policy: \"Xiaomi uses regional data hosting infrastructure located in the Netherlands and Singapore\" — EEA/UK/CH users' data stored in the Netherlands (Xiaomi Technology Netherlands B.V.), others in Singapore (Xiaomi Technologies Singapore Pte. Ltd.), with cross-transfer between the two and onward transfers to affiliates. Service Agreement: user is Data Controller, Xiaomi is Processor; custom storage regions on request (may cost extra). Mainland-China users: data stored in the PRC.",
+        "regions": [
+          "NL",
+          "SG",
+          "CN"
+        ]
       },
-      "sourceUrl": "https://platform.xiaomimimo.com/docs/terms/user-agreement",
-      "privacyUrl": "https://mimo.mi.com/docs/terms/privacy-policy",
-      "sourceDate": "2026-09-13",
-      "notes": "Upgraded from Unverified based on Service Agreement (April 26, 2026). Major finding: international data goes to EU/Singapore, not China. Privacy Policy relocated to mimo.mi.com/docs/terms/privacy-policy (June 25, 2026 update) and verified 2026-09-13 — training explicitly excluded, resolving the previously inaccessible privacy.mi.com page. Open-source weights on HuggingFace (MIT) available for self-hosting. User Agreement via OpenRouter (anchor removed for compatibility).",
+      "sourceUrl": "https://mimo.mi.com/docs/quick-start/terms/user-agreement",
+      "privacyUrl": "https://privacy.mi.com/XiaomiMiMoPlatformos/en_GB/",
+      "sourceDate": "2026-09-30",
+      "notes": "Re-verified 2026-09-30 against the Service Agreement (July 7, 2026), international Privacy Policy (June 25, 2026) and mainland Privacy Policy (v20260806). International data hosted in the Netherlands and Singapore, not mainland China; Service Agreement includes a data-processing appendix (Xiaomi as Processor). No ZDR, SOC 2 or HIPAA terms published. Open-source weights on HuggingFace (MIT) available for self-hosting.",
       "relatedUrls": [
         "https://platform.xiaomimimo.com/#/docs/terms/user-agreement",
         "https://privacy.mi.com/XiaomiMiMoPlatform/en_GB/"
+      ],
+      "compliance": {
+        "dpa": "public",
+        "soc2": "silent",
+        "hipaaBaa": "silent"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://privacy.mi.com/XiaomiMiMoPlatformos/en_GB/",
+          "quote": "Xiaomi will not use the content you provide for model training or any other purposes.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://privacy.mi.com/XiaomiMiMoPlatform/en_GB/",
+          "quote": "Without your prior consent, Xiaomi will not use the text content provided by you for model training or any other purposes.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://privacy.mi.com/XiaomiMiMoPlatformos/en_GB/",
+          "quote": "We will cease to retain and delete or anonymize personal information once the purpose of collection is fulfilled, or after we confirm your request for erasure, or after we terminate the operation of the corresponding services",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://mimo.mi.com/docs/quick-start/terms/user-agreement",
+          "quote": "Upon service expiration, completion of the agreed purpose, or at your request, unless prohibited by laws that Xiaomi must comply with, Xiaomi will cease processing or permanently delete the personal information within a reasonable period.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://mimo.mi.com/static/docs/quick-start/usage-guide/text-generation/batch-api.md",
+          "quote": "Input files and result files are retained for **30 days by default** and are automatically cleaned up after expiry.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://mimo.mi.com/docs/quick-start/terms/user-agreement",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://privacy.mi.com/XiaomiMiMoPlatformos/en_GB/",
+          "quote": "Xiaomi uses regional data hosting infrastructure located in the Netherlands and Singapore.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://mimo.mi.com/docs/quick-start/terms/user-agreement",
+          "quote": "When providing services outside the Chinese Mainland, Xiaomi will store the relevant data on servers located in Europe and Singapore.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://privacy.mi.com/XiaomiMiMoPlatform/en_GB/",
+          "quote": "This agreement applies to your use of Xiaomi MiMo services within the territory of the People's Republic of China. Accordingly, your personal information will be stored within the territory of the People's Republic of China.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://mimo.mi.com/docs/quick-start/terms/user-agreement",
+          "quote": "Xiaomi acts as a Processor in data processing activities, and you are the Data Controller.",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {

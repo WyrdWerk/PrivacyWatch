@@ -1,5 +1,6 @@
 # Provider backlog — OpenRouter curated ToS list (2026-09-13)
 
+> **Status: complete (2026-09-30).** All batches landed — batch 1 in v1.4.0, batches 2+3 in v1.5.0, batches 4+5 in v1.6.0; the tables below are the record. Nothing is pending from the OpenRouter list. Crof AI, covered before this backlog, was removed from the dataset in v1.9.0 as defunct (its snapshot stays in `policies/`).
 
 > Manually reconciled snapshot (not script output): the dedupe script at PR head
 > reports 34 covered / 47 new because it does not model URL aliases — Xiaomi's
@@ -15,7 +16,9 @@ Source: OpenRouter provider-selection docs list, deduplicated against
 - **Batch 1 (9 providers) landed in v1.4.0**: StepFun, Baidu Qianfan, ByteDance
   Seed (BytePlus), Tencent Cloud, Upstage, Meta (Model API), Deepgram, Voyage AI,
   Black Forest Labs.
-- Batches 2 (9) and 3 (13) landed in v1.5.0 (feat/provider-batch-2-3). Remaining 23 below, grouped into research batches. One batch ≈ one PR.
+- Batches 2 (9) and 3 (13) landed in v1.5.0 (feat/provider-batch-2-3). Batches 4
+  (20) and 5 (3) landed in v1.6.0 — the backlog is done; see the tables below for
+  the record.
 
 ## Batch 2 — cloud / inference platforms (9) — ✅ landed in v1.5.0
 

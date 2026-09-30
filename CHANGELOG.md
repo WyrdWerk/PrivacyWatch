@@ -16,6 +16,8 @@ Implemented as small Pages Functions that read the deployed `providers.json`, so
 
 **Licensing.** Dataset under CC BY 4.0 (`LICENSE-DATA.md`; quoted policy text and logos excluded); code under MIT (`LICENSE`). `providers.json` meta now carries `license` and `licenseUrl`.
 
+**Docs.** Regular documentation brought up to date with the v2 workflow and v1.13.0 state: README (structured fields + evidence, rating precedents, watcher/issue-#2 contribution flow), agent guide in `AGENTS.md`, status notes on the superseded source-coverage audit, the completed provider backlog and both plans, `policies/index.md` audit-report index, and stale fallback dates in `index.html`.
+
 ---
 
 ## v1.12.0 — 2026-09-30

@@ -3,6 +3,28 @@
 All policy changes, new providers, and corrections are logged here.
 Format: `[YYYY-MM-DD] Provider — what changed — source`
 
+## v1.8.0 — 2026-09-30
+
+**Chinese providers re-verified against live sources (10 rows)** and given structured fields with verbatim evidence (coverage 18/97).
+
+Rating changes:
+- Moonshot Kimi App — **Caution → High Risk.** Privacy Policy v2 (effective 2026-08-31) names the Beijing entity and PRC-only storage; content is used for model training unless you ask customer service to stop (with identity verification). May 2025: named by a Chinese government notice among 35 apps collecting personal data unrelated to their function (incident flag added).
+- Zhipu BigModel (China) — **Caution → High Risk.** Sep 2026 User Agreement allows use of service data unless otherwise agreed, anonymized data for training without consent, and a perpetual licence; China-only.
+
+Corrections:
+- DeepSeek API — the Open Platform Terms (effective 2026-04-29) are a Specific Agreement to the general Terms of Use, so the §4.3 training clause and its opt-out ("Improve the model for everyone" toggle, or privacy@deepseek.com) apply to the API. Retention is account lifetime, not indefinite. Incidents now itemized (7 confirmed).
+- DeepSeek App — source URLs moved from the dead deepseek-en.com mirror to cdn.deepseek.com.
+- MiniMax API — ToS §3 allows use of input and output "to provide, maintain, develop, and improve our Services" (was "silent"); US storage is stated, not inferred. Rating unchanged (improvement language, not explicit training).
+- MiniMax Hailuo — operator is Nanonoble Pte. Ltd. (Singapore); earlier "anonymized", "30 days post-deletion" and "China/PIPL" claims were not supported by the policy.
+- Moonshot Kimi API — ToS (Jul 2026) permits training unless agreed in writing, while the help FAQ says API data is never trained on: recorded as `conflicting`. Enterprise ZDR now offered directly. The Sep 2026 Anthropic routing allegation is recorded as unconfirmed.
+- Alibaba Qwen — the ZDR page cited earlier now redirects to a page without a ZDR statement; Model Studio stores call data in-region with no stated duration. Rating kept at Guarded (training off, public DPA, SOC 2 Type 2).
+- Xiaomi MiMo — international data hosted in the Netherlands and Singapore; international privacy policy URL; Service Agreement dated 2026-07-07.
+- Zhipu Z.ai — individual-user retention is "as long as you have an account".
+
+The US Entity List designation of Zhipu (Jan 2025) is noted in both Zhipu rows but is not treated as a privacy incident (export control, not a data event).
+
+---
+
 ## v1.7.0 — 2026-09-30
 
 **Structured fields (v2 pilot).** Optional machine-readable fields alongside the existing text: `training.default`/`optOut`, `retention.kind`/`days`, `zdr.access`, `location.regions`, `compliance` (DPA, SOC 2, HIPAA BAA), `incidents[]`, and `evidence[]` (URL + verbatim quote + retrieval date). Spec: [docs/plans/2026-09-30-schema-v2.md](docs/plans/2026-09-30-schema-v2.md). `npm run validate` enforces the vocabularies and evidence rules and reports coverage (8/97).

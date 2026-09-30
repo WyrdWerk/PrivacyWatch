@@ -1,8 +1,9 @@
 {
   "name": "privacywatch",
-  "version": "1.12.0",
+  "version": "1.13.0",
   "private": false,
   "description": "PrivacyWatch — track data retention, privacy, and model training policies",
+  "license": "MIT",
   "scripts": {
     "build": "node scripts/build.mjs",
     "logos": "node scripts/fetch-logos.mjs",

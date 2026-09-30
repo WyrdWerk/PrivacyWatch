@@ -27,6 +27,13 @@
         },
         "maintainer": {
           "type": "string"
+        },
+        "license": {
+          "type": "string"
+        },
+        "licenseUrl": {
+          "type": "string",
+          "format": "uri"
         }
       }
     },

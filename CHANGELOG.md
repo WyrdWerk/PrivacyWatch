@@ -3,6 +3,19 @@
 All policy changes, new providers, and corrections are logged here.
 Format: `[YYYY-MM-DD] Provider — what changed — source`
 
+## v1.13.0 — 2026-09-30
+
+**Public API v1.** Read-only, no key, CORS-enabled:
+- `GET /api/v1/providers` — filter by category, rating, surface type, training default, ZDR access, retention kind, region, max retention days, incident flag, or a list of ids (compare); `fields=full` for complete rows.
+- `GET /api/v1/providers/{id}` — one row with evidence and incidents.
+- `GET /api/v1/meta` and `GET /api/v1/openapi.json`.
+
+Implemented as small Pages Functions that read the deployed `providers.json`, so the API and the dataset can't drift. Filters and summaries live in `scripts/lib/api.mjs` (10 new tests).
+
+**Licensing.** Dataset under CC BY 4.0 (`LICENSE-DATA.md`; quoted policy text and logos excluded); code under MIT (`LICENSE`). `providers.json` meta now carries `license` and `licenseUrl`.
+
+---
+
 ## v1.12.0 — 2026-09-30
 
 **Final 5 inference rows re-verified** (Aion Labs, MARA, Nex AGI, ModelRun, Morph) with structured fields and verbatim evidence. **All 96 rows now carry structured fields and evidence.** No rating changes.

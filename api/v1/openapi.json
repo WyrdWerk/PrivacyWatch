@@ -1,0 +1,462 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PrivacyWatch API",
+    "version": "0.0.0",
+    "description": "Read-only API over the PrivacyWatch dataset: LLM provider data retention, training use, zero-data-retention and data location, with verbatim evidence. \"silent\" means the provider's documents were read and do not address the field; a missing field means not researched. Not legal advice.",
+    "license": {
+      "name": "CC BY 4.0 (data)",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "contact": {
+      "name": "WyrdWerk",
+      "url": "https://github.com/WyrdWerk/PrivacyWatch"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://privacywatch.wyrdwerk.com"
+    }
+  ],
+  "paths": {
+    "/api/v1/providers": {
+      "get": {
+        "summary": "List and filter provider surfaces",
+        "operationId": "listProviders",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "description": "Category. Comma-separate or repeat for OR.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "us-frontier",
+                "chinese",
+                "inference",
+                "coding"
+              ]
+            },
+            "explode": true
+          },
+          {
+            "name": "rating",
+            "in": "query",
+            "required": false,
+            "description": "Overall rating. Comma-separate or repeat for OR.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "clean",
+                "guarded",
+                "caution",
+                "high-risk",
+                "unverified"
+              ]
+            },
+            "explode": true
+          },
+          {
+            "name": "surfaceType",
+            "in": "query",
+            "required": false,
+            "description": "Surface type. Comma-separate or repeat for OR.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "api",
+                "consumer"
+              ]
+            },
+            "explode": true
+          },
+          {
+            "name": "training",
+            "in": "query",
+            "required": false,
+            "description": "training.default — what a new account gets. Comma-separate or repeat for OR.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "off",
+                "on",
+                "opt-in",
+                "tier-dependent",
+                "silent",
+                "conflicting"
+              ]
+            },
+            "explode": true
+          },
+          {
+            "name": "zdr",
+            "in": "query",
+            "required": false,
+            "description": "zdr.access — how zero data retention is obtained. Comma-separate or repeat for OR.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "default",
+                "self-serve",
+                "approval",
+                "enterprise",
+                "none",
+                "silent"
+              ]
+            },
+            "explode": true
+          },
+          {
+            "name": "retention",
+            "in": "query",
+            "required": false,
+            "description": "retention.kind. Comma-separate or repeat for OR.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "none",
+                "transient",
+                "fixed",
+                "until-deleted",
+                "indefinite",
+                "silent"
+              ]
+            },
+            "explode": true
+          },
+          {
+            "name": "incident",
+            "in": "query",
+            "required": false,
+            "description": "Confirmed incident flag. Comma-separate or repeat for OR.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            },
+            "explode": true
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "description": "Row lists this region in location.regions (ISO 3166-1 alpha-2, EU or GLOBAL). Comma-separate for OR.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxRetentionDays",
+            "in": "query",
+            "description": "Only rows with fixed retention of at most N days.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "ids",
+            "in": "query",
+            "description": "Comma-separated provider ids (use to compare providers).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "description": "summary (default) or full rows with evidence. Comma-separate or repeat for OR.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "summary",
+                "full"
+              ]
+            },
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching rows",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/Summary"
+                          },
+                          {
+                            "$ref": "#/components/schemas/Provider"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/api/v1/providers/{id}": {
+      "get": {
+        "summary": "One provider surface with evidence and incidents",
+        "operationId": "getProvider",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "openai-api"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Full row",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Provider"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/api/v1/meta": {
+      "get": {
+        "summary": "Dataset version, licence, counts, vocabularies and endpoints",
+        "operationId": "getMeta",
+        "responses": {
+          "200": {
+            "description": "Metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/search": {
+      "get": {
+        "summary": "Semantic search over archived policy text",
+        "operationId": "search",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 512
+            }
+          },
+          {
+            "name": "k",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 25,
+              "default": 8
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Top-k policy snippets with source URLs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Meta": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "lastUpdated": {
+            "type": "string",
+            "format": "date"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "license": {
+            "type": "string",
+            "example": "CC-BY-4.0"
+          }
+        }
+      },
+      "Summary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "surface": {
+            "type": "string"
+          },
+          "surfaceType": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "string"
+          },
+          "incident": {
+            "type": "boolean"
+          },
+          "training": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "off",
+              "on",
+              "opt-in",
+              "tier-dependent",
+              "silent",
+              "conflicting",
+              null
+            ]
+          },
+          "trainingOptOut": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "retention": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "none",
+              "transient",
+              "fixed",
+              "until-deleted",
+              "indefinite",
+              "silent",
+              null
+            ]
+          },
+          "retentionDays": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "zdr": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "default",
+              "self-serve",
+              "approval",
+              "enterprise",
+              "none",
+              "silent",
+              null
+            ]
+          },
+          "regions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "Provider": {
+        "type": "object",
+        "description": "Full row; see https://github.com/WyrdWerk/PrivacyWatch/blob/main/providers.schema.json",
+        "additionalProperties": true
+      }
+    },
+    "responses": {
+      "Error": {
+        "description": "Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

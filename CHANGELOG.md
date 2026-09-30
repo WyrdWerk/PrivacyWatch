@@ -3,6 +3,33 @@
 All policy changes, new providers, and corrections are logged here.
 Format: `[YYYY-MM-DD] Provider — what changed — source`
 
+## v1.11.0 — 2026-09-30
+
+**Long-tail inference providers re-verified (52 rows)** with structured fields and verbatim evidence (coverage 91/96). Research ran in 12 Amp threads (low, medium, and a GLM-5.3 Flash retry); maintainer re-checked every rating change and all "training silent" conclusions against live pages.
+
+Rating changes:
+- Relace — **Caution → Clean.** A published ZDR policy (2026-09-21) excludes API platform content from training and retention.
+- Venice — **Clean → Guarded.** Training is contractually off and ZDR is in the privacy policy, but Venice's own privacy page warns that Anonymous-mode frontier providers "see and likely save your prompt".
+- Decart — **Clean → Guarded.** Training off by default, but no ZDR is documented; personal data is retained until deletion.
+- SambaNova — **Clean → Guarded.** Cloud terms limit Customer Content use "solely to the extent necessary to provide the Service", but no ZDR or post-termination deletion period is documented.
+- Meta Llama API — **Guarded → Caution.** Content is retained "as needed" with no ordinary maximum (vague retention); Discounted tier permits training.
+- DekaLLM — **Guarded → Caution.** Temporary storage with a scheduled deletion whose duration is not published.
+
+Correction to v1.10.0:
+- Groq — training was recorded as `silent`; the GroqCloud Services Agreement says "Groq is not permitted to use Inputs or Outputs for training or fine-tuning any AI Model Services or other models, unless explicitly granted permission or instructed by Customer." Now `off`.
+
+Held after review (research suggested a change, evidence didn't support it):
+- Fish Audio stays **High Risk** — the live Terms still say Usage Data and Content "may be used to develop, train, or enhance artificial intelligence or machine learning models".
+- StepFun stays **Caution** — the explicit training clause is scoped to Startup/early-access programs; the general grant is an any-purpose licence (Krea precedent). Location corrected to US servers.
+- Baseten stays **Clean** with its incident flag (flags are additive).
+- StreamLake's incident flag stays off — parent Kuaishou's Feb 2026 fine was content regulation, recorded in notes (Entity List precedent).
+
+Notable corrections: US or "global" flags replaced with the regions each policy actually names (❓ where none are named) across ~30 rows; new or fixed source URLs for AI21, SambaNova, GMICloud, Relace, Runway, Sourceful, Chutes and Darkbloom; Deepgram adds EU/AU/IN endpoints; Tencent TokenHub ZDR in SG/DE/US; NextBit publishes an EU (Spain) endpoint with zero retention; Phala's DPA names US/India/France; Perceptron's Terms and Privacy Policy conflict on training.
+
+Not yet covered: Aion Labs, MARA, Nex AGI, ModelRun and Morph (research still running).
+
+---
+
 ## v1.10.0 — 2026-09-30
 
 **Major inference hosts re-verified (12 rows)** with structured fields and verbatim evidence (coverage 39/96). Research ran in Amp threads (two low, one medium); maintainer checked the Together and Cohere wording live.

@@ -3,6 +3,27 @@
 All policy changes, new providers, and corrections are logged here.
 Format: `[YYYY-MM-DD] Provider — what changed — source`
 
+## v1.10.0 — 2026-09-30
+
+**Major inference hosts re-verified (12 rows)** with structured fields and verbatim evidence (coverage 39/96). Research ran in Amp threads (two low, one medium); maintainer checked the Together and Cohere wording live.
+
+Rating changes:
+- Together AI — **Clean → Caution.** Current docs: "By default, Together stores the prompts you send and the responses models return, and may use them for product improvements." No automatic deletion period; admins can switch storage off (ZDR). Training sharing stays opt-in.
+- Cohere — **Clean → Caution.** Enterprise Data Commitments: "You can opt out from your prompts and generations being used to train Cohere models in your dashboard settings" — i.e. training is on unless you opt out. Logged prompts auto-deleted after 30 days, with exceptions.
+- DeepInfra — **Guarded → Clean.** Terms now commit to Zero Data Retention and no training on Customer Data; standard inference is memory-only (bulk/image exceptions disclosed; Google/Anthropic models follow those providers' policies).
+- Cloudflare Workers AI — **Clean → Guarded.** Training off, but live docs no longer document ZDR or an inference retention period.
+
+Corrections:
+- Fireworks — Response API stores conversations 30 days by default (open-model inference remains ZDR by default); GLOBAL default plus regional options.
+- Nebius — docs now say customer content is not used to train models; speculative-decoding retention is separate and stored in Finland; ZDR is a self-serve account setting.
+- Groq — API data page doesn't explicitly address training (`silent`); abuse logs up to 30 days; ZDR via Data Controls.
+- Mistral — API data is not used for training (separate from Vibe); 30-day retention; ZDR by request. Docs page 404'd, so `sourceDate` unchanged.
+- Perplexity — Chat Completions is ZDR by default, but the Search API addendum allows retention and product use; US location isn't stated.
+- SiliconFlow — the .com policy doesn't support the archived no-storage claim; retention unspecified.
+- Amazon Bedrock — ZDR by default with a `data_retention_mode` API. Azure — modified abuse monitoring is an application, not an enterprise-only contract; the 30-day abuse-storage sentence is gone.
+
+---
+
 ## v1.9.0 — 2026-09-30
 
 **Crof AI removed (defunct).** Row, logo and mapping dropped; the archived policy snapshot stays in `policies/` for the record. 96 surfaces across 85 families.

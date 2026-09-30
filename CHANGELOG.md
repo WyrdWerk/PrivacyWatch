@@ -3,6 +3,24 @@
 All policy changes, new providers, and corrections are logged here.
 Format: `[YYYY-MM-DD] Provider — what changed — source`
 
+## v1.7.0 — 2026-09-30
+
+**Structured fields (v2 pilot).** Optional machine-readable fields alongside the existing text: `training.default`/`optOut`, `retention.kind`/`days`, `zdr.access`, `location.regions`, `compliance` (DPA, SOC 2, HIPAA BAA), `incidents[]`, and `evidence[]` (URL + verbatim quote + retrieval date). Spec: [docs/plans/2026-09-30-schema-v2.md](docs/plans/2026-09-30-schema-v2.md). `npm run validate` enforces the vocabularies and evidence rules and reports coverage (8/97).
+
+**US Frontier re-verified against live sources (8 rows).** Corrections:
+- Anthropic Claude.ai — **Guarded → Caution.** Training is no longer opt-in only: the Privacy Policy (effective 2026-09-10) trains on Inputs/Outputs "unless you opt out"; safety-flagged chats are used regardless. Retention detail adds 2-year flagged-chat and 7-year safety-score retention.
+- Anthropic API — storage is US, but inference may run globally by default (US-only inference at 1.1x). Anthropic is processor for Microsoft Foundry.
+- OpenAI API — 10 residency regions + global default; the 10% uplift applies to data-residency endpoints, not ZDR. Incident flag added: Nov 2025 Mixpanel vendor breach (account profile data).
+- OpenAI ChatGPT — incident flag added (Mar 2023 breach, Mar 2023 Italy ban, Dec 2024 Garante fine later annulled).
+- Google Vertex — retention exceptions documented (90-day abuse flags, 3-day Search grounding, Interactions API storage); multi-region.
+- Google Gemini App — retention is 18-month auto-delete by default (72h with Keep Activity off; 3 years if human-reviewed), not "until deleted"; location unspecified.
+- xAI API — default endpoint may route between regions (US-only via `us.api.x.ai`); ZDR now self-serve.
+- xAI Grok consumer — incident flag added (Irish DPC actions, Aug 2025 shared-chat indexing, Jan 2026 Indonesia/Malaysia blocks); location unspecified.
+
+x.ai and openai.com/help.openai.com block automated fetches; Grok consumer and ChatGPT evidence uses the 2026-05-27 archived snapshots (dated accordingly) and those rows keep their earlier `sourceDate`.
+
+---
+
 ## v1.6.1 — 2026-09-15
 
 **Light mode default.** WyrdWerk cream/ink/teal palette is now the default theme. Dark mode remains available via the header toggle (`localStorage`).

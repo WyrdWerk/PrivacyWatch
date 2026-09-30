@@ -1,7 +1,7 @@
 {
   "meta": {
-    "lastUpdated": "2026-09-15",
-    "version": "1.6.1",
+    "lastUpdated": "2026-09-30",
+    "version": "1.7.0",
     "description": "PrivacyWatch — LLM data privacy, retention, and model training tracker",
     "maintainer": "WyrdWerk (github.com/WyrdWerk/PrivacyWatch)"
   },
@@ -14,29 +14,116 @@
       "category": "us-frontier",
       "categoryLabel": "US Frontier",
       "rating": "clean",
-      "incident": false,
+      "incident": true,
       "training": {
         "label": "Off by default",
-        "detail": "No training on API data since March 1, 2023. Opt-in available if customer explicitly requests."
+        "detail": "No training on API data since March 1, 2023. Opt-in available if customer explicitly requests.",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
         "label": "30 days",
-        "detail": "API inputs/outputs auto-deleted after 30 days. Application state retention varies by endpoint."
+        "detail": "API inputs/outputs auto-deleted after 30 days. Application state retention varies by endpoint.",
+        "kind": "fixed",
+        "days": 30
       },
       "zdr": {
         "label": "Yes — approval required",
-        "detail": "ZDR requires OpenAI approval + written amendment + 10% price uplift. EU data residency requires ZDR amendment.",
-        "status": "full"
+        "detail": "ZDR or Modified Abuse Monitoring requires OpenAI approval. Non-US data residency requires a Modified Retention amendment; data-residency endpoints carry a 10% price uplift.",
+        "status": "full",
+        "access": "approval"
       },
       "location": {
-        "label": "US + EU option",
-        "flag": "🇺🇸",
-        "detail": "US primary. EU residency (Ireland + others) available with ZDR amendment and approval."
+        "label": "Global default + 10 regions",
+        "flag": "🌐",
+        "detail": "Default \"Global\" processing. Data residency available in US, EU (EEA + Switzerland), UK, Japan, Canada, South Korea, Singapore, India, Australia and UAE; some regions store locally but do not process locally.",
+        "regions": [
+          "GLOBAL",
+          "US",
+          "EU",
+          "AU",
+          "CA",
+          "JP",
+          "IN",
+          "SG",
+          "KR",
+          "GB",
+          "AE"
+        ]
       },
       "sourceUrl": "https://platform.openai.com/docs/guides/your-data",
       "privacyUrl": "https://openai.com/policies/data-processing-addendum/",
-      "sourceDate": "2026-09-15",
-      "notes": "API has been training-off by default since March 2023. Primary ToS via OpenRouter; API-specific data policy at platform.openai.com/docs/guides/your-data. Re-verified 2026-09-15: live API page restates no training on API data since 1 Mar 2023 and 30-day abuse logs / ZDR-by-approval. sourceUrl pointed at ROW consumer ToS (which only links out to Business Terms); now the Your-data guide."
+      "sourceDate": "2026-09-30",
+      "notes": "API has been training-off by default since March 2023. Primary ToS via OpenRouter; API-specific data policy at platform.openai.com/docs/guides/your-data. Re-verified 2026-09-15: live API page restates no training on API data since 1 Mar 2023 and 30-day abuse logs / ZDR-by-approval. sourceUrl pointed at ROW consumer ToS (which only links out to Business Terms); now the Your-data guide.",
+      "compliance": {
+        "hipaaBaa": "available"
+      },
+      "incidents": [
+        {
+          "date": "2025-11",
+          "type": "breach",
+          "confirmed": true,
+          "summary": "Breach at third-party analytics vendor Mixpanel (smishing, detected Nov 8, 2025) exposed limited profile/analytics metadata (names, emails, approx. location, browser/OS, org/user IDs) of some API platform users; OpenAI says no chats, API requests, keys, passwords or payment data were exposed and removed Mixpanel from production.",
+          "sourceUrl": "https://www.bleepingcomputer.com/news/security/openai-discloses-api-customer-data-breach-via-mixpanel-vendor-hack/"
+        }
+      ],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://developers.openai.com/api/docs/guides/your-data",
+          "quote": "As of March 1, 2023, data sent to the OpenAI API is not used to train or improve OpenAI models (unless you explicitly opt in to share data with us).",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://developers.openai.com/api/docs/guides/your-data",
+          "quote": "By default, abuse monitoring logs are generated for all API feature usage and retained for up to 30 days, unless longer retention is required by law, or is reasonably necessary to protect our services or any third party from harm.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://developers.openai.com/api/docs/guides/your-data",
+          "quote": "Currently, these controls are subject to prior approval by OpenAI and acceptance of additional requirements.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://developers.openai.com/api/docs/guides/your-data",
+          "quote": "you can select regional processing for an individual request by using the prefixed domain with an API key from a project having Global geography.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://developers.openai.com/api/docs/guides/your-data",
+          "quote": "To use data residency with any region other than the United States, you must be approved for abuse monitoring controls, and execute a Modified Retention amendment.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://developers.openai.com/api/docs/guides/your-data",
+          "quote": "Contact our sales team to see if you’re eligible for using data residency controls. Data residency endpoints are charged a 10% uplift for models released on or after March 5, 2026, that are eligible for data residency.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://developers.openai.com/api/docs/guides/your-data",
+          "quote": "Selecting the United Arab Emirates region requires additional approval.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://developers.openai.com/api/docs/guides/your-data",
+          "quote": "For customers who have executed an OpenAI Business Associate and Healthcare Addendum, once your org ID is provisioned with Private Retention with Private Safety Processing, BAA-eligible endpoints can be used for processing PHI, even if data is retained.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.bleepingcomputer.com/news/security/openai-discloses-api-customer-data-breach-via-mixpanel-vendor-hack/",
+          "quote": "OpenAI is notifying some ChatGPT API customers that limited identifying information was exposed following a breach at its third-party analytics provider Mixpanel.",
+          "retrieved": "2026-09-30"
+        }
+      ],
+      "incidentDetail": "Nov 2025: breach at analytics vendor Mixpanel exposed some API account profile data (names, emails, approximate location). No chats, API requests, keys or payment data were exposed."
     },
     {
       "id": "openai-chatgpt",
@@ -46,29 +133,118 @@
       "category": "us-frontier",
       "categoryLabel": "US Frontier",
       "rating": "caution",
-      "incident": false,
+      "incident": true,
       "training": {
         "label": "On by default",
-        "detail": "Free, Plus, Pro: training ON by default. Opt-out: Settings → Data Controls → toggle off. Business/Enterprise/Edu: OFF by default."
+        "detail": "Free, Plus, Pro: training ON by default. Opt-out: Settings → Data Controls → toggle off. Business/Enterprise/Edu: OFF by default.",
+        "default": "tier-dependent",
+        "optOut": "setting"
       },
       "retention": {
         "label": "30 days after deletion",
-        "detail": "Deleted chats removed within 30 days. Temporary Chats auto-deleted in 30 days, never used for training."
+        "detail": "Deleted chats removed within 30 days. Temporary Chats auto-deleted in 30 days, never used for training.",
+        "kind": "until-deleted"
       },
       "zdr": {
         "label": "Not available",
         "detail": "ZDR not available on any consumer plan. Enterprise tier only (approval required).",
-        "status": "none"
+        "status": "none",
+        "access": "silent"
       },
       "location": {
         "label": "US primary",
         "flag": "🇺🇸",
-        "detail": "US + globally via trusted service providers. EU residency not available for consumer plans."
+        "detail": "US + globally via trusted service providers. EU residency not available for consumer plans.",
+        "regions": []
       },
       "sourceUrl": "https://help.openai.com/en/articles/7730893",
       "privacyUrl": "https://openai.com/policies/privacy-policy/",
       "sourceDate": "2026-05-27",
-      "notes": "Paying for Plus or Pro does NOT disable training by default."
+      "notes": "Paying for Plus or Pro does NOT disable training by default.",
+      "incidents": [
+        {
+          "date": "2023-03",
+          "type": "breach",
+          "confirmed": true,
+          "summary": "Redis library bug on 20 Mar 2023 exposed other users’ chat titles and some Plus subscribers’ payment information; cited by the Italian Garante.",
+          "sourceUrl": "https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9870847"
+        },
+        {
+          "date": "2023-03",
+          "type": "ban",
+          "confirmed": true,
+          "summary": "Italian Garante ordered immediate temporary limitation of processing of Italian users’ data (ChatGPT blocked in Italy) over lack of legal basis for training, transparency and age verification; lifted late April 2023 after changes.",
+          "sourceUrl": "https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9870847"
+        },
+        {
+          "date": "2024-12",
+          "type": "regulatory",
+          "confirmed": true,
+          "summary": "Garante fined OpenAI EUR 15M and ordered a six-month awareness campaign (decision n. 755 of 2 Nov 2024, announced Dec 2024) for training on personal data without adequate legal basis, transparency failures and not notifying the March 2023 breach. Annulled on appeal by the Tribunale di Roma (judgment 4153/2026, published 18 Mar 2026).",
+          "sourceUrl": "https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/10085432"
+        }
+      ],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://help.openai.com/en/articles/7730893",
+          "quote": "They specifically allow you to choose whether your conversations help improve our models.",
+          "retrieved": "2026-05-27"
+        },
+        {
+          "field": "training",
+          "url": "https://help.openai.com/en/articles/7730893",
+          "quote": "Yes, our Team, Enterprise, and Edu plans offer additional data controls.",
+          "retrieved": "2026-05-27"
+        },
+        {
+          "field": "retention",
+          "url": "https://help.openai.com/en/articles/7730893",
+          "quote": "Your conversations will still appear in your chat history but won't be used to train ChatGPT.",
+          "retrieved": "2026-05-27"
+        },
+        {
+          "field": "retention",
+          "url": "https://help.openai.com/en/articles/7730893",
+          "quote": "Temporary Chats are deleted from our systems after 30 days.",
+          "retrieved": "2026-05-27"
+        },
+        {
+          "field": "zdr",
+          "url": "https://help.openai.com/en/articles/7730893",
+          "retrieved": "2026-05-27"
+        },
+        {
+          "field": "location",
+          "url": "https://help.openai.com/en/articles/7730893",
+          "retrieved": "2026-05-27"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9870847",
+          "quote": "Il Garante per la protezione dei dati personali ha disposto, con effetto immediato, la limitazione provvisoria del trattamento dei dati degli utenti italiani nei confronti di OpenAI",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9870847",
+          "quote": "lo scorso 20 marzo aveva subito una perdita di dati (data breach) riguardanti le conversazioni degli utenti e le informazioni relative al pagamento degli abbonati al servizio a pagamento.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/10085432",
+          "quote": "OpenAI dovrà realizzare una campagna informativa di sei mesi e pagare una sanzione di 15 milioni di euro.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/10085432",
+          "quote": "a seguito della sentenza del Tribunale di Roma n. 4153/2026, pubbl. il 18/03/2026, con la quale è stata accolta l’opposizione proposta avverso il provvedimento del Garante",
+          "retrieved": "2026-09-30"
+        }
+      ],
+      "incidentDetail": "Mar 2023: Redis bug exposed other users' chat titles and some payment details. Mar 2023: Italy's Garante temporarily banned ChatGPT. Dec 2024: Garante fined OpenAI €15M (annulled by a Rome court, Mar 2026)."
     },
     {
       "id": "anthropic-api",
@@ -81,28 +257,93 @@
       "incident": false,
       "training": {
         "label": "Off by default",
-        "detail": "No training on commercial API data. Opt-in via feedback submission only. 'By default, we will not use your inputs or outputs to train our models.'"
+        "detail": "No training on commercial API data. Opt-in via feedback submission only. 'By default, we will not use your inputs or outputs to train our models.'",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
         "label": "30 days auto-delete",
-        "detail": "Inputs/outputs auto-deleted within 30 days. ZDR = immediate post-response. Policy violations: up to 2 years."
+        "detail": "Inputs/outputs auto-deleted within 30 days. ZDR = immediate post-response. Policy violations: up to 2 years.",
+        "kind": "fixed",
+        "days": 30
       },
       "zdr": {
         "label": "Yes — enterprise approval",
         "detail": "ZDR available for enterprise API customers. Requires Anthropic account team + per-org enablement. Eligible: Messages API, Token Counting, Prompt Caching. Not eligible: Batch, Files API.",
-        "status": "full"
+        "status": "full",
+        "access": "approval"
       },
       "location": {
-        "label": "US only",
-        "flag": "🇺🇸",
-        "detail": "Workspace geo: US only. EU residency available via AWS Bedrock, GCP Vertex, or Azure Foundry — those providers' policies apply."
+        "label": "US storage; global inference",
+        "flag": "🇺🇸🌐",
+        "detail": "Data stored in the US. Inference may run in any geography by default; US-only inference available at 1.1x pricing. Via AWS Bedrock or Google Cloud, those providers' policies apply; Anthropic remains processor for Microsoft Foundry and Claude Platform on AWS.",
+        "regions": [
+          "GLOBAL",
+          "US"
+        ]
       },
       "sourceUrl": "https://www.anthropic.com/legal/commercial-terms",
       "privacyUrl": "https://www.anthropic.com/legal/data-processing-addendum",
-      "sourceDate": "2026-05-27",
-      "notes": "If using Claude via AWS Bedrock, GCP Vertex, or Azure — Anthropic's policy does not govern; cloud provider's policies apply. Commercial ToS via OpenRouter; API data retention at platform.claude.com.",
+      "sourceDate": "2026-09-30",
+      "notes": "Via AWS Bedrock or Google Cloud Vertex, the cloud provider's policies apply. Anthropic is the data processor for Microsoft Foundry and Claude Platform on AWS. HIPAA BAA is self-serve in the Console for most organizations. Re-verified 2026-09-30.",
       "relatedUrls": [
         "https://www.anthropic.com/legal/commercial-terms"
+      ],
+      "compliance": {
+        "dpa": "public",
+        "soc2": "type2",
+        "hipaaBaa": "available"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://privacy.claude.com/en/articles/7996868",
+          "quote": "By default, we will not use your inputs or outputs from our commercial products (e.g. Claude for Work, Anthropic API, Claude Gov, etc.) to train our models.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://privacy.claude.com/en/articles/7996866",
+          "quote": "For Anthropic API users, we automatically delete inputs and outputs on our backend within 30 days of receipt or generation, except:",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+          "quote": "ZDR is enabled per organization; each new organization requires ZDR to be enabled separately by your account team",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://platform.claude.com/docs/en/manage-claude/data-residency",
+          "quote": "Default. Inference may run in any available geography for optimal performance and availability.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://platform.claude.com/docs/en/manage-claude/data-residency",
+          "quote": "Currently, `\"us\"` is the only available workspace geo.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://www.anthropic.com/legal/data-processing-addendum",
+          "quote": "This Data Processing Addendum (“DPA”) is incorporated into and forms part of the Anthropic Commercial Terms of Service",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://privacy.claude.com/en/articles/10015870",
+          "quote": "SOC 2 Type I & Type II",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+          "quote": "Most organizations can enable it directly in the Claude Console with Anthropic's standard BAA; organizations that require a negotiated BAA should work with their account team.",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {
@@ -112,30 +353,105 @@
       "surfaceType": "consumer",
       "category": "us-frontier",
       "categoryLabel": "US Frontier",
-      "rating": "guarded",
+      "rating": "caution",
       "incident": false,
       "training": {
-        "label": "Opt-in required",
-        "detail": "Training OFF by default. User must explicitly enable 'Model Improvement' toggle in Privacy Settings — the only US Frontier consumer product with opt-IN training."
+        "label": "On unless opted out",
+        "detail": "Privacy Policy (effective 2026-09-10): \"We may use your Inputs and Outputs to train and improve Anthropic AI models, unless you opt out through your account settings.\" New users choose a preference at signup; toggle in Privacy Settings. Chats flagged for safety review are used even if you opt out.",
+        "default": "on",
+        "optOut": "setting"
       },
       "retention": {
         "label": "30 days after deletion",
-        "detail": "Backend storage cleared within 30 days after user deletes. If training opted in: de-identified data up to 5 years. Incognito chats: 30 days regardless, never trained."
+        "detail": "Deleted chats removed within 30 days. Chats flagged for safety review retained up to 2 years; safety classification scores up to 7 years.",
+        "kind": "until-deleted"
       },
       "zdr": {
         "label": "Not available",
         "detail": "ZDR not available for Claude.ai Free/Pro/Max. Incognito mode is available (auto-deleted 30 days, never trained on).",
-        "status": "none"
+        "status": "none",
+        "access": "none"
       },
       "location": {
         "label": "US only",
         "flag": "🇺🇸",
-        "detail": "No geographic controls for consumer plans."
+        "detail": "No geographic controls for consumer plans.",
+        "regions": [
+          "US"
+        ]
       },
       "sourceUrl": "https://privacy.claude.com/en/articles/10023580",
       "privacyUrl": "https://www.anthropic.com/legal/privacy",
-      "sourceDate": "2026-05-27",
-      "notes": "Only US Frontier consumer product where training is opt-IN, not opt-out. Incognito mode is a genuine privacy feature."
+      "sourceDate": "2026-09-30",
+      "notes": "Since the Aug/Sep 2025 consumer terms update, Claude.ai is no longer opt-in-only for training. Re-verified 2026-09-30.",
+      "compliance": {
+        "dpa": "none",
+        "soc2": "silent",
+        "hipaaBaa": "silent"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://www.anthropic.com/legal/privacy",
+          "quote": "We may use your Inputs and Outputs to train and improve Anthropic AI models, unless you opt out through your account settings.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://www.anthropic.com/news/updates-to-our-consumer-terms",
+          "quote": "If you’re a new user, you can select your preference in the signup process.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://privacy.claude.com/en/articles/10023580",
+          "quote": "You choose to allow us to use your chats and coding sessions to improve Claude",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://privacy.claude.com/en/articles/12109829",
+          "quote": "Under Help Improve our AI models, click the button to toggle it off/on",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://privacy.claude.com/en/articles/10023548",
+          "quote": "You control your chats with Claude and can delete your conversations at any time.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://privacy.claude.com/en/articles/10023548",
+          "quote": "Deleted from our back-end storage systems within 30 days",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://privacy.claude.com/en/articles/10023548",
+          "quote": "If you allow us to use your chats or coding sessions to improve Claude, we may retain your data in a de-identified format for up to 5 years in our model training pipelines.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+          "quote": "ZDR applies when Claude Code is used with API keys from a Commercial organization (an organization under Anthropic's Commercial Terms of Service, as distinct from a consumer Claude account)",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://www.anthropic.com/legal/privacy",
+          "quote": "your personal data is transferred to our servers in the US, or to other countries outside the European Economic Area (“EEA”) and the UK",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://www.anthropic.com/legal/data-processing-addendum",
+          "quote": "This Data Processing Addendum (“DPA”) is incorporated into and forms part of the Anthropic Commercial Terms of Service",
+          "retrieved": "2026-09-30"
+        }
+      ]
     },
     {
       "id": "google-vertex",
@@ -148,26 +464,120 @@
       "incident": false,
       "training": {
         "label": "Off by default",
-        "detail": "Paid API/Vertex AI: data NOT used for training. Governed by Cloud Data Processing Addendum; Google acts as data processor."
+        "detail": "Paid API/Vertex AI: data NOT used for training. Governed by Cloud Data Processing Addendum; Google acts as data processor.",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
-        "label": "Limited period (unspecified)",
-        "detail": "Abuse monitoring: 'limited period' — duration deliberately not specified. Grounding (Search/Maps): mandatory 30-day retention even under ZDR."
+        "label": "24h in-memory cache; exceptions",
+        "detail": "Prompts cached in memory up to 24 hours. Abuse-flagged prompts retained up to 90 days; \"Advanced AI\" models log prompts/responses up to 30 days. Grounding with Google Search logs kept up to 3 days (Maps grounding 30 days). Interactions API stores by default; Deep Research sessions 7 days.",
+        "kind": "transient"
       },
       "zdr": {
         "label": "Yes — Vertex AI",
         "detail": "ZDR equivalent available. Caveat: grounding with Google Search/Maps retains data for 30 days mandatory — true zero retention not achievable when grounding is used.",
-        "status": "full"
+        "status": "full",
+        "access": "approval"
       },
       "location": {
-        "label": "US + EU residency",
-        "flag": "🇺🇸🇪🇺",
-        "detail": "Vertex AI offers EU data residency for enterprise. Regional Google Cloud options available."
+        "label": "Multi-region (US, EU, APAC, …)",
+        "flag": "🌐",
+        "detail": "Regional endpoints across US, EU (FR, DE, NL), UK, Brazil, Canada, Australia, India, Japan, Singapore, South Korea, plus global endpoint. Product now branded Gemini Enterprise Agent Platform.",
+        "regions": [
+          "US",
+          "EU",
+          "FR",
+          "DE",
+          "NL",
+          "GB",
+          "BR",
+          "CA",
+          "AU",
+          "IN",
+          "JP",
+          "SG",
+          "KR",
+          "GLOBAL"
+        ]
       },
       "sourceUrl": "https://cloud.google.com/terms/",
       "privacyUrl": "https://cloud.google.com/terms/data-processing-addendum",
-      "sourceDate": "2026-05-27",
-      "notes": "'Limited period' retention is deliberately vague. Grounding creates a ZDR exception. Google Cloud ToS via OpenRouter; Vertex AI data governance at cloud.google.com/vertex-ai."
+      "sourceDate": "2026-09-30",
+      "notes": "'Limited period' retention is deliberately vague. Grounding creates a ZDR exception. Google Cloud ToS via OpenRouter; Vertex AI data governance at cloud.google.com/vertex-ai.",
+      "compliance": {
+        "dpa": "public",
+        "soc2": "type2",
+        "hipaaBaa": "available"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/data-governance",
+          "quote": "Google won't use your data to train or fine-tune any AI/ML models without your prior permission or instruction.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/data-governance",
+          "quote": "This data is stored only in-memory (not at-rest), is isolated at the project level, and has a 24-hour TTL.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/learn/abuse-monitoring",
+          "quote": "Google may log customer prompts solely for the purpose of examining whether a violation of the AUP or Prohibited Use Policy has occurred. This data won't be used to train or fine-tune any AI/ML models. This data is stored securely for up to 90 days",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/data-governance",
+          "quote": "If you do not specify a value for store , it defaults to true for all models. To achieve zero data retention, explicitly set store = false in your API requests.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/learn/abuse-monitoring",
+          "quote": "Customer opt-out : Customers may request for an exception by filling out this form . If approved, Google won't store any prompts associated with the approved Google Cloud account.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/data-governance",
+          "quote": "Google stores prompts and contextual information that customers may provide, and generated output for thirty (30) days for the purposes of creating grounded results",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/learn/data-residency",
+          "quote": "Jurisdictional multi-region endpoints : When you use jurisdictional endpoints, ML processing stays within that specific geographical region (such as the United States or the European Union).",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/learn/data-residency",
+          "quote": "Requests submitted to a global endpoint may be processed in any Google Cloud location around the world, and therefore don't provide any data residency guarantees.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://cloud.google.com/security/compliance/soc-2",
+          "quote": "The core Google Cloud and Google Workspace SOC 2 Type II reports are issued quarterly",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://cloud.google.com/security/compliance/hipaa",
+          "quote": "Google will enter into Business Associate Agreements with customers as necessary under HIPAA.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/data-governance",
+          "quote": "More details about how Google processes data can also be found in Google's Cloud Data Processing Addendum (CDPA).",
+          "retrieved": "2026-09-30"
+        }
+      ]
     },
     {
       "id": "google-gemini-app",
@@ -180,26 +590,91 @@
       "incident": false,
       "training": {
         "label": "On by default",
-        "detail": "Free Gemini App and AI Studio: training ON. Used to improve Google products and ML technologies. Paying for Gemini Advanced does NOT change this — same policy as free."
+        "detail": "Free Gemini App and AI Studio: training ON. Used to improve Google products and ML technologies. Paying for Gemini Advanced does NOT change this — same policy as free.",
+        "default": "on",
+        "optOut": "setting"
       },
       "retention": {
-        "label": "Until deleted; 3yr post-review",
-        "detail": "Until user deletes. Human-reviewed data retained 3 years post-anonymization."
+        "label": "18 months default; 3yr if reviewed",
+        "detail": "Activity auto-deleted after 18 months by default (changeable to 3 or 36 months, or never). With Keep Activity off or in Temporary Chats, retained 72 hours. Human-reviewed chats retained up to 3 years.",
+        "kind": "fixed",
+        "days": 548
       },
       "zdr": {
         "label": "Not available",
         "detail": "ZDR not available on Gemini App or free AI Studio.",
-        "status": "none"
+        "status": "none",
+        "access": "silent"
       },
       "location": {
-        "label": "US",
-        "flag": "🇺🇸",
-        "detail": "No location controls for Gemini App or free AI Studio."
+        "label": "Not specified",
+        "flag": "❓",
+        "detail": "No location controls. Policy only states that Google Ireland provides the service in the EEA and Switzerland.",
+        "regions": []
       },
       "sourceUrl": "https://support.google.com/gemini/answer/13594961",
       "privacyUrl": "https://support.google.com/gemini/answer/13594961",
-      "sourceDate": "2026-05-19",
-      "notes": "Critical: paying for Gemini Advanced does NOT improve privacy. Training is on by default regardless of subscription tier. Opt-out via 'Gemini Apps Activity' toggle — but disabling it also removes chat history. Source updated from 404 URL to Gemini Apps Privacy Hub (last updated May 19, 2026)."
+      "sourceDate": "2026-09-30",
+      "notes": "Critical: paying for Gemini Advanced does NOT improve privacy. Training is on by default regardless of subscription tier. Opt-out via 'Keep Activity' setting — but disabling it also removes chat history. Source updated from 404 URL to Gemini Apps Privacy Hub (last updated May 19, 2026). Re-verified 2026-09-30.",
+      "compliance": {
+        "dpa": "silent",
+        "soc2": "silent",
+        "hipaaBaa": "silent"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://support.google.com/gemini/answer/13594961",
+          "quote": "Google uses your activity to provide, develop, and improve its services (including training generative AI models), as well as to protect Google, its users, and the public with the help of human reviewers.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://support.google.com/gemini/answer/13594961",
+          "quote": "If the Keep Activity setting is off: Your future chats won’t appear in your Activity, and won’t be used to train our AI models, unless you choose to send Google feedback.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://ai.google.dev/gemini-api/terms",
+          "quote": "Google uses the content you submit to the Services and any generated responses to provide, improve, and develop Google products and services and machine learning technologies",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://support.google.com/gemini/answer/13594961",
+          "quote": "You can change your auto-delete setting in Gemini Apps Activity from the default of 18 months to 3 months, 36 months, or indefinite.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://support.google.com/gemini/answer/13594961",
+          "quote": "Temporary chats and chats you have when Keep Activity is off are retained with your account for 72 hours",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://support.google.com/gemini/answer/13594961",
+          "quote": "Chats reviewed by human reviewers (and related data like your language, device type, location info, or feedback) are not deleted when you delete your activity. Instead, they are retained for up to three years.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://support.google.com/gemini/answer/13594961",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://support.google.com/gemini/answer/13594961",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://support.google.com/gemini/answer/13594961",
+          "retrieved": "2026-09-30"
+        }
+      ]
     },
     {
       "id": "xai-api",
@@ -212,28 +687,99 @@
       "incident": false,
       "training": {
         "label": "Off by default",
-        "detail": "'We do not use your business data, including inputs or outputs, for training our models.' Opt-in available (free credits in exchange)."
+        "detail": "'We do not use your business data, including inputs or outputs, for training our models.' Opt-in available (free credits in exchange).",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
         "label": "30 days auto-delete",
-        "detail": "API inputs/outputs auto-deleted within 30 days. Exceptions: written agreement or policy violations/legal compliance."
+        "detail": "API inputs/outputs auto-deleted within 30 days. Exceptions: written agreement or policy violations/legal compliance.",
+        "kind": "fixed",
+        "days": 30
       },
       "zdr": {
-        "label": "Yes — ZDR-Enabled API",
-        "detail": "May 12, 2026 Enterprise ToS formally names this the 'ZDR-Enabled API.' User Content exists transiently only; deleted upon the earlier of: (a) one hour after inference completion, or (b) delivery of the response. No logs, backups, or durable copies retained for any purpose, including safety or legal compliance. Personal Data must be submitted exclusively through the ZDR-Enabled API. Foundation model training explicitly prohibited: 'xAI shall not use any User Content to train any foundation models, large language models, or other artificial intelligence systems.'",
-        "status": "full"
+        "label": "Yes — self-serve (where available)",
+        "detail": "May 12, 2026 Enterprise ToS formally names this the 'ZDR-Enabled API.' User Content exists transiently only; deleted upon the earlier of: (a) one hour after inference completion, or (b) delivery of the response. No logs, backups, or durable copies retained for any purpose, including safety or legal compliance. Personal Data must be submitted exclusively through the ZDR-Enabled API. Foundation model training explicitly prohibited: 'xAI shall not use any User Content to train any foundation models, large language models, or other artificial intelligence systems.' As of Sep 2026, ZDR is a self-serve toggle in the xAI Console where available.",
+        "status": "full",
+        "access": "self-serve"
       },
       "location": {
-        "label": "US only",
-        "flag": "🇺🇸",
-        "detail": "All xAI services processed in the United States. No EU data residency."
+        "label": "US opt-in; default may route",
+        "flag": "🇺🇸🌐",
+        "detail": "Default endpoint \"may route requests between regions\". US-only processing via us.api.x.ai (10% surcharge, limited models).",
+        "regions": [
+          "US",
+          "GLOBAL"
+        ]
       },
       "sourceUrl": "https://x.ai/legal/terms-of-service-enterprise",
       "privacyUrl": "https://x.ai/legal/privacy-policy",
-      "sourceDate": "2026-06-07",
+      "sourceDate": "2026-09-30",
       "notes": "Updated May 12, 2026: xAI Enterprise ToS now formally names the product 'ZDR-Enabled API' — superseding the prior 'Enterprise Vault' label. ZDR deletion: within 1 hour of inference completion or response delivery, whichever is sooner. Training prohibition explicitly stated in ToS. Enterprise ToS via OpenRouter; FAQ at x.ai/legal/faq.",
       "relatedUrls": [
         "https://x.ai/legal/terms-of-service-enterprise"
+      ],
+      "compliance": {
+        "dpa": "public",
+        "soc2": "type2",
+        "hipaaBaa": "available"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://docs.x.ai/developers/faq/security",
+          "quote": "SpaceXAI never trains on your API inputs or outputs without your explicit permission.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://docs.x.ai/developers/faq/security",
+          "quote": "By default, all API requests and responses are stored on our servers (encrypted at rest) for 30 days for auditing purposes in the event of suspected abuse or misuse. SpaceXAI does not train on this data, and it is automatically deleted after 30 days.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://docs.x.ai/developers/faq/security",
+          "quote": "**Self-serve:** Where available, a team admin can turn it on or off directly from the [xAI Console]",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://docs.x.ai/developers/faq/security",
+          "quote": "ZDR ensures that API request inputs (i.e., your prompt) and outputs (i.e., the tokens generated by the LLM) are never persisted to disk.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://docs.x.ai/developers/advanced-api-usage/regions",
+          "quote": "`https://api.x.ai` is the global endpoint. SpaceXAI may route requests between regions for capacity or reliability, so the processing location is not guaranteed.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://docs.x.ai/developers/advanced-api-usage/regions",
+          "quote": "If you need API request handling and model inference to happen in the United States, use the US regional endpoint, `https://us.api.x.ai/v1`. It is available to every team",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://docs.x.ai/developers/faq/security",
+          "quote": "We are SOC 2 Type 2 compliant.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://docs.x.ai/developers/faq/security",
+          "quote": "To inquire about a Business Associate Agreement (BAA), please complete our [BAA Questionnaire](https://x.ai/legal/baa).",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://docs.x.ai/developers/faq/general",
+          "quote": "Please refer to our [Legal Resources](https://x.ai/legal) for our Enterprise Terms of Service and Data Processing Addendum.",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {
@@ -244,29 +790,130 @@
       "category": "us-frontier",
       "categoryLabel": "US Frontier",
       "rating": "caution",
-      "incident": false,
+      "incident": true,
       "training": {
         "label": "On by default",
-        "detail": "Grok.com/mobile: conversations used for training by default. Grok on X: X Corp shares public posts + Grok interactions with xAI for training. Opt-out available in both."
+        "detail": "Grok.com/mobile: conversations used for training by default. Grok on X: X Corp shares public posts + Grok interactions with xAI for training. Opt-out available in both.",
+        "default": "on",
+        "optOut": "setting"
       },
       "retention": {
         "label": "Indefinite until deleted",
-        "detail": "Grok.com: conversations kept until deleted; 30-day recovery window. Grok on X: governed by X Corp policy — duration not confirmed."
+        "detail": "Grok.com: conversations kept until deleted; 30-day recovery window. Grok on X: governed by X Corp policy — duration not confirmed.",
+        "kind": "until-deleted"
       },
       "zdr": {
         "label": "Not available",
         "detail": "No ZDR for consumer surfaces.",
-        "status": "none"
+        "status": "none",
+        "access": "silent"
       },
       "location": {
-        "label": "US only",
-        "flag": "🇺🇸",
-        "detail": "xAI: all processing in US. Grok on X governed by X Corp (separate legal entity)."
+        "label": "Not specified",
+        "flag": "❓",
+        "detail": "Consumer policies do not state a processing or storage location.",
+        "regions": []
       },
       "sourceUrl": "https://x.ai/legal/faq",
       "privacyUrl": "https://x.ai/privacy-policy",
       "sourceDate": "2026-05-27",
-      "notes": "Grok on X.com is governed by X Corp's privacy policy, NOT xAI's — legally separate entities. Opt-out is forward-looking only."
+      "notes": "Grok on X.com is governed by X Corp's privacy policy, NOT xAI's — legally separate entities. Opt-out is forward-looking only.",
+      "compliance": {
+        "dpa": "silent",
+        "soc2": "silent",
+        "hipaaBaa": "silent"
+      },
+      "incidents": [
+        {
+          "date": "2024-08",
+          "type": "regulatory",
+          "confirmed": true,
+          "summary": "Irish DPC brought urgent High Court proceedings; X agreed to suspend processing EU/EEA users' public posts (7 May-1 Aug 2024) to train Grok, later made permanent (case struck out Sept 2024).",
+          "sourceUrl": "https://www.dataprotection.ie/en/news-media/press-releases/dpc-welcomes-xs-agreement-suspend-its-processing-personal-data-purpose-training-ai-tool-grok"
+        },
+        {
+          "date": "2025-04",
+          "type": "regulatory",
+          "confirmed": true,
+          "summary": "Irish DPC opened a GDPR inquiry into X Internet Unlimited Company over use of EU/EEA users' public X posts to train Grok models; no decision found as of 2026-09.",
+          "sourceUrl": "https://www.dataprotection.ie/en/news-media/latest-news/data-protection-commission-announces-commencement-inquiry-x-internet-unlimited-company-xiuc"
+        },
+        {
+          "date": "2025-08",
+          "type": "breach",
+          "confirmed": true,
+          "summary": "Forbes reported 370,000+ Grok conversations created via the Share button were published without noindex and became searchable on Google/Bing/DuckDuckGo, some containing personal details.",
+          "sourceUrl": "https://www.forbes.com/sites/iainmartin/2025/08/20/elon-musks-xai-published-hundreds-of-thousands-of-grok-chatbot-conversations/"
+        },
+        {
+          "date": "2026-01",
+          "type": "ban",
+          "confirmed": true,
+          "summary": "Indonesia and Malaysia temporarily blocked access to Grok over generation of non-consensual sexualised images.",
+          "sourceUrl": "https://www.cnbc.com/2026/01/12/malaysia-indonesia-block-elon-musks-grok-obscene-non-consensual-content.html"
+        },
+        {
+          "date": "2026-02",
+          "type": "regulatory",
+          "confirmed": true,
+          "summary": "Irish DPC opened an investigation into X (XIUC) over Grok-generated non-consensual intimate/sexualised images of EU/EEA people, including children (GDPR Arts 5, 6, 25, 35).",
+          "sourceUrl": "https://www.dataprotection.ie/en/news-media/press-releases/data-protection-commission-opens-investigation-x-xiuc"
+        }
+      ],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://x.ai/legal/faq",
+          "quote": "We may use your content and interactions with Grok (e.g., prompts, searches, and other materials you submit) along with Grok's responses to train our models.",
+          "retrieved": "2026-05-27"
+        },
+        {
+          "field": "training",
+          "url": "https://x.ai/legal/faq",
+          "quote": "Once you select that your data should not be used for training, your new conversations will not be used to train our models.",
+          "retrieved": "2026-05-27"
+        },
+        {
+          "field": "training",
+          "url": "https://docs.x.ai/developers/faq/security",
+          "quote": "If the \"improve the model\" toggle is enabled from grok.com or mobile data controls settings, these chats via Build mode and build sessions, including data from created apps, may be used for product and model improvements.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://x.ai/legal/faq",
+          "quote": "You can keep your data on your xAI account for as long as you wish.",
+          "retrieved": "2026-05-27"
+        },
+        {
+          "field": "retention",
+          "url": "https://x.ai/legal/faq",
+          "quote": "If you delete conversations from your account or if you use Private Chat, conversations will be removed from our systems within 30 days",
+          "retrieved": "2026-05-27"
+        },
+        {
+          "field": "zdr",
+          "url": "https://x.ai/legal/faq",
+          "retrieved": "2026-05-27"
+        },
+        {
+          "field": "location",
+          "url": "https://x.ai/legal/faq",
+          "retrieved": "2026-05-27"
+        },
+        {
+          "field": "compliance",
+          "url": "https://x.ai/legal/faq",
+          "retrieved": "2026-05-27"
+        },
+        {
+          "field": "incidents",
+          "url": "https://www.dataprotection.ie/en/news-media/latest-news/data-protection-commission-announces-commencement-inquiry-x-internet-unlimited-company-xiuc",
+          "quote": "the processing of personal data comprised in publicly-accessible posts posted on the 'X' social media platform by EU/EEA users, for the purposes of training generative artificial intelligence models",
+          "retrieved": "2026-09-30"
+        }
+      ],
+      "incidentDetail": "Aug 2024: Irish DPC High Court action; X agreed to stop training Grok on EU users' posts. Apr 2025: DPC inquiry into Grok training. Aug 2025: 370k+ shared Grok chats indexed by search engines. Jan 2026: Indonesia and Malaysia blocked Grok. Feb 2026: DPC investigation into sexualised images generated with Grok."
     },
     {
       "id": "alibaba-qwen",

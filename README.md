@@ -77,7 +77,7 @@ PrivacyWatch is a static site hosted on Cloudflare Pages. Pushes to `main` trigg
 - **Not legal advice.** This is a good-faith summary of public policy documents.
 - **Policies change.** Always verify with primary sources before making compliance decisions.
 - **"Unknown" ≠ safe.** ⚫ Unverified means the cited document never addresses API data — not that the provider is clean. 🟠 Caution on a silent/opaque host means we looked and they still don’t say; it is not a finding that they train.
-- Research conducted May–June 2026. Verify dates on individual provider entries.
+- Research conducted May–September 2026. Verify dates on individual provider entries.
 
 ---
 

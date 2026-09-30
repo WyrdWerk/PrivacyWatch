@@ -2,74 +2,361 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "PrivacyWatch Provider Data",
   "type": "object",
-  "required": ["meta", "providers"],
+  "required": [
+    "meta",
+    "providers"
+  ],
   "properties": {
     "meta": {
       "type": "object",
-      "required": ["lastUpdated", "version", "description"],
+      "required": [
+        "lastUpdated",
+        "version",
+        "description"
+      ],
       "properties": {
-        "lastUpdated": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
-        "version": { "type": "string" },
-        "description": { "type": "string" },
-        "maintainer": { "type": "string" }
+        "lastUpdated": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "version": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "maintainer": {
+          "type": "string"
+        }
       }
     },
     "providers": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "name", "surface", "surfaceType", "category", "categoryLabel", "rating", "training", "retention", "zdr", "location", "sourceUrl", "sourceDate"],
+        "required": [
+          "id",
+          "name",
+          "surface",
+          "surfaceType",
+          "category",
+          "categoryLabel",
+          "rating",
+          "training",
+          "retention",
+          "zdr",
+          "location",
+          "sourceUrl",
+          "sourceDate"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "name": { "type": "string" },
-          "surface": { "type": "string" },
-          "surfaceType": { "type": "string", "enum": ["api", "consumer"] },
-          "category": { "type": "string", "enum": ["us-frontier", "chinese", "inference", "coding"] },
-          "categoryLabel": { "type": "string" },
-          "rating": { "type": "string", "enum": ["clean", "guarded", "caution", "high-risk", "unverified"] },
-          "incident": { "type": "boolean" },
-          "incidentDetail": { "type": "string" },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "surface": {
+            "type": "string"
+          },
+          "surfaceType": {
+            "type": "string",
+            "enum": [
+              "api",
+              "consumer"
+            ]
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "us-frontier",
+              "chinese",
+              "inference",
+              "coding"
+            ]
+          },
+          "categoryLabel": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "string",
+            "enum": [
+              "clean",
+              "guarded",
+              "caution",
+              "high-risk",
+              "unverified"
+            ]
+          },
+          "incident": {
+            "type": "boolean"
+          },
+          "incidentDetail": {
+            "type": "string"
+          },
           "training": {
             "type": "object",
-            "required": ["label", "detail"],
+            "required": [
+              "label",
+              "detail"
+            ],
             "properties": {
-              "label": { "type": "string" },
-              "detail": { "type": "string" }
+              "label": {
+                "type": "string"
+              },
+              "detail": {
+                "type": "string"
+              },
+              "default": {
+                "type": "string",
+                "enum": [
+                  "off",
+                  "on",
+                  "opt-in",
+                  "tier-dependent",
+                  "silent",
+                  "conflicting"
+                ]
+              },
+              "optOut": {
+                "type": "string",
+                "enum": [
+                  "setting",
+                  "api-param",
+                  "email",
+                  "contract",
+                  "not-needed",
+                  "none",
+                  "silent"
+                ]
+              }
             }
           },
           "retention": {
             "type": "object",
-            "required": ["label", "detail"],
+            "required": [
+              "label",
+              "detail"
+            ],
             "properties": {
-              "label": { "type": "string" },
-              "detail": { "type": "string" }
+              "label": {
+                "type": "string"
+              },
+              "detail": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "transient",
+                  "fixed",
+                  "until-deleted",
+                  "indefinite",
+                  "silent"
+                ]
+              },
+              "days": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 1,
+                "description": "Only when kind is \"fixed\"."
+              }
             }
           },
           "zdr": {
             "type": "object",
-            "required": ["label", "detail", "status"],
+            "required": [
+              "label",
+              "detail",
+              "status"
+            ],
             "properties": {
-              "label": { "type": "string" },
-              "detail": { "type": "string" },
-              "status": { "type": "string", "enum": ["full", "partial", "none"] }
+              "label": {
+                "type": "string"
+              },
+              "detail": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "full",
+                  "partial",
+                  "none"
+                ]
+              },
+              "access": {
+                "type": "string",
+                "enum": [
+                  "default",
+                  "self-serve",
+                  "approval",
+                  "enterprise",
+                  "none",
+                  "silent"
+                ]
+              }
             }
           },
           "location": {
             "type": "object",
-            "required": ["label", "flag", "detail"],
+            "required": [
+              "label",
+              "flag",
+              "detail"
+            ],
             "properties": {
-              "label": { "type": "string" },
-              "flag": { "type": "string" },
-              "detail": { "type": "string" }
+              "label": {
+                "type": "string"
+              },
+              "flag": {
+                "type": "string"
+              },
+              "detail": {
+                "type": "string"
+              },
+              "regions": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^([A-Z]{2}|EU|GLOBAL)$"
+                },
+                "description": "Where data is processed/stored. Empty array = documents are silent."
+              }
             }
           },
-          "sourceUrl": { "type": "string", "format": "uri" },
-          "privacyUrl": { "type": "string", "format": "uri" },
-          "sourceDate": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
-          "notes": { "type": "string" },
+          "sourceUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "privacyUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "sourceDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "notes": {
+            "type": "string"
+          },
           "relatedUrls": {
             "type": "array",
-            "items": { "type": "string", "format": "uri" }
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "compliance": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "dpa": {
+                "type": "string",
+                "enum": [
+                  "public",
+                  "on-request",
+                  "enterprise",
+                  "none",
+                  "silent"
+                ]
+              },
+              "soc2": {
+                "type": "string",
+                "enum": [
+                  "type1",
+                  "type2",
+                  "none",
+                  "silent"
+                ]
+              },
+              "hipaaBaa": {
+                "type": "string",
+                "enum": [
+                  "available",
+                  "enterprise",
+                  "none",
+                  "silent"
+                ]
+              }
+            }
+          },
+          "incidents": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "date",
+                "type",
+                "confirmed",
+                "summary",
+                "sourceUrl"
+              ],
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}(-\\d{2})?$"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "breach",
+                    "regulatory",
+                    "ban",
+                    "allegation"
+                  ]
+                },
+                "confirmed": {
+                  "type": "boolean"
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "sourceUrl": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "url",
+                "retrieved"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "enum": [
+                    "training",
+                    "retention",
+                    "zdr",
+                    "location",
+                    "compliance",
+                    "incidents"
+                  ]
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "quote": {
+                  "type": "string",
+                  "description": "Short verbatim excerpt. Required unless the value is \"silent\"."
+                },
+                "retrieved": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                }
+              }
+            }
           }
         }
       }

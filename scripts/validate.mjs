@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { logoMap } from './lib/logos.mjs';
+import { validateV2, coverage } from './lib/v2-fields.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
@@ -44,6 +45,7 @@ for (const p of providers) {
     }
     if (!privacyOk) errors.push(`${p.id || '?'}: privacyUrl, when present, must be an absolute https URL`);
   }
+  errors.push(...validateV2(p));
   if (ids.has(p.id)) errors.push(`duplicate id: ${p.id}`);
   ids.add(p.id);
 }
@@ -69,4 +71,6 @@ if (errors.length) {
   process.exit(1);
 }
 
+const cov = coverage(providers);
 console.log(`✅ providers.json — ${providers.length} providers, version ${data.meta.version}, last updated ${data.meta.lastUpdated}`);
+console.log(`   structured: ${cov.complete}/${cov.total} rows complete — ` + Object.entries(cov.fields).map(([f, n]) => `${f} ${n}`).join(', '));

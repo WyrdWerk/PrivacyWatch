@@ -21,7 +21,6 @@ export const PROVIDER_LOGOS = {
   'Cursor': { slug: 'cursor', domains: ['cursor.com'], names: ['Cursor'] },
   'OpenCode': { slug: 'opencode', domains: ['opencode.ai'], names: ['OpenCode'] },
   'HyperAgent': { slug: 'hyperagent', domains: ['hyperagent.com'], names: ['HyperAgent'] },
-  'Crof AI': { slug: 'crof', domains: ['crof.ai'], names: ['Crof AI'] },
   'Wafer AI': { slug: 'wafer', domains: ['wafer.ai'], names: ['Wafer AI'] },
   'Neuralwatt': { slug: 'neuralwatt', domains: ['neuralwatt.com'], names: ['Neuralwatt'] },
   'CommandCode': { slug: 'commandcode', domains: ['commandcode.ai'], names: ['CommandCode'] },

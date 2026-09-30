@@ -3,6 +3,25 @@
 All policy changes, new providers, and corrections are logged here.
 Format: `[YYYY-MM-DD] Provider — what changed — source`
 
+## v1.9.0 — 2026-09-30
+
+**Crof AI removed (defunct).** Row, logo and mapping dropped; the archived policy snapshot stays in `policies/` for the record. 96 surfaces across 85 families.
+
+**Coding tools re-verified (9 rows)** with structured fields and verbatim evidence (coverage 27/96). Research ran in Amp threads (low mode, Fast); maintainer spot-checked Cursor's data-use page and Wafer's policy URLs.
+
+Rating changes:
+- Wafer AI (Privacy tier) — **Clean → Caution**, Wafer AI (Standard) — **Guarded → Caution.** Wafer's privacy policy URL now returns 404 and its compliance portal page is an empty shell, so current terms can't be checked (the rubric's opaque-after-live-check case). Structured values come from the May 2026 archived policy; current docs confirm a per-request/account-level ZDR control. `sourceDate` unchanged.
+
+Corrections:
+- Cursor — Privacy Mode is available on Free and Pro (on by default for Enterprise), not only Teams/Enterprise. Processing is not US-only: infrastructure spans US, Europe and Singapore, with worldwide inference providers. ZDR has exceptions (abuse investigations, non-ZDR models, own API keys).
+- OpenCode Go — model table now includes Contributor models that allow training and are not ZDR; retention 0–30 days depending on model. Previously cited US/EU/Singapore regions are no longer stated.
+- OpenCode Zen — the unpaid-account improvement clause doesn't name model training (`silent`); the earlier Cloudflare R2 prompt-storage claim isn't supported by current pages.
+- HyperAgent — subprocessors retain up to 30 days (a ceiling, not a floor); no ZDR offering documented; regions unspecified.
+- Neuralwatt — anonymized semantic representations may be kept for caching with no stated period.
+- CommandCode — hosted AI request content may be retained up to 30 days; no in-house training, but upstream no-training depends on the provider unless strict ZDR mode is used; SOC 2 still in progress.
+
+---
+
 ## v1.8.0 — 2026-09-30
 
 **Chinese providers re-verified against live sources (10 rows)** and given structured fields with verbatim evidence (coverage 18/97).

@@ -37,7 +37,6 @@ array to providers.json for the rows that need it).
 | opencode-go | Go (paid tier) | https://dev.opencode.ai/docs/go/ | ⏳ pending |  |
 | opencode-zen | Zen (free tier) | https://opencode.ai/legal/privacy-policy | ⏳ pending |  |
 | hyperagent | Platform | https://hyperagent.com/privacy | ⏳ pending |  |
-| crof-ai | API | https://crof.ai/privacy | ⏳ pending |  |
 | wafer-ai-privacy | Privacy Tier ($25/wk) | https://www.wafer.ai/terms | ⏳ pending |  |
 | wafer-ai-standard | Standard (Lite/Starter) | https://www.wafer.ai/terms | ⏳ pending |  |
 | neuralwatt | API | https://portal.neuralwatt.com/privacy | ⏳ pending |  |

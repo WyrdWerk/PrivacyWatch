@@ -1,7 +1,7 @@
 {
   "meta": {
     "lastUpdated": "2026-09-30",
-    "version": "1.9.0",
+    "version": "1.10.0",
     "description": "PrivacyWatch — LLM data privacy, retention, and model training tracker",
     "maintainer": "WyrdWerk (github.com/WyrdWerk/PrivacyWatch)"
   },
@@ -2258,28 +2258,82 @@
       "incident": false,
       "training": {
         "label": "Off — ZDR default",
-        "detail": "No training on inference data. FireOptimizer (optional) requires explicit opt-in; deleted after use, contractually enforced."
+        "detail": "Fireworks says it does not use prompts, training data, or API inputs to train or improve models without explicit opt-in. FireOptimizer logging is also opt-in; the live policy does not confirm the previous claim that data is deleted after use or contractually enforced.",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
         "label": "ZDR default; Response API 30-day*",
-        "detail": "Standard inference: ZDR default (volatile memory only). IMPORTANT: Response API defaults to store=True (30-day retention) — set store=False to disable."
+        "detail": "Standard open-model inference is ZDR by default. The Response API is an exception: `store=True` by default retains conversation data for 30 days; set `store=False` or delete it sooner.",
+        "kind": "fixed",
+        "days": 30
       },
       "zdr": {
         "label": "Default — all tiers",
-        "detail": "ZDR is the default for all tiers. Not an add-on. Enterprise explicitly guarantees no data retention.",
-        "status": "full"
+        "detail": "ZDR is the default for open-model inference. The Response API is an exception: conversation data is stored by default with `store=True` and automatically deleted after 30 days.",
+        "status": "full",
+        "access": "default"
       },
       "location": {
-        "label": "US + EU + APAC",
+        "label": "Global default; multi-region options",
         "flag": "🌐",
-        "detail": "Dedicated deployments: US, EUROPE, APAC, or GLOBAL region options."
+        "detail": "Deployments are multi-region by default; supported groupings include GLOBAL, US, CANADA, EUROPE, and APAC. New accounts receive quota for GLOBAL only; other placements require additional quota.",
+        "regions": [
+          "GLOBAL",
+          "US",
+          "CA",
+          "EU"
+        ]
       },
       "sourceUrl": "https://fireworks.ai/terms-of-service",
       "privacyUrl": "https://fireworks.ai/privacy-policy",
-      "sourceDate": "2026-05-27",
-      "notes": "ISO 27001/27701/42001, SOC 2 Type II, HIPAA. *Response API has store=True as default — must explicitly set store=False. ToS via OpenRouter; Data handling at docs.fireworks.ai.",
+      "sourceDate": "2026-09-30",
+      "notes": "SOC 2 Type II is documented and a public DPA is available. Standard open-model inference is ZDR by default; Response API requests store conversation data by default unless `store=False` is set.",
       "relatedUrls": [
         "https://fireworks.ai/terms-of-service"
+      ],
+      "compliance": {
+        "dpa": "public",
+        "soc2": "type2"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://fireworks.ai/privacy-policy",
+          "quote": "We do not use your prompts, training data, or API inputs to train or improve our AI models without your explicit opt-in.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://docs.fireworks.ai/guides/security_compliance/data_handling",
+          "quote": "All stored conversation data is automatically deleted after 30 days.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://docs.fireworks.ai/guides/security_compliance/data_handling",
+          "quote": "Fireworks has Zero Data Retention by default.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://docs.fireworks.ai/deployments/regions",
+          "quote": "Supported multi-regions: `GLOBAL`, `US`, `CANADA`, `EUROPE`, `APAC`.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://www.fireworks.ai/dpa",
+          "quote": "This Data Processing Addendum (“DPA”) forms part of and is incorporated into the agreement",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://docs.fireworks.ai/guides/security_compliance/data_security",
+          "quote": "SOC 2 Type II (certified)",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {
@@ -2289,32 +2343,66 @@
       "surfaceType": "api",
       "category": "inference",
       "categoryLabel": "Inference",
-      "rating": "clean",
+      "rating": "caution",
       "incident": false,
       "training": {
         "label": "Off — opt-in only",
-        "detail": "'We do not use any data collected from you to train our models without your explicit opt-in and consent.' Toggle in account Privacy & Security settings."
+        "detail": "Training data sharing is opt-in and off by default. The live docs place this control in the Privacy section of Organization Settings; prompt storage is a separate setting.",
+        "default": "opt-in",
+        "optOut": "not-needed"
       },
       "retention": {
-        "label": "Not stored by default",
-        "detail": "No default storage of prompts/completions. ZDR self-serve. Temporary cache duration unspecified."
+        "label": "Stored by default; user-deletable",
+        "detail": "Prompts and model responses are stored by default and may be used for product improvements. Users can delete stored data; the live docs do not state an automatic retention period.",
+        "kind": "until-deleted"
       },
       "zdr": {
-        "label": "Yes — self-serve, all tiers",
-        "detail": "ZDR available via Settings → Profile → Privacy & Security. Most accessible ZDR of any inference provider — no sales call required.",
-        "status": "full"
+        "label": "Yes — self-serve",
+        "detail": "Organization admins can turn storage off in privacy settings to enable ZDR. The docs say ZDR applies from when enabled; it does not change data processed beforehand.",
+        "status": "full",
+        "access": "self-serve"
       },
       "location": {
-        "label": "US + EU (enterprise)",
-        "flag": "🇺🇸🇪🇺",
-        "detail": "Default: North America. EU data residency for enterprise (UK, Spain, France, Portugal, Iceland). SCCs in place for GDPR."
+        "label": "EU available; serverless unpinned",
+        "flag": "❓",
+        "detail": "Private networking and VPC-based deployments can be set up in EU regions. Serverless endpoints do not offer region selection; the cited live docs do not establish their processing region.",
+        "regions": [
+          "EU"
+        ]
       },
       "sourceUrl": "https://www.together.ai/terms-of-service",
       "privacyUrl": "https://www.together.ai/privacy",
-      "sourceDate": "2026-05-27",
-      "notes": "SOC 2 Type II (Jul 2025). DPA for enterprise only. HIPAA BAA available. ToS via OpenRouter; Privacy at www.together.ai/privacy.",
+      "sourceDate": "2026-09-30",
+      "notes": "Training sharing is opt-in, but prompt and response storage is on by default and may be used for product improvements. The cited docs describe EU-region private deployments, not serverless region selection.",
       "relatedUrls": [
         "https://www.together.ai/terms-of-service"
+      ],
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://docs.together.ai/docs/privacy-and-security",
+          "quote": "Data sharing for training other models is opt-in and not enabled by default.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://docs.together.ai/docs/privacy-and-security",
+          "quote": "By default, Together stores the prompts you send and the responses models return, and may use them for product improvements.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://docs.together.ai/docs/privacy-and-security",
+          "quote": "Organization admins can turn storage off in privacy settings, which enables zero data retention (ZDR): request content is then not persisted or used for any secondary purpose.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://docs.together.ai/docs/privacy-and-security",
+          "quote": "For customers with data-residency, regulatory, or compliance requirements (for example, GDPR-driven EU-region deployments), Together supports private networking and VPC-based deployments, including in EU regions.",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {
@@ -2324,32 +2412,75 @@
       "surfaceType": "api",
       "category": "inference",
       "categoryLabel": "Inference",
-      "rating": "guarded",
+      "rating": "clean",
       "incident": false,
       "training": {
         "label": "Off — explicit",
-        "detail": "'We do not train on your data.' Memory-only processing. Exception: Google/Anthropic models follow those providers' own policies when accessed via DeepInfra."
+        "detail": "'We do not train on your data.' Memory-only processing. Exception: Google/Anthropic models follow those providers' own policies when accessed via DeepInfra.",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
         "label": "Memory only (not to disk)",
-        "detail": "Standard inference: in-memory, not stored to disk. Account data: 30-day post-deletion. Bulk APIs: temporary encrypted disk during processing."
+        "detail": "Standard inference inputs and outputs are processed in memory and deleted after the request. Bulk inference may use encrypted disk for a short retention period; image-generation outputs may also be stored briefly. Account personal information is removed 30 days after account deletion.",
+        "kind": "transient"
       },
       "zdr": {
-        "label": "Yes — enterprise only",
-        "detail": "ZDR available via enterprise arrangement. Not self-serve. Trust Center has formal Data Retention Policy document.",
-        "status": "full"
+        "label": "Default — zero retention",
+        "detail": "The current Terms of Service describe Zero Data Retention for Customer Data, subject to stated exceptions for customer-authorized support retention, operational metadata, and records kept for legal, fraud, security, or abuse purposes.",
+        "status": "full",
+        "access": "default"
       },
       "location": {
-        "label": "US only",
+        "label": "United States stated",
         "flag": "🇺🇸",
-        "detail": "US data centers only. No EU data residency. GDPR DPA: in progress — not yet published."
+        "detail": "The Privacy Notice says data may be transferred, stored, and processed in the United States. It does not establish that the United States is the only possible location or describe EU data residency.",
+        "regions": [
+          "US"
+        ]
       },
       "sourceUrl": "https://deepinfra.com/terms",
       "privacyUrl": "https://deepinfra.com/privacy",
-      "sourceDate": "2026-05-27",
-      "notes": "Google/Anthropic model calls follow those providers' policies, not DeepInfra's. GDPR DPA absent — gap for EU enterprise. SOC 2, ISO 27001, HIPAA compliant. Terms via OpenRouter; Data privacy at docs.deepinfra.com.",
+      "sourceDate": "2026-09-30",
+      "notes": "Current API docs describe memory-only standard inference and disclose bulk/image-output exceptions. Current Terms of Service state Zero Data Retention for Customer Data with support, metadata, legal, fraud, security, and abuse exceptions. The Privacy Notice references SOC 2 but does not specify a type.",
       "relatedUrls": [
         "https://deepinfra.com/terms"
+      ],
+      "compliance": {
+        "soc2": "silent"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://docs.deepinfra.com/account/data-privacy",
+          "quote": "We do not use data you submit to our APIs for training models, except when using Google or Anthropic models, where the receiving company's training policy applies.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://docs.deepinfra.com/account/data-privacy",
+          "quote": "Once inference is complete, the data is deleted from memory.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://deepinfra.com/terms",
+          "quote": "Provider will not retain, store, or log any Customer Data submitted to or generated by the Services beyond the period strictly necessary to process and return the applicable request, after which such Customer Data is deleted from Provider's systems in the ordinary course of operations",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://deepinfra.com/privacy",
+          "quote": "Your data may be transferred, stored, and processed outside of your jurisdiction, specifically in the United States.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://deepinfra.com/privacy",
+          "quote": "Our security measures comply with SOC 2 and ISO 27001 standards and include technical and organizational measures for GDPR and HIPAA compliance.",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {
@@ -2362,29 +2493,101 @@
       "rating": "guarded",
       "incident": false,
       "training": {
-        "label": "Speculative decoding only",
-        "detail": "Training ON by default — but ONLY to train small internal draft models for Speculative Decoding (inference speed optimization). Explicitly NOT for foundational LLM training. ZDR disables entirely."
+        "label": "No model training",
+        "detail": "Nebius says customer content is not used to train models. Separately, prompts and outputs may be retained by default for speculative decoding; enabling ZDR disables that use.",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
-        "label": "Retained for Speculative Decoding",
-        "detail": "Duration: 'as long as necessary' — not numerically specified. Object Storage: deleted within 4 days of deletion request. Security logs: 24 months."
+        "label": "Stored for speculative decoding unless ZDR",
+        "detail": "Without ZDR, inputs and outputs are retained for speculative decoding; the guide says they are stored in Finland, but gives no fixed retention period. On service termination, the guide says customer personal data is deleted or returned at the customer's choice, subject to legal retention.",
+        "kind": "until-deleted"
       },
       "zdr": {
-        "label": "Yes — onboarding form or email",
-        "detail": "ZDR available via onboarding form or by emailing tokenfactory-support@nebius.com — not a self-serve UI toggle. Disables Speculative Decoding data collection. Required for HIPAA/BAA compliance. May impact inference latency.",
-        "status": "full"
+        "label": "Yes — self-serve account setting",
+        "detail": "ZDR can be enabled in account settings at the organization level. It covers projects and endpoints in the organization and stops input/output retention and speculative decoding.",
+        "status": "full",
+        "access": "self-serve"
       },
       "location": {
-        "label": "EU (Finland) + US",
-        "flag": "🇪🇺🇺🇸",
-        "detail": "Token Factory: EU-North1 (Finland) primary. Both EU and US inference available. Nebius B.V. incorporated Netherlands."
+        "label": "Global public endpoints; dedicated region selectable",
+        "flag": "🌐",
+        "detail": "Public endpoints show Global and have dynamically chosen processing locations with no region guarantee. Dedicated endpoints are configured to a selected region; retained speculative-decoding data is stored in Finland (EU). Fine-tuning locations vary by customer region, with data stored in the EU.",
+        "regions": [
+          "GLOBAL",
+          "EU",
+          "FI",
+          "US"
+        ]
       },
       "sourceUrl": "https://docs.nebius.com/legal/studio/terms-of-use/",
       "privacyUrl": "https://docs.tokenfactory.nebius.com/legal/privacy-policy",
-      "sourceDate": "2026-06-07",
-      "notes": "Ex-Yandex: full divestment completed July 2024. Fully independent EU entity now. SOC 2 Type II, ISO 27001:2022. DPA published. ToS via OpenRouter; Token Factory quick guide at docs.tokenfactory.nebius.com.",
+      "sourceDate": "2026-09-30",
+      "notes": "The current Token Factory guide distinguishes model training from speculative decoding: it says customer content is not used to train models, while prompts and outputs may be retained by default for speculative decoding. ZDR is self-serve. The guide documents a public DPA, SOC 2 Type II, and HIPAA workloads subject to a signed BAA.",
       "relatedUrls": [
         "https://docs.nebius.com/legal/studio/terms-of-use/"
+      ],
+      "compliance": {
+        "dpa": "public",
+        "soc2": "type2",
+        "hipaaBaa": "available"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://docs.tokenfactory.nebius.com/legal/legal-quick-guide",
+          "quote": "Your content is not used to train any models in either mode.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://docs.tokenfactory.nebius.com/legal/legal-quick-guide",
+          "quote": "Unless you enable Zero Data Retention, we keep your inputs and outputs to speed up inference using the Speculative Decoding technique described in Section 3.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://docs.tokenfactory.nebius.com/legal/legal-quick-guide",
+          "quote": "For maximum privacy and control, you can enable Zero Data Retention in your account settings.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://docs.tokenfactory.nebius.com/legal/legal-quick-guide",
+          "quote": "For public model endpoints, the Region field shows Global. The processing location is decided dynamically, is not tied to any single data center, and can change at any time without prior notice.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://docs.tokenfactory.nebius.com/legal/legal-quick-guide",
+          "quote": "If you have not enabled Zero Data Retention (see Section 4), the inputs and outputs retained for Speculative Decoding are stored in Finland (EU), regardless of where real-time processing takes place.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://docs.tokenfactory.nebius.com/legal/legal-quick-guide",
+          "quote": "Processing for US customers: fine-tuning jobs submitted by US users are processed in US data centers, but all data is stored in the EU.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://docs.tokenfactory.nebius.com/legal/legal-quick-guide",
+          "quote": "We provide a DPA to all our customers.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://docs.tokenfactory.nebius.com/legal/legal-quick-guide",
+          "quote": "We are a certified company holding ISO 27001, ISO 27701 and SOC 2 Type II certifications.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://docs.nebius.com/legal/hipaa",
+          "quote": "Use of Nebius products with Protected Health Information (PHI) or electronic Protected Health Information (ePHI) is subject to a signed Business Associate Agreement (BAA), the scope of services covered by that BAA, proper configuration, and customer responsibilities consistent with HIPAA.",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {
@@ -2397,32 +2600,64 @@
       "rating": "caution",
       "incident": false,
       "training": {
-        "label": "Not explicitly prohibited",
-        "detail": "Terms of Service (Mar 31, 2025): 'We will not access your Interaction Data...will not use or disclose it without authorization...will only use your Interaction Data in compliance with applicable laws and solely for the purpose of providing Services to you.' This constrains use to service provision but contains no explicit training prohibition. CN Privacy Policy (.cn entity): 'we will not conduct any unauthorised use or disclosure of your Interaction Data, and will not store it' — functionally stronger but applies to Chinese entity/users."
+        "label": "Use limited to service provision",
+        "detail": "The live .com Terms say SiliconFlow will not access Interaction Data and will not use it without authorization; any use is limited to providing Services. The documents do not explicitly address model training.",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
-        "label": "No storage (Interaction Data only)",
-        "detail": "Chinese-language Privacy Policy (Oct 11, 2025): Interaction Data is not stored. Account data, billing, and profile data IS retained with no specific durations. 'No data stored, ever' marketing is misleading as a blanket claim — it applies to Interaction Data specifically."
+        "label": "Retention period unspecified",
+        "detail": "The Privacy Policy says SiliconFlow has no obligation to store Interaction Data, but does not promise that data is never stored or give a retention period. It sets separate purpose-based periods for personal/account data.",
+        "kind": "silent"
       },
       "zdr": {
-        "label": "Not formally documented",
-        "detail": "No formal ZDR offering found. 'No storage' claim for Interaction Data is functionally equivalent but not contractually guaranteed as a ZDR service.",
-        "status": "none"
+        "label": "No formal ZDR documented",
+        "detail": "No Zero Data Retention program or control is described in the live .com legal pages. The separate .cn policy makes stronger API-specific no-long-term-storage/no-training claims for its service; those do not establish the .com API’s ZDR terms.",
+        "status": "none",
+        "access": "silent"
       },
       "location": {
         "label": "Undisclosed",
-        "flag": "🌐",
-        "detail": "Server locations NOT specified in any policy version. Singapore entity governed by PDPA; China entity by Chinese law. International .com product explicitly excludes China users — separate siliconflow.cn product."
+        "flag": "❓",
+        "detail": "The .com Privacy Policy allows transfer of personal data within or outside Singapore but does not name API processing/storage locations. The separate .cn policy says it stores personal information in mainland China; that is not a location commitment for the .com API.",
+        "regions": []
       },
       "sourceUrl": "https://docs.siliconflow.com/en/legals/terms-of-service",
       "privacyUrl": "https://docs.siliconflow.com/en/legals/privacy-policy",
-      "sourceDate": "2026-05-27",
-      "notes": "Source updated to English Terms of Service (Mar 31, 2025), which explicitly restricts Interaction Data use: 'will not access your Interaction Data...will not use or disclose it without authorization...solely for the purpose of providing Services to you.' CN Privacy Policy (.cn entity, Oct 2025) has stronger language: 'will not conduct any unauthorised use or disclosure of your Interaction Data, and will not store it.' No explicit training prohibition in any version — constraint is 'solely for purpose of providing Services.' No SOC 2, ISO 27001, DPA, or sub-processor list.",
+      "sourceDate": "2026-09-30",
+      "notes": "Re-verified 2026-09-30 against live .com Terms and Privacy Policy. Terms constrain Interaction Data handling to service provision and say SiliconFlow has no obligation to store it, but do not explicitly address model training or specify an API retention period. .cn policy is a separate service/entity context and is not evidence for .com API storage or ZDR.",
       "relatedUrls": [
         "https://docs.siliconflow.com/en/legals/privacy-policy",
         "https://docs.siliconflow.cn/en/legals/privacy-policy",
         "https://docs.siliconflow.cn/cn/legals/privacy-policy",
         "https://docs.siliconflow.com/en/legals/terms-of-service"
+      ],
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://docs.siliconflow.com/en/legals/terms-of-service",
+          "quote": "We will not access your Interaction Data. You acknowledge and agree that we and this platform act solely as passive technical supporters or channels for Interaction Data. We are under no obligation to store Interaction Data and will not use or disclose it without authorization.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://docs.siliconflow.com/en/legals/privacy-policy",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://docs.siliconflow.com/en/legals/privacy-policy",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://docs.siliconflow.com/en/legals/privacy-policy",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {
@@ -3119,30 +3354,81 @@
       "rating": "guarded",
       "incident": false,
       "training": {
-        "label": "Not used for inference data (product docs)",
-        "detail": "GroqCloud Your Data: inference requests are not retained by default. The page does not grant a training license over Input/Output. Trust Center FAQ (third-party index) states Groq does not use customer data to train models. Website Terms of Use do not mention API training."
+        "label": "Training not addressed in API data policy",
+        "detail": "The live GroqCloud data page documents retention, abuse monitoring, ZDR, and US storage but does not state whether inference inputs or outputs are used for model training. Do not treat the absence of a training grant on this page as an express prohibition.",
+        "default": "silent",
+        "optOut": "silent"
       },
       "retention": {
         "label": "Not retained by default; up to 30 days",
-        "detail": "Inference is not retained by default. Optional batch/fine-tune features keep application state (batch files 30 days). Reliability/abuse logs of inputs/outputs may be kept up to 30 days unless the org enables ZDR in Data Controls."
+        "detail": "Inference is not retained by default. Optional batch/fine-tune features keep application state (batch files 30 days). Reliability/abuse logs of inputs/outputs may be kept up to 30 days unless the org enables ZDR in Data Controls.",
+        "kind": "fixed",
+        "days": 30
       },
       "zdr": {
         "label": "Yes — self-serve Data Controls",
         "detail": "All customers can enable Zero Data Retention in Data Controls (org-wide or per-feature). ZDR disables features that need persistence (batch, fine-tune) and abuse-monitoring logs.",
-        "status": "full"
+        "status": "full",
+        "access": "self-serve"
       },
       "location": {
         "label": "US",
         "flag": "🇺🇸",
-        "detail": "US data centers. No EU data residency documented."
+        "detail": "US data centers. No EU data residency documented.",
+        "regions": [
+          "US"
+        ]
       },
       "sourceUrl": "https://console.groq.com/docs/your-data",
       "privacyUrl": "https://groq.com/privacy-policy/",
       "relatedUrls": [
         "https://console.groq.com/docs/legal/customer-data-processing-addendum"
       ],
-      "sourceDate": "2026-09-15",
-      "notes": "Re-verified 2026-09-15. Cited groq.com/terms-of-use is a website ToS (no API training clause). Live source is console.groq.com/docs/your-data. Rating stays Guarded: no-training is product-doc / FAQ, not a cloud Services Agreement on that URL."
+      "sourceDate": "2026-09-30",
+      "notes": "Re-verified 2026-09-30. GroqCloud documents default inference non-retention, optional Data Controls ZDR, up-to-30-day reliability/abuse logs, and US GCP storage. Its API data page does not address model training; DPA and SOC 2 Type II are publicly documented.",
+      "compliance": {
+        "dpa": "public",
+        "soc2": "type2"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://console.groq.com/docs/your-data",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://console.groq.com/docs/your-data",
+          "quote": "These logs are retained for up to 30 days, unless legally required to retain longer.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://console.groq.com/docs/your-data",
+          "quote": "All customers may enable Zero Data Retention (ZDR) in Data Controls settings.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://console.groq.com/docs/your-data",
+          "quote": "All customer data is retained in Google Cloud Platform (GCP) buckets located in the United States.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://console.groq.com/docs/legal/customer-data-processing-addendum",
+          "quote": "This Data Processing Addendum (“ DPA”) is incorporated into and made part of the Groq Services Agreement between the Groq Contracting Party and Customer (“ Services Agreement”) for use of Groq’s Cloud Services.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://console.groq.com/docs/legal/customer-data-processing-addendum",
+          "quote": "including SOC 2 Type II certification audits.",
+          "retrieved": "2026-09-30"
+        }
+      ]
     },
     {
       "id": "cohere",
@@ -3151,30 +3437,96 @@
       "surfaceType": "api",
       "category": "inference",
       "categoryLabel": "Inference",
-      "rating": "clean",
+      "rating": "caution",
       "incident": false,
       "training": {
-        "label": "Off by default",
-        "detail": "ToS: Customer data not used for training. Opt-in available for model improvement via separate agreement."
+        "label": "On by default; enterprise opt-out",
+        "detail": "Enterprise Data Commitments say customers can opt out of prompts and generations being used to train Cohere models in dashboard settings. Trial/research inputs and outputs may also be used for R&D; enterprise agreements govern enterprise Customer Data.",
+        "default": "on",
+        "optOut": "setting"
       },
       "retention": {
-        "label": "Per agreement",
-        "detail": "Retention duration defined in customer agreement. Standard endpoint: not stored post-processing unless agreed."
+        "label": "30 days, with exceptions",
+        "detail": "Cohere automatically deletes logged SaaS prompts and generations after 30 days, except where law or contract requires longer retention or usage is flagged for possible misuse. Training data may be retained separately under the customer agreement.",
+        "kind": "fixed",
+        "days": 30
       },
       "zdr": {
-        "label": "Yes — via agreement",
-        "detail": "ZDR available through enterprise/customer agreement. Not self-serve — requires sales engagement.",
-        "status": "full"
+        "label": "Yes — enterprise approval required",
+        "detail": "ZDR is limited to enterprise customers who make additional usage commitments; request it through support. When enabled, prompts and generations are not logged, but usage data is still received.",
+        "status": "full",
+        "access": "approval"
       },
       "location": {
-        "label": "US + EU",
-        "flag": "🇺🇸🇪🇺",
-        "detail": "Headquartered in Toronto, but serves US and EU. Data residency options available for enterprise."
+        "label": "Canada, EU + US operations",
+        "flag": "🇨🇦🇪🇺🇺🇸",
+        "detail": "Cohere’s Trust Center describes customer-data transfers from the EU to the US, and its Privacy Policy lists Canada, the United States, and the United Kingdom as transfer destinations. These sources do not promise per-request regional controls.",
+        "regions": [
+          "CA",
+          "EU",
+          "US"
+        ]
       },
       "sourceUrl": "https://cohere.com/terms-of-use",
       "privacyUrl": "https://cohere.com/privacy",
-      "sourceDate": "2026-06-28",
-      "notes": "Added via OpenRouter ToS cross-reference. Canadian AI company with strong privacy stance."
+      "sourceDate": "2026-09-30",
+      "notes": "Re-verified 2026-09-30 against Cohere Enterprise Data Commitments, Privacy Policy, Security page, and Trust Center. SaaS/trial data can be used for model improvement absent opt-out; enterprise controls and agreements differ. Enterprise ZDR requires approval. SOC 2 Type II and a DPA are available by request; HIPAA BAA is limited to custom model-development engagements, not Cohere-hosted SaaS.",
+      "compliance": {
+        "dpa": "on-request",
+        "soc2": "type2",
+        "hipaaBaa": "enterprise"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://cohere.com/enterprise-data-commitments",
+          "quote": "You can opt out from your prompts and generations being used to train Cohere models in your dashboard settings at any time.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://cohere.com/enterprise-data-commitments",
+          "quote": "We automatically delete logged prompts and generations after 30 days, unless we need it to comply with a legal requirement or customer contract, or unless your usage is flagged as potentially violating our terms, including our Usage Policy (e.g. abuse or misuse of our services).",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://cohere.com/enterprise-data-commitments",
+          "quote": "Because of this, we only allow ZDR for enterprise customers who can make additional commitments about their usage of the Cohere Services.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://trustcenter.cohere.com/monitoring",
+          "quote": "Based on the Transfer Impact Assessment, Cohere considers that the transfer of customer data to the US is, taking account of all the circumstances of the transfer, compatible with the GDPR read in light of the Charter of Fundamental Rights of the EU.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://cohere.com/privacy",
+          "quote": "Examples of countries we transfer personal information to include, but are not limited to, Canada, the United States, and the United Kingdom.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://cohere.com/enterprise-data-commitments",
+          "quote": "Contact privacy@cohere.com if you are a SaaS Platform customer and need a Data Processing Addendum.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://trustcenter.cohere.com/monitoring",
+          "quote": "Cohere undergoes an annual SOC 2 Type II audit.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://trustcenter.cohere.com/monitoring",
+          "quote": "Cohere may execute a Business Associate Agreement (BAA) for custom model development engagements.",
+          "retrieved": "2026-09-30"
+        }
+      ]
     },
     {
       "id": "mistral",
@@ -3186,27 +3538,81 @@
       "rating": "clean",
       "incident": false,
       "training": {
-        "label": "Off by default",
-        "detail": "ToS: Customer data not used to train models without consent. Explicit opt-in required for any training use."
+        "label": "API data not used for training",
+        "detail": "Mistral’s Privacy and data controls page states that API data is not used for model training and exposes a separate API control to allow or disable training use. Labs models are an exception: data may be used for training regardless of subscription plan or opt-out settings; Feedback is also an exception under the Commercial Terms.",
+        "default": "off",
+        "optOut": "setting"
       },
       "retention": {
-        "label": "Limited period",
-        "detail": "Data retained only as long as necessary for service provision. Deletion upon request per GDPR."
+        "label": "30 days for standard API calls",
+        "detail": "The Privacy Policy says API inputs/outputs are held for the time needed to generate a response plus 30 rolling days for abuse monitoring unless ZDR is active. Exceptions include Agents API data until account termination and Fine-Tuning data until deleted.",
+        "kind": "fixed",
+        "days": 30
       },
       "zdr": {
-        "label": "Yes — GDPR by design",
-        "detail": "EU company (Paris) with GDPR compliance. ZDR achievable via data deletion requests. No permanent storage of inference data.",
-        "status": "full"
+        "label": "Yes — request and approval required",
+        "detail": "ZDR is available for supported stateless API calls on paid plans. Contact support with a legitimate reason; Mistral reviews and may approve or deny requests. Stateful APIs and products are excluded.",
+        "status": "full",
+        "access": "approval"
       },
       "location": {
-        "label": "EU (France)",
-        "flag": "🇪🇺",
-        "detail": "Headquartered in Paris, France. GDPR jurisdiction. Data processed in EU."
+        "label": "Undisclosed",
+        "flag": "❓",
+        "detail": "Mistral identifies its contracting entity as French and the DPA sets transfer safeguards, but the reviewed API documents do not specify the regions where API inputs/outputs are processed or stored.",
+        "regions": []
       },
       "sourceUrl": "https://mistral.ai/terms/#terms-of-use",
       "privacyUrl": "https://legal.mistral.ai/terms/privacy-policy",
       "sourceDate": "2026-06-28",
-      "notes": "Added via OpenRouter ToS cross-reference. Major European open-weight model provider."
+      "notes": "Re-verified 2026-09-30. Mistral’s official Privacy and data controls content states API data is not used for training and documents a separate API training control; the Help Center confirms an API opt-out toggle. Labs models and Feedback remain exceptions. The docs URL returned 404 on direct fetch during this check, so verify the live route when Mistral restores or redirects it.",
+      "compliance": {
+        "dpa": "public"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://docs.mistral.ai/admin/monitor-comply/privacy-data-controls",
+          "quote": "API: data sent through the API isn't used for model training.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://docs.mistral.ai/admin/monitor-comply/privacy-data-controls",
+          "quote": "allow or disable the use of API calls to train Mistral models.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://help.mistral.ai/en/articles/455207-can-i-opt-out-of-my-input-or-output-data-being-used-for-training",
+          "quote": "Under the `Anonymous improvement data` section, disable the toggle to prevent API calls and related data from being used to improve Mistral’s services.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://legal.mistral.ai/terms/privacy-policy",
+          "quote": "Except for specific APIs, we keep your Input and Output for the period necessary to generate the Output and then for thirty (30) rolling days to monitor abuse (unless zero data retention is activated).",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://docs.mistral.ai/admin/monitor-comply/zero-data-retention",
+          "quote": "To request ZDR, contact support through the ZDR Help Center article or contact Mistral support.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://legal.mistral.ai/terms/data-processing-addendum",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://legal.mistral.ai/terms/data-processing-addendum",
+          "quote": "This Data Processing Addendum (the “ Data Processing Addendum” or the “ DPA”) forms part of and supplements the Agreement entered into by and between Mistral AI and Customer as of the Effective Date.",
+          "retrieved": "2026-09-30"
+        }
+      ]
     },
     {
       "id": "perplexity-api",
@@ -3219,26 +3625,81 @@
       "incident": false,
       "training": {
         "label": "Off — explicit",
-        "detail": "API ToS: 'We do not use your API data to train our models.' Consumer product has different policy."
+        "detail": "API ToS §2.3.3: Perplexity shall not use Customer Content to train, retrain, fine-tune or otherwise improve any generative AI models. Chat Completions docs repeat that customer data is not used to train models. The Search API addendum is a different posture (see notes).",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
-        "label": "Not stored",
-        "detail": "API inputs/outputs not persisted. Metadata (usage, billing) retained per standard practices."
+        "label": "Not stored (Chat Completions)",
+        "detail": "Chat Completions API: 'We do not retain data sent through the Chat Completions API' — only billing metadata (tokens, model, timestamps, API key). The Search API addendum says zero-data-retention obligations in the main API terms do not apply to Search.",
+        "kind": "none"
       },
       "zdr": {
-        "label": "Yes — by design",
-        "detail": "ZDR is the default for API. No separate agreement needed — data is not stored post-inference.",
-        "status": "full"
+        "label": "Yes — Chat Completions default",
+        "detail": "Docs describe a Zero Data Retention Policy for the Chat Completions API. The Search API addendum expressly carves out ZDR and other enhanced security obligations.",
+        "status": "full",
+        "access": "default"
       },
       "location": {
-        "label": "US",
-        "flag": "🇺🇸",
-        "detail": "Headquartered in San Francisco. US data centers."
+        "label": "Undisclosed",
+        "flag": "❓",
+        "detail": "API ToS, DPA, and privacy-security docs do not name processing countries or regions for Chat Completions inference.",
+        "regions": []
       },
       "sourceUrl": "https://www.perplexity.ai/hub/legal/perplexity-api-terms-of-service",
       "privacyUrl": "https://docs.perplexity.ai/docs/resources/privacy-security",
-      "sourceDate": "2026-06-28",
-      "notes": "Added via OpenRouter ToS cross-reference. Search-focused AI with separate API product."
+      "sourceDate": "2026-09-30",
+      "notes": "Re-verified 2026-09-30 against live API ToS (updated 23 Jan 2026), Chat Completions privacy-security docs, public DPA, and trust.perplexity.ai. Search API is governed by a 22 Sep 2025 addendum that permits use of Search Data to improve products and disapplies ZDR. HIPAA requires a separately executed BAA; Trust Center lists a 2025 HIPAA gap assessment, not a blanket BAA.",
+      "compliance": {
+        "dpa": "public",
+        "soc2": "type2",
+        "hipaaBaa": "available"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://www.perplexity.ai/hub/legal/perplexity-api-terms-of-service",
+          "quote": "Perplexity shall not use (or authorize third parties to use) Customer Content to train, retrain, fine-tune or otherwise improve any generative artificial intelligence models.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://docs.perplexity.ai/docs/resources/privacy-security",
+          "quote": "We do not retain data sent through the Chat Completions API, and we do not use customer data to train our models or for any purpose beyond processing the immediate request.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://docs.perplexity.ai/docs/resources/privacy-security",
+          "quote": "We do not retain data sent through the Chat Completions API, and we do not use customer data to train our models or for any purpose beyond processing the immediate request.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://docs.perplexity.ai/docs/resources/privacy-security",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://www.perplexity.ai/hub/legal/perplexity-api-terms-of-service",
+          "quote": "This Agreement incorporates by reference Perplexity’s Data Processing Addendum (“DPA”), available at www.perplexity.ai/hub/legal/dpa.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://docs.perplexity.ai/docs/resources/privacy-security",
+          "quote": "SOC 2 Type II Report",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://www.perplexity.ai/hub/legal/perplexity-api-terms-of-service",
+          "quote": "unless Customer and Perplexity have executed a Business Associate Agreement.",
+          "retrieved": "2026-09-30"
+        }
+      ]
     },
     {
       "id": "cloudflare-r2",
@@ -3247,30 +3708,81 @@
       "surfaceType": "api",
       "category": "inference",
       "categoryLabel": "Inference",
-      "rating": "clean",
+      "rating": "guarded",
       "incident": false,
       "training": {
         "label": "Off — explicit",
-        "detail": "ToS: Customer content not used for training. Workers AI inference data processed ephemerally."
+        "detail": "Workers AI data-usage (updated 21 Apr 2026): Cloudflare does not use Customer Content to train Workers AI models or improve Cloudflare or third-party services unless it receives explicit consent. Developer Platform SST: 'Unless otherwise agreed, Cloudflare does not use any Customer Content to train generative AI tools.'",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
-        "label": "Ephemeral",
-        "detail": "Inference data not persisted. R2 storage retention per customer configuration."
+        "label": "Not specified for inference",
+        "detail": "The Workers AI data-usage page does not state how long prompts/outputs are kept. It only says Customer Content 'may be stored by Cloudflare if you specifically use a storage service (e.g., R2, KV, DO, Vectorize, etc.) in conjunction with Workers AI.'",
+        "kind": "silent"
       },
       "zdr": {
-        "label": "Yes — by design",
-        "detail": "ZDR is default for Workers AI. No storage of inference data post-processing.",
-        "status": "full"
+        "label": "Not documented",
+        "detail": "No Workers AI page reviewed promises zero data retention or ephemeral-only inference. Existing 'ZDR is default' is not in the live data-usage docs.",
+        "status": "full",
+        "access": "silent"
       },
       "location": {
-        "label": "Global (300+ locations)",
+        "label": "Global network",
         "flag": "🌐",
-        "detail": "Edge network spans 300+ cities. Data processed in region of request. No single data center dependency."
+        "detail": "Glossary: Workers AI runs models on Cloudflare's global network with serverless GPUs. Optional Data Localization Suite Regional Services can pin Workers custom domains in-region; that is not stated as the Workers AI default.",
+        "regions": [
+          "GLOBAL"
+        ]
       },
       "sourceUrl": "https://www.cloudflare.com/service-specific-terms-developer-platform/#developer-platform-terms",
       "privacyUrl": "https://www.cloudflare.com/service-specific-terms-developer-platform/#developer-platform-terms",
-      "sourceDate": "2026-06-28",
-      "notes": "Added via OpenRouter ToS cross-reference. Infrastructure provider with edge inference capabilities."
+      "sourceDate": "2026-09-30",
+      "notes": "Re-verified 2026-09-30. This row is Workers AI (id remains cloudflare-r2). Public DPA is incorporated into self-serve and enterprise terms. HIPAA BAA is enterprise-only per Trust Hub.",
+      "compliance": {
+        "dpa": "public",
+        "soc2": "type2",
+        "hipaaBaa": "enterprise"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://developers.cloudflare.com/workers-ai/platform/data-usage/",
+          "quote": "Cloudflare does not use your Customer Content to (1) train any AI models made available on Workers AI or (2) improve any Cloudflare or third-party services, and would not do so unless we received your explicit consent.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://developers.cloudflare.com/workers-ai/platform/data-usage/",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://developers.cloudflare.com/workers-ai/platform/data-usage/",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://developers.cloudflare.com/workers-ai/platform/glossary/",
+          "quote": "Workers AI is a Cloudflare service that enables running machine learning models on Cloudflare's global network, utilizing serverless GPUs.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://www.cloudflare.com/cloudflare-customer-dpa/",
+          "quote": "These may include annual ISO/IEC 27001 audits; AICPA SOC 2 Type II; PCI DSS Level 1; and other external audits.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://www.cloudflare.com/trust-hub/hipaa/",
+          "quote": "However, Cloudflare will only enter into business associate agreements (BAAs) with its enterprise customers.",
+          "retrieved": "2026-09-30"
+        }
+      ]
     },
     {
       "id": "amazon-bedrock",
@@ -3283,26 +3795,76 @@
       "incident": false,
       "training": {
         "label": "Off by default",
-        "detail": "AWS treats customer data as customer data. No training on customer data without explicit consent. Governed by AWS service terms."
+        "detail": "Security page: customer data 'is not shared with model providers, and is not used to improve the base models.' Amazon FM privacy FAQ: prompts and outputs are not used to train underlying Amazon FMs unless a customer consents. New accounts inherit each model's default, which AWS documents as ZDR unless a model requires retention.",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
-        "label": "Per AWS controls",
-        "detail": "Data retention controlled by customer via Bedrock settings. Applications can configure retention periods."
+        "label": "Not stored by default",
+        "detail": "Abuse-detection guide: 'by default, Amazon Bedrock does not store model inputs or outputs.' Unconfigured accounts inherit the model default (ZDR for most models). Named OpenAI/Anthropic frontier models may keep classifier-flagged or all traffic up to 30 days; Claude Fable 5/5.1 require aws_review. Set data_retention_mode none to force ZDR (requests to models that require retention then fail).",
+        "kind": "none"
       },
       "zdr": {
-        "label": "Yes — configurable",
-        "detail": "ZDR available via Bedrock configuration. Customers can set data to not persist beyond inference.",
-        "status": "full"
+        "label": "Yes — default; some models need approval",
+        "detail": "ZDR is the documented default security model. For models that require retention, ZDR is evaluated per-account, per-model with the AWS account team (Anthropic-managed for Claude). IAM/SCPs can lock the org to mode none.",
+        "status": "full",
+        "access": "default"
       },
       "location": {
-        "label": "US + Global",
-        "flag": "🇺🇸🌐",
-        "detail": "AWS regions worldwide. Data processed in selected region. No cross-region transfer without configuration."
+        "label": "Customer-selected AWS Regions",
+        "flag": "🌐",
+        "detail": "Retention and inference are configured per AWS Region and do not propagate to other Regions. Cross-region inference stores retained I/O in the destination Region where the request is processed. AWS DPA lets the customer specify Region(s), including EEA.",
+        "regions": [
+          "GLOBAL"
+        ]
       },
       "sourceUrl": "https://aws.amazon.com/service-terms/",
       "privacyUrl": "https://aws.amazon.com/privacy/",
-      "sourceDate": "2026-06-28",
-      "notes": "Added via OpenRouter ToS cross-reference. AWS managed service for foundation models."
+      "sourceDate": "2026-09-30",
+      "notes": "Re-verified 2026-09-30 against live Bedrock data-retention and abuse-detection user guides, security-compliance, HIPAA eligible-services list (Bedrock listed; updated 3 Sep 2026), and AWS Service Terms DPA incorporation. AgentCore CVEs are product bugs, not customer-data breaches. soc2 type omitted: marketing says 'SOC' without Type 1/2 on the Bedrock page.",
+      "compliance": {
+        "dpa": "public",
+        "hipaaBaa": "available"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://aws.amazon.com/bedrock/security-compliance/",
+          "quote": "This means your data is not shared with model providers, and is not used to improve the base models.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/abuse-detection.html",
+          "quote": "This means that by default, Amazon Bedrock does not store model inputs or outputs.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/abuse-detection.html",
+          "quote": "This means that by default, Amazon Bedrock does not store model inputs or outputs.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/data-retention.html",
+          "quote": "You can configure data retention in a given AWS Region at the account level or project level, and the setting is enforced consistently across the Messages, Chat Completions, and Responses APIs.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://aws.amazon.com/service-terms/",
+          "quote": "These Service Terms incorporate the AWS Data Processing Addendum (“DPA”), when you use AWS Services to process Customer Data (as defined in the DPA).",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://aws.amazon.com/bedrock/security-compliance/",
+          "quote": "Finally, Bedrock is in scope for common compliance standards including ISO, SOC, CSA STAR Level 2, is HIPAA eligible, and customers can use Bedrock in compliance with the GDPR.",
+          "retrieved": "2026-09-30"
+        }
+      ]
     },
     {
       "id": "azure",
@@ -3315,26 +3877,97 @@
       "incident": false,
       "training": {
         "label": "Off by default",
-        "detail": "Azure OpenAI data-privacy docs: prompts and completions \"are NOT used to train any generative AI foundation models without your permission or instruction\" and \"are not used to train, retrain, or improve the base models.\""
+        "detail": "Foundry Models sold by Azure (includes Azure OpenAI): prompts, completions, embeddings, and training data 'are NOT used to train any generative AI foundation models without your permission or instruction' and 'are not used to train, retrain, or improve the base models.' Not available to OpenAI or other model providers.",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
-        "label": "Limited period",
-        "detail": "Data retained only as long as necessary. Customer controls retention via Azure settings."
+        "label": "Abuse logs: duration not stated",
+        "detail": "Models are stateless — prompts/completions are not stored in the model. Flagged content for human abuse review is stored in the geography of the Foundry resource; the live privacy page no longer states a 30-day TTL (that sentence was removed around Nov 2024). Optional Responses/Assistants/stored-completions persist message history until the customer deletes it. Modified abuse monitoring, if approved, turns off that storage and human review.",
+        "kind": "silent"
       },
       "zdr": {
-        "label": "Yes — enterprise",
-        "detail": "ZDR available for enterprise customers. Requires agreement with Microsoft. Data not persisted post-inference.",
-        "status": "full"
+        "label": "Yes — approval (modified abuse monitoring)",
+        "detail": "Managed customers may apply to modify abuse monitoring. If approved, 'the data storage and human review process described above is not performed'; automated review can still run at request time. This is an application/approval path, not a self-serve toggle.",
+        "status": "full",
+        "access": "approval"
       },
       "location": {
-        "label": "Global (35+ regions)",
+        "label": "Customer geography; Global / DataZone / US / EU options",
         "flag": "🌐",
-        "detail": "Azure regions worldwide. Data residency controls available. Customer can select specific regions."
+        "detail": "Standard deployments process prompts/responses in the customer-specified geography (regions within that geography allowed). Global deployments may process in any geography where the model is deployed. DataZone in the United States stays in the US; DataZone in an EU member state may process in any EU member state. Data at rest, including the abuse-monitoring store, stays in the customer-designated geography.",
+        "regions": [
+          "GLOBAL",
+          "US",
+          "EU"
+        ]
       },
       "sourceUrl": "https://learn.microsoft.com/en-us/legal/cognitive-services/openai/data-privacy",
       "privacyUrl": "https://privacy.microsoft.com/en-us/privacystatement",
-      "sourceDate": "2026-09-15",
-      "notes": "Added via OpenRouter ToS cross-reference. Microsoft's cloud AI inference service. Re-verified 2026-09-15: replaced the generic Microsoft website ToS with the Azure OpenAI data-privacy page that actually states the no-training rule."
+      "sourceDate": "2026-09-30",
+      "notes": "Re-verified 2026-09-30 on the live Foundry/Azure OpenAI data-privacy page (canonical URL still learn.microsoft.com/legal/cognitive-services/openai/data-privacy). Microsoft Online Services DPA governs processing. HIPAA BAA is in Product Terms for in-scope Azure services. Do not use Microsoft Q&A '30 days' answers — that figure is absent from the current privacy article.",
+      "compliance": {
+        "dpa": "public",
+        "soc2": "type2",
+        "hipaaBaa": "available"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://learn.microsoft.com/en-us/legal/cognitive-services/openai/data-privacy",
+          "quote": "are NOT used to train any generative AI foundation models without your permission or instruction.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://learn.microsoft.com/en-us/legal/cognitive-services/openai/data-privacy",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://learn.microsoft.com/en-us/legal/cognitive-services/openai/data-privacy",
+          "quote": "the data storage and human review process described above is not performed.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://learn.microsoft.com/en-us/legal/cognitive-services/openai/data-privacy",
+          "quote": "If you create a DataZone deployment in a Foundry resource located in the United States, prompts and responses may be processed anywhere within the United States.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://learn.microsoft.com/en-us/legal/cognitive-services/openai/data-privacy",
+          "quote": "If you create a DataZone deployment in a Foundry resource located in a European Union Member Nation, prompts and responses may be processed in that or any other European Union Member Nation.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://learn.microsoft.com/en-us/legal/cognitive-services/openai/data-privacy",
+          "quote": "For any deployment type labeled 'Global,' prompts and responses may be processed in any geography where the relevant model sold by Azure is deployed",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://learn.microsoft.com/en-us/legal/cognitive-services/openai/data-privacy",
+          "quote": "Please also see Microsoft Products and Services Data Protection Addendum",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://learn.microsoft.com/en-us/azure/compliance/offerings/offering-soc-2",
+          "quote": "Microsoft Azure, Dynamics 365, and other Microsoft cloud services undergo rigorous independent third-party SOC 2 Type 2 audits conducted by a reputable certified public accountant (CPA) firm.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://learn.microsoft.com/en-us/azure/compliance/offerings/offering-hipaa-us",
+          "quote": "To support our customers who are subject to HIPAA compliance, Microsoft will enter into BAAs with its covered entity and business associate customers.",
+          "retrieved": "2026-09-30"
+        }
+      ]
     },
     {
       "id": "ai21",

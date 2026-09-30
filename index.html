@@ -712,6 +712,7 @@ function render() {
           </div>
           ${p.incident && pIncidentDetail ? `<div class="detail-incident"><strong>🚩 Confirmed Incident / Government Action</strong>${pIncidentDetail}</div>` : ''}
           ${pNotes ? `<div class="detail-notes">📌 ${pNotes}</div>` : ''}
+          <div style="margin-top:10px;"><a class="source-link" href="/p/${escapeHtml(p.id)}" onclick="event.stopPropagation()">Full brief →</a></div>
           <div class="detail-source-footer">
             Primary Source: <a class="source-link" href="${pSourceUrl}" target="_blank" rel="noopener noreferrer">${pSourceUrl}</a> — Verified ${pSourceDate}
             ${pRelatedUrls ? `<div style="margin-top:4px;">Related: ${pRelatedUrls.map(u => `<a class="source-link" href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(u)}</a>`).join(' · ')}</div>` : ''}

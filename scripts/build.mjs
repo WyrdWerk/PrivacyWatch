@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { buildManifest } from './lib/manifest.mjs';
 import { logoMap } from './lib/logos.mjs';
+import { renderBrief, renderSitemap } from './lib/briefs.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
@@ -13,7 +14,6 @@ const FILES = [
   'index.html',
   'providers.json',
   'robots.txt',
-  'sitemap.xml',
   '_headers',
   '_redirects',
 ];
@@ -77,4 +77,15 @@ const providers = dataset.providers || [];
 const manifest = buildManifest(providers);
 fs.writeFileSync(path.join(dist, 'watch-urls.json'), JSON.stringify(manifest, null, 2) + '\n');
 
-console.log(`Built production artifact in dist/ (${FILES.length} files + ${DIRS.length} dirs, watch manifest: ${manifest.urls.length} distinct URLs)`);
+// Per-provider brief pages: dist/p/{id}.html, served at /p/{id}.
+const briefMeta = { lastUpdated: dataset.meta?.lastUpdated };
+const briefsDir = path.join(dist, 'p');
+fs.mkdirSync(briefsDir, { recursive: true });
+for (const p of providers) {
+  fs.writeFileSync(path.join(briefsDir, `${p.id}.html`), renderBrief(p, briefMeta));
+}
+
+// Sitemap is generated here so it always covers the tracker plus every brief page.
+fs.writeFileSync(path.join(dist, 'sitemap.xml'), renderSitemap(providers, briefMeta));
+
+console.log(`Built production artifact in dist/ (${FILES.length} files + ${DIRS.length} dirs, ${providers.length} briefs, watch manifest: ${manifest.urls.length} distinct URLs)`);

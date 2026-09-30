@@ -42,6 +42,8 @@ Public dataset: [`providers.json`](./providers.json) · Schema: [`providers.sche
 
 Read-only JSON API, no key required. Responses are CORS-enabled and cached for an hour.
 
+**Full reference:** [`docs/API.md`](./docs/API.md) · rendered page at [`/api-docs`](https://privacywatch.wyrdwerk.com/api-docs) · OpenAPI spec at [`/api/v1/openapi.json`](https://privacywatch.wyrdwerk.com/api/v1/openapi.json)
+
 | Endpoint | Returns |
 |---|---|
 | `GET /api/v1/providers` | Summary rows; filter with `category`, `rating`, `surfaceType`, `training`, `zdr`, `retention`, `region`, `maxRetentionDays`, `incident`, `ids` (compare), `fields=full` |

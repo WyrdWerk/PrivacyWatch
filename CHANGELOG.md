@@ -12,6 +12,8 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 Implemented as small Pages Functions that read the deployed `providers.json`, so the API and the dataset can't drift. Filters and summaries live in `scripts/lib/api.mjs` (10 new tests).
 
+**API documentation.** `docs/API.md` and a readable page at [/api-docs](https://privacywatch.wyrdwerk.com/api-docs) (linked from the site footer): endpoints, filters, field glossary, errors, caching/CORS, licence. Versioning policy: fields may be added at any time; removals, renames or changed meanings are announced here at least 30 days ahead with the old field kept working, or shipped under `/api/v2`.
+
 **Licensing.** Dataset under CC BY 4.0 (`LICENSE-DATA.md`; quoted policy text and logos excluded); code under MIT (`LICENSE`). `providers.json` meta now carries `license` and `licenseUrl`.
 
 ---

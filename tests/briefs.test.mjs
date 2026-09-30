@@ -134,14 +134,22 @@ test('incident background renders inside the Incidents section', () => {
   assert.ok(bare.includes('Mar 2023: something happened.'));
 });
 
-test('sitemap lists the tracker root and every brief page', () => {
+test('sitemap lists the tracker root, /api-docs and every brief page', () => {
   const xml = renderSitemap(rows, meta);
   const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-  assert.equal(locs.length, 97);
-  assert.equal(locs.length, 1 + rows.length);
+  assert.equal(locs.length, 98);
+  assert.ok(locs.includes(`${SITE}/api-docs`));
+  assert.equal(locs.length, 2 + rows.length);
   assert.equal(locs[0], `${SITE}/`);
   for (const row of rows) {
     assert.ok(locs.includes(`${SITE}/p/${row.id}`), `${row.id}: missing from sitemap`);
     assert.ok(xml.includes(`<loc>${SITE}/p/${row.id}</loc>\n    <lastmod>${row.sourceDate}</lastmod>`), `${row.id}: lastmod is not sourceDate`);
   }
+});
+
+test('long incident histories collapse to one at-a-glance line', () => {
+  const r = structuredClone(rows.find((x) => x.id === 'deepseek-api'));
+  const lines = plainEnglish(r).filter((l) => /incident|allegation|Confirmed|Alleged/.test(l));
+  assert.equal(lines.length, 1);
+  assert.match(lines[0], /^\d+ confirmed incidents \(.+ – .+\); see Incidents below$/);
 });

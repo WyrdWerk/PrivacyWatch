@@ -3,6 +3,12 @@
 All policy changes, new providers, and corrections are logged here.
 Format: `[YYYY-MM-DD] Provider — what changed — source`
 
+## v1.14.0 — 2026-09-30
+
+**Provider brief pages.** Every row now has its own page at `/p/<id>` (e.g. [/p/deepseek-api](https://privacywatch.wyrdwerk.com/p/deepseek-api)), generated at build: a plain-English "At a glance" box from the structured fields, training / retention / ZDR / location details, compliance, incidents, and every evidence quote with its source link and retrieval date, plus links to the row's JSON in the API. The tracker's expanded rows link to them ("Full brief →"). `sitemap.xml` is now generated at build and lists the tracker, `/api-docs` and all 96 briefs.
+
+---
+
 ## v1.13.0 — 2026-09-30
 
 **Public API v1.** Read-only, no key, CORS-enabled:

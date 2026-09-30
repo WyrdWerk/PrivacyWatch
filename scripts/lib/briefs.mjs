@@ -155,11 +155,21 @@ export function plainEnglish(row) {
     if (sentence) out.push(sentence);
   }
 
-  for (const inc of row.incidents ?? []) {
-    const type = say(PLAIN['incidents.type'][inc.type], row);
-    if (!type) continue;
-    const status = inc.confirmed ? 'Confirmed' : 'Alleged';
-    out.push(`${status} ${type} (${formatMonth(inc.date)})`);
+  const incidents = (row.incidents ?? []).filter((inc) => PLAIN['incidents.type'][inc.type]);
+  if (incidents.length > 2) {
+    // Long histories collapse to one line; the Incidents section lists each one.
+    const confirmed = incidents.filter((inc) => inc.confirmed).length;
+    const parts = [];
+    if (confirmed) parts.push(`${confirmed} confirmed incident${confirmed === 1 ? '' : 's'}`);
+    if (incidents.length - confirmed) parts.push(`${incidents.length - confirmed} unconfirmed allegation${incidents.length - confirmed === 1 ? '' : 's'}`);
+    const dates = incidents.map((inc) => inc.date).sort();
+    out.push(`${parts.join(' and ')} (${formatMonth(dates[0])} – ${formatMonth(dates[dates.length - 1])}); see Incidents below`);
+  } else {
+    for (const inc of incidents) {
+      const type = say(PLAIN['incidents.type'][inc.type], row);
+      const status = inc.confirmed ? 'Confirmed' : 'Alleged';
+      out.push(`${status} ${type} (${formatMonth(inc.date)})`);
+    }
   }
 
   return out;
@@ -645,11 +655,12 @@ ${body(row)}
 `;
 }
 
-// Sitemap covering the tracker root and every brief page.
+// Sitemap covering the tracker root, the API docs page and every brief page.
 export function renderSitemap(providers, meta = {}) {
   const site = meta.site || SITE;
   const rootLastmod = meta.lastUpdated || '';
   const urls = [`  <url>\n    <loc>${escapeHtml(site)}/</loc>\n    <lastmod>${escapeHtml(rootLastmod)}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>1.0</priority>\n  </url>`];
+  urls.push(`  <url>\n    <loc>${escapeHtml(site)}/api-docs</loc>\n    <lastmod>${escapeHtml(rootLastmod)}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.5</priority>\n  </url>`);
   for (const p of providers) {
     urls.push(`  <url>\n    <loc>${escapeHtml(site)}/p/${escapeHtml(p.id)}</loc>\n    <lastmod>${escapeHtml(p.sourceDate || rootLastmod)}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>`);
   }

@@ -1,5 +1,7 @@
 # PrivacyWatch Dynamic Pipeline — Implementation Plan (v2)
 
+**Status (2026-09-30):** shipped — the watcher Worker (3 cron passes/day: 03:00, 11:00, 15:00 UTC) checks every watched `sourceUrl` with conditional GETs against a build-derived manifest (KV state, R2 snapshots), posts detected changes as comments to issue #2 and reopens it (maintainers close it once processed), and indexes snapshot chunks into D1 via Workers AI. `/api/search` is live as a Pages Function over that index. **Not shipped:** `/api/ask` remains gated on the benchmark plan (Phase 4 below). The rest of this file is the plan as written; treat unshipped phases as proposals, not current state.
+
 **Goal:** Make PrivacyWatch self-updating — watch every provider `sourceUrl`, re-research only changed policies on a cadence, and give the site semantic search over the actual policy text.
 
 **Architecture:** A separate Cloudflare Worker (`privacywatch-watcher`) runs daily sharded cron passes over a build-derived watch manifest (conditional GETs + KV hash store + R2 snapshots), sized against verified free-plan limits. Detected changes are reported durably to a pinned GitHub issue. The research loop is **tool-agnostic by design** — issue → re-research → PR — and runs by default as a scheduled Amp thread, with a documented manual fallback (same steps, run by hand) so no part of the pipeline *requires* Amp. Snapshots are chunked and embedded into a shared D1 database (Workers AI binding) to power `/api/search`, then `/api/ask` as Pages Functions.

@@ -1,8 +1,18 @@
 # PrivacyWatch — Archived Policy Documents
 
 Local snapshots of the primary source documents underlying the PrivacyWatch dashboard ratings.
-Archived snapshots scraped and saved on **2026-05-27**. Later-dated research notes are listed at the bottom.
-All files scraped and saved on **2026-05-27**.
+
+- **Page snapshots** — 30 files scraped and saved on **2026-05-27** (first table below).
+- **Research notes** — source-verified notes (not full snapshots) for the 2026-09-13 OpenRouter batches, listed in the dated tables below.
+- **Audit reports** — cross-check reports from 2026-05-27, 2026-06-07, and 2026-09-15 (table below).
+
+Since v1.7.0 every `providers.json` row carries per-field `evidence[]` (source URL + verbatim quote + retrieval date); these files are the deeper archive behind it.
+
+| Report | Date | Scope |
+| --- | --- | --- |
+| [VERIFICATION_REPORT.md](./VERIFICATION_REPORT.md) | 2026-05-27 | 33 rows cross-checked against the 2026-05-27 archive |
+| [AUDIT_REPORT_2026-06-07.md](./AUDIT_REPORT_2026-06-07.md) | 2026-06-07 | 33 rows cross-referenced against the research notebook |
+| [AUDIT_2026-09-15.md](./AUDIT_2026-09-15.md) | 2026-09-15 | Full 97-surface live audit (before Crof AI was removed in v1.9.0) |
 
 | Provider | Surface | Category | Source URL | Archived File |
 | --- | --- | --- | --- | --- |

@@ -233,9 +233,9 @@ curl "https://privacywatch.wyrdwerk.com/api/v1/meta"</code></pre>
 
   <h3><code>GET /api/v1/providers</code></h3>
   <p>Summary rows for all 96 provider surfaces, filtered in memory. Use this for comparisons, dashboards, and &ldquo;show me providers that&hellip;&rdquo; queries. Parameters are listed in the <a href="#filters">filters table</a>; all are optional. Add <code>fields=full</code> for complete rows (same shape as <code>/api/v1/providers/{id}</code>) or <code>ids=a,b,c</code> to compare a few providers side by side.</p>
-  <p>Example response (<code>?training=off&amp;zdr=default&amp;rating=clean</code>, trimmed to 1 of 3 matches):</p>
+  <p>Example response (<code>?training=off&amp;zdr=default&amp;rating=clean</code>, trimmed to 1 of 14 matches):</p>
 <pre><code>{
-  "meta": { "version": "1.13.0", "lastUpdated": "2026-09-30", "count": 3, "license": "CC-BY-4.0" },
+  "meta": { "version": "1.13.0", "lastUpdated": "2026-09-30", "count": 14, "license": "CC-BY-4.0" },
   "data": [
     {
       "id": "fireworks-ai", "name": "Fireworks AI", "surface": "API", "surfaceType": "api",
@@ -312,7 +312,7 @@ curl "https://privacywatch.wyrdwerk.com/api/v1/meta"</code></pre>
   <h3><code>GET /api/search?q=</code></h3>
   <p>Semantic search over the archived policy corpus (privacy policies, ToS, DPAs behind the dataset). Returns the top matching text chunks with source URLs and provider IDs. Not a provider filter — it searches documents, not the structured fields.</p>
   <p><strong>Parameters:</strong> <code>q</code> (required, free text, max 512 chars), <code>k</code> (optional, results 1&ndash;25, default 8).</p>
-  <p>Example response (<code>?q=zero+data+retention</code>, trimmed):</p>
+  <p>Example response (<code>?q=zero+data+retention</code>, illustrative and trimmed):</p>
 <pre><code>{
   "query": "zero data retention",
   "count": 42,

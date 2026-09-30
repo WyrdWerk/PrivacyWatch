@@ -32,11 +32,11 @@ Summary rows for all 96 provider surfaces, filtered in memory. Use this for comp
 
 **Parameters:** see the [filters table](#filters) below. All are optional.
 
-**Example response** (`?training=off&zdr=default&rating=clean`, trimmed to 2 of 3 matches):
+**Example response** (`?training=off&zdr=default&rating=clean`, trimmed to 1 of 14 matches):
 
 ```json
 {
-  "meta": { "version": "1.13.0", "lastUpdated": "2026-09-30", "count": 3, "license": "CC-BY-4.0" },
+  "meta": { "version": "1.13.0", "lastUpdated": "2026-09-30", "count": 14, "license": "CC-BY-4.0" },
   "data": [
     {
       "id": "fireworks-ai", "name": "Fireworks AI", "surface": "API", "surfaceType": "api",
@@ -123,7 +123,7 @@ Semantic search over the archived policy corpus (privacy policies, ToS, DPAs beh
 
 **Parameters:** `q` (required, free text, max 512 chars), `k` (optional, results 1–25, default 8).
 
-**Example response** (`?q=zero+data+retention`, trimmed):
+**Example response** (`?q=zero+data+retention`, illustrative and trimmed):
 
 ```json
 {

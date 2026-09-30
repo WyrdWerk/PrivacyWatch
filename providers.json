@@ -1,7 +1,7 @@
 {
   "meta": {
     "lastUpdated": "2026-09-30",
-    "version": "1.8.0",
+    "version": "1.9.0",
     "description": "PrivacyWatch — LLM data privacy, retention, and model training tracker",
     "maintainer": "WyrdWerk (github.com/WyrdWerk/PrivacyWatch)"
   },
@@ -2435,29 +2435,79 @@
       "rating": "clean",
       "incident": false,
       "training": {
-        "label": "Off — contractual ZDR",
-        "detail": "Privacy Mode: contractual ZDR with OpenAI, Anthropic, Google Vertex, xAI. Cursor's own models also excluded. ToS: 'ANYSPHERE WILL NOT USE CONTENT TO TRAIN... UNLESS YOU'VE EXPLICITLY AGREED.'"
+        "label": "Off with Privacy Mode",
+        "detail": "When Privacy Mode is enabled, Customer Data is not used for Cursor training. Privacy Mode is available on Free and Pro too; Enterprise teams have it on by default. Abuse investigations and designated non-ZDR models are exceptions.",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
-        "label": "No persistent storage",
-        "detail": "Plaintext code not retained. Embeddings metadata (hashes, filenames) retained for codebase indexing feature. Volatile memory for AI requests."
+        "label": "Transient cache; exceptions apply",
+        "detail": "Cursor says cached file contents are temporary and never permanently stored with Privacy Mode on. Abuse-triggered investigations may be retained under provider policies; some models require retention and admin approval.",
+        "kind": "transient"
       },
       "zdr": {
-        "label": "Yes — Privacy Mode = functional ZDR",
-        "detail": "Privacy Mode provides ZDR-equivalent guarantees via contracts with all model providers. Default for Teams/Enterprise (admin-enforced).",
-        "status": "full"
+        "label": "Yes — self-serve, with exceptions",
+        "detail": "Privacy Mode is available to anyone. Cursor says providers have ZDR agreements, but abuse investigations, non-ZDR models, and use of your own API keys are exceptions.",
+        "status": "full",
+        "access": "self-serve"
       },
       "location": {
-        "label": "US only",
-        "flag": "🇺🇸",
-        "detail": "All processing on US AWS infrastructure. No EU data residency on any plan."
+        "label": "Global (provider-dependent)",
+        "flag": "🌐",
+        "detail": "Cursor infrastructure is primarily AWS US, with latency-critical services in Europe and Singapore; inference providers include worldwide services. Enterprise US-only residency is a separate option.",
+        "regions": [
+          "GLOBAL"
+        ]
       },
       "sourceUrl": "https://cursor.com/data-use",
       "privacyUrl": "https://cursor.com/privacy",
-      "sourceDate": "2026-05-27",
-      "notes": "Default for Teams/Enterprise. SOC 2 Type II. HIPAA BAA and DPA available for enterprise only.",
+      "sourceDate": "2026-09-30",
+      "notes": "Privacy Mode is available on Free and Pro and is on by default for Enterprise teams. Cursor publishes a DPA and reports SOC 2 Type II compliance. The Trust Center lists an Enterprise HIPAA guide, but the BAA page body was not text-readable in this check.",
       "relatedUrls": [
         "https://cursor.com/help/security-and-privacy/privacy"
+      ],
+      "compliance": {
+        "dpa": "public",
+        "soc2": "type2"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://cursor.com/data-use",
+          "quote": "Customer Data will not be used for training by Cursor.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://cursor.com/data-use",
+          "quote": "All cached file contents are temporary, never permanently stored, and never used as training data when privacy mode is enabled.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://cursor.com/data-use",
+          "quote": "Cursor maintains zero data retention (ZDR) agreements with all providers",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://trust.cursor.com/subprocessors",
+          "quote": "Worldwide",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://cursor.com/help/security-and-privacy/compliance",
+          "quote": "Cursor maintains SOC 2 Type II compliance.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://cursor.com/terms/dpa",
+          "quote": "This Data Processing Addendum (“ **DPA**”) governs Anysphere, Inc.’s",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {
@@ -2470,29 +2520,79 @@
       "rating": "caution",
       "incident": false,
       "training": {
-        "label": "On (default Free/Pro)",
-        "detail": "Without Privacy Mode: code, prompts, editor actions may be stored and used 'to improve our AI features and train our models.' Must manually enable Privacy Mode to stop."
+        "label": "On when Privacy Mode is off",
+        "detail": "Cursor says it may use and store codebase data, prompts, editor actions, and code snippets to improve AI features and train models when Privacy Mode is off. Enabling Privacy Mode is the self-serve opt-out; Enterprise teams have it on by default.",
+        "default": "on",
+        "optOut": "setting"
       },
       "retention": {
-        "label": "Variable — code may be stored",
-        "detail": "Code and context may be stored without Privacy Mode. Codebase indexing: embeddings and file metadata retained."
+        "label": "May be stored; period unspecified",
+        "detail": "With Privacy Mode off, Cursor may use and store codebase data, prompts, editor actions, and snippets. The live data-use page gives no retention period for this mode.",
+        "kind": "silent"
       },
       "zdr": {
-        "label": "Not active",
-        "detail": "Privacy Mode must be manually enabled: Settings → General (Cmd/Ctrl+Shift+J). Free and Pro users start with it OFF.",
-        "status": "none"
+        "label": "Available, but off in this row",
+        "detail": "Privacy Mode is a self-serve control and must be enabled for its ZDR protections. It is on by default for Enterprise teams, not this off-mode row.",
+        "status": "none",
+        "access": "self-serve"
       },
       "location": {
-        "label": "US only",
-        "flag": "🇺🇸",
-        "detail": "US AWS only."
+        "label": "Global (provider-dependent)",
+        "flag": "🌐",
+        "detail": "Cursor infrastructure is primarily AWS US, with latency-critical services in Europe and Singapore; inference providers include worldwide services. Enterprise US-only residency is a separate option.",
+        "regions": [
+          "GLOBAL"
+        ]
       },
       "sourceUrl": "https://cursor.com/data-use",
       "privacyUrl": "https://cursor.com/privacy",
-      "sourceDate": "2026-05-27",
-      "notes": "Critical: most Free/Pro users have Privacy Mode OFF without knowing it. This is the default state for the majority of individual Cursor users.",
+      "sourceDate": "2026-09-30",
+      "notes": "For this Privacy Mode OFF row, Cursor says data may be used to improve and train models. Privacy Mode can be enabled on Free and Pro; Enterprise teams have it on by default. Cursor publishes a DPA and reports SOC 2 Type II compliance.",
       "relatedUrls": [
         "https://cursor.com/help/security-and-privacy/privacy"
+      ],
+      "compliance": {
+        "dpa": "public",
+        "soc2": "type2"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://cursor.com/data-use",
+          "quote": "If you choose to turn off “Privacy Mode”: we may use and store codebase data, prompts, editor actions, code snippets, and other code data and actions to improve our AI features and train our models.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://cursor.com/data-use",
+          "quote": "If you choose to turn off “Privacy Mode”: we may use and store codebase data, prompts, editor actions, code snippets, and other code data and actions to improve our AI features and train our models.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://cursor.com/help/security-and-privacy/privacy",
+          "quote": "Privacy Mode is on by default for Enterprise teams.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://trust.cursor.com/subprocessors",
+          "quote": "Worldwide",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://cursor.com/help/security-and-privacy/compliance",
+          "quote": "Cursor maintains SOC 2 Type II compliance.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://cursor.com/terms/dpa",
+          "quote": "This Data Processing Addendum (“ **DPA**”) governs Anysphere, Inc.’s",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {
@@ -2505,27 +2605,77 @@
       "rating": "guarded",
       "incident": false,
       "training": {
-        "label": "Off for listed Go models",
-        "detail": "Go docs model table: Model training = \"Not used\" for Grok 4.6, GPT 5.6 Luna, GLM-5.3-Flash, GLM-5.3. Some Meta-hosted rows disclose permission to train future Meta models. Not a contractual ZDR across every upstream."
+        "label": "Tier-dependent",
+        "detail": "The current Go table lists most models as “Not used,” but Muse Spark Contributor models as “Yes.” The docs do not describe an opt-out control; selecting another model is not documented as an opt-out.",
+        "default": "tier-dependent",
+        "optOut": "silent"
       },
       "retention": {
-        "label": "0–30 days by model",
-        "detail": "Same table: Grok 4.6 and GPT 5.6 Luna retain 30 days; GLM-5.3-Flash and GLM-5.3 retain 0 days. \"Zero-retention from providers\" is not accurate for the whole Go catalog."
+        "label": "0–30 days for listed models; exceptions unspecified",
+        "detail": "The table lists 0 days for many models and 30 days for Grok and GPT Luna. Muse Spark Contributor models are marked “Not ZDR” without a duration, so 30 days does not describe the whole catalog.",
+        "kind": "fixed",
+        "days": 30
       },
       "zdr": {
-        "label": "Partial — model-dependent",
-        "detail": "Some Go models are 0-day; others 30-day. Not a single ZDR product.",
-        "status": "partial"
+        "label": "Model-dependent",
+        "detail": "The table documents 0-day retention for many Go models and monthly-renewed ZDR for DeepSeek; Grok/GPT Luna list 30 days, and Muse Spark Contributor is not ZDR.",
+        "status": "partial",
+        "access": "self-serve"
       },
       "location": {
-        "label": "US, EU, Singapore",
+        "label": "Global access; hosting regions unspecified",
         "flag": "🌐",
-        "detail": "Go models in US, EU, and Singapore. Note: some models may be proxied through 3rd-party APIs (Alibaba DashScope, Moonshot) — ZDR scope for proxied calls undocumented."
+        "detail": "The live Go docs describe international users and global access but do not identify model-processing regions. The archived US/EU/Singapore description was not confirmed on the current page.",
+        "regions": []
       },
       "sourceUrl": "https://dev.opencode.ai/docs/go/",
       "privacyUrl": "https://opencode.ai/legal/privacy-policy",
-      "sourceDate": "2026-09-15",
-      "notes": "Re-verified 2026-09-15 against dev.opencode.ai/docs/go/. Clean → Guarded because retention is 30 days for several listed models and Meta rows allow training of future Meta models."
+      "sourceDate": "2026-09-30",
+      "notes": "Re-verified 2026-09-30 against the live Go privacy table. Training and retention vary by model; Muse Spark Contributor allows training and is not ZDR. Existing Guarded rating remains appropriate.",
+      "compliance": {
+        "dpa": "silent",
+        "soc2": "silent",
+        "hipaaBaa": "silent"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://dev.opencode.ai/docs/go/",
+          "quote": "| Muse Spark 1.3 Contributor | Yes | Not ZDR |",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://dev.opencode.ai/docs/go/",
+          "quote": "| GLM-5.3-Flash | Not used | 0 days |",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://dev.opencode.ai/docs/go/",
+          "quote": "| Grok 4.7 | Not used | 30 days |",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://dev.opencode.ai/docs/go/",
+          "quote": "| GLM-5.3-Flash | Not used | 0 days |",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://dev.opencode.ai/docs/go/",
+          "quote": "The service is designed primarily for international users and provides stable global access.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://dev.opencode.ai/docs/go/",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        }
+      ]
     },
     {
       "id": "opencode-zen",
@@ -2537,27 +2687,70 @@
       "rating": "caution",
       "incident": false,
       "training": {
-        "label": "Possible (ToS clause)",
-        "detail": "ToS: 'if you are using the Services through an unpaid account, we may use Content to further develop and improve our Services.' No explicit training prohibition."
+        "label": "Service improvement permitted; model training unspecified",
+        "detail": "The Terms say unpaid accounts’ Content may be used to “further develop and improve” Services, but do not explicitly say that Content is used to train models. The live policy does not document an opt-out for model training.",
+        "default": "silent",
+        "optOut": "silent"
       },
       "retention": {
-        "label": "Stored server-side; no opt-out",
-        "detail": "Full prompts/responses stored in Cloudflare R2. No documented retention period. No user-facing opt-out. Contradicts homepage marketing claim."
+        "label": "No Zen-specific period disclosed",
+        "detail": "The Privacy Policy retains personal data as long as necessary for service or business purposes, without a Zen prompt-retention interval. The Terms say Content is not retained when using Third Party Models; that clause does not establish Zen’s retention practice.",
+        "kind": "silent"
       },
       "zdr": {
-        "label": "Not available",
-        "detail": "No ZDR for free Zen tier. Use Go tier or own API keys to avoid server-side storage.",
-        "status": "none"
+        "label": "Not documented",
+        "detail": "The current Terms and Privacy Policy do not document a Zen ZDR control. The Terms’ no-retention statement applies to Third Party Models, not a clearly specified Zen ZDR offering.",
+        "status": "none",
+        "access": "silent"
       },
       "location": {
-        "label": "Cloudflare R2 (region unknown)",
-        "flag": "🌐",
-        "detail": "Storage location not explicitly stated."
+        "label": "Not disclosed",
+        "flag": "❓",
+        "detail": "The current Terms and Privacy Policy do not identify Zen data-processing regions.",
+        "regions": []
       },
       "sourceUrl": "https://opencode.ai/legal/privacy-policy",
       "privacyUrl": "https://opencode.ai/legal/privacy-policy",
-      "sourceDate": "2026-05-27",
-      "notes": "Homepage states 'does not store code' — contradicted by free tier ToS and documented storage."
+      "sourceDate": "2026-09-30",
+      "notes": "The live Terms allow unpaid-account Content to be used to further develop and improve Services but do not explicitly mention model training. The prior claim of documented full-prompt storage in Cloudflare R2 was not confirmed in the live policy pages; Zen-specific retention and ZDR remain undisclosed.",
+      "compliance": {
+        "dpa": "silent",
+        "soc2": "silent",
+        "hipaaBaa": "silent"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://opencode.ai/legal/terms-of-service",
+          "quote": "if you are using the Services through an unpaid account, we may use Content to further develop and improve our Services.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://opencode.ai/legal/privacy-policy",
+          "quote": "We retain Personal Data about you for as long as necessary to provide you with our Services or to perform our business or commercial purposes for collecting your Personal Data.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://opencode.ai/legal/terms-of-service",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://opencode.ai/legal/privacy-policy",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://opencode.ai/legal/privacy-policy",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        }
+      ]
     },
     {
       "id": "hyperagent",
@@ -2570,28 +2763,74 @@
       "incident": false,
       "training": {
         "label": "Off — express consent required",
-        "detail": "'We will not use, or permit others to use, Input or Output to train the generative artificial intelligence models used to provide the Services, without your express consent.'"
+        "detail": "'We will not use, or permit others to use, Input or Output to train the generative artificial intelligence models used to provide the Services, without your express consent.'",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
-        "label": "Not specified; 30-day floor via subprocessors",
-        "detail": "HyperAgent own retention: 'no longer than necessary.' Subprocessors (Anthropic, Google, OpenAI) may retain I/O up to 30 days for safety/compliance."
+        "label": "Up to 30 days via AI subprocessors",
+        "detail": "Terms say Third-Party AI Providers may retain inputs and outputs for up to 30 days for safety and compliance moderation. Prohibited content may be retained longer for legal reporting; HyperAgent’s own retention period is not specified.",
+        "kind": "fixed",
+        "days": 30
       },
       "zdr": {
         "label": "Not documented",
-        "detail": "No ZDR option explicitly documented. Effective floor is 30-day subprocessor retention.",
-        "status": "none"
+        "detail": "The live Terms do not document a ZDR option. The disclosed 30-day subprocessor allowance is not itself a ZDR commitment.",
+        "status": "none",
+        "access": "silent"
       },
       "location": {
-        "label": "Global (unspecified)",
+        "label": "International; regions unspecified",
         "flag": "🌐",
-        "detail": "Data may be transferred outside user's jurisdiction. EU/UK/Swiss: SCCs or adequacy decisions. Specific data centers not disclosed."
+        "detail": "The Privacy Policy says data may be transferred to and processed in countries outside the user’s jurisdiction, but does not name specific regions.",
+        "regions": [
+          "GLOBAL"
+        ]
       },
       "sourceUrl": "https://hyperagent.com/terms",
       "privacyUrl": "https://hyperagent.com/privacy",
-      "sourceDate": "2026-09-15",
-      "notes": "No compliance certifications disclosed. Security page returns 404. Strong no-training commitment. Metadata (usage data) used for analytics/product improvement. Re-verified 2026-09-15: \"We will not use, or permit others to use, Input or Output to train the generative artificial intelligence models used to provide the Services, without your express consent\" is in Terms, not Privacy. sourceUrl updated.",
+      "sourceDate": "2026-09-30",
+      "notes": "Live Terms prohibit using Input or Output to train generative models without express consent. Third-party AI providers may retain I/O up to 30 days for safety/compliance, with longer retention possible for prohibited content. No compliance certifications were identified in the reviewed policy pages; the security page returned 404.",
       "relatedUrls": [
         "https://hyperagent.com/terms"
+      ],
+      "compliance": {
+        "dpa": "silent",
+        "soc2": "silent",
+        "hipaaBaa": "silent"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://hyperagent.com/terms?standalone=1",
+          "quote": "We will not use, or permit others to use, Input or Output to train the generative artificial intelligence models used to provide the Services, without your express consent.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://hyperagent.com/terms?standalone=1",
+          "quote": "Third-Party AI Providers may retain Input and Output for up to thirty (30) days for the purpose of safety and compliance moderation.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://hyperagent.com/terms?standalone=1",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://hyperagent.com/privacy?standalone=1",
+          "quote": "We may transfer to and process your personal information in countries outside of the jurisdiction where you are located",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://hyperagent.com/terms?standalone=1",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        }
       ]
     },
     {
@@ -2601,32 +2840,66 @@
       "surfaceType": "api",
       "category": "coding",
       "categoryLabel": "Coding Tools",
-      "rating": "clean",
+      "rating": "caution",
       "incident": false,
       "training": {
-        "label": "Off (ZDR tier)",
-        "detail": "No training on served models or internal speculative decoding draft models. Zero Data Retention fully active."
+        "label": "Off when ZDR is enforced",
+        "detail": "Archived policy (May 2026) says served models are not trained on prompts and ZDR-covered traffic is excluded from internal draft-model training. Current live docs confirm ZDR controls, but the current training policy could not be retrieved.",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
         "label": "No durable storage",
-        "detail": "Prompts/completions NOT written to durable storage. Operational metadata only (token counts, timestamps, request IDs)."
+        "detail": "Prompts/completions NOT written to durable storage. Operational metadata only (token counts, timestamps, request IDs).",
+        "kind": "none"
       },
       "zdr": {
-        "label": "Yes — Privacy tier",
-        "detail": "Wafer Pass Privacy ($25/week): Zero Data Retention explicitly documented. DPA available.",
-        "status": "full"
+        "label": "Available — self-serve",
+        "detail": "Current Serverless docs say ZDR can be required per request with the Wafer-ZDR header or configured account-wide. The previous $25/week Privacy tier and DPA could not be verified on current live pages.",
+        "status": "full",
+        "access": "self-serve"
       },
       "location": {
         "label": "US",
         "flag": "🇺🇸",
-        "detail": "Inference served from US data centers."
+        "detail": "Archived policy says inference is served from US data centers; the current policy page could not be retrieved to re-confirm location.",
+        "regions": [
+          "US"
+        ]
       },
       "sourceUrl": "https://www.wafer.ai/terms",
       "privacyUrl": "https://compliance.wafer.ai/en/documents/privacy-policy",
       "sourceDate": "2026-05-27",
-      "notes": "Y Combinator-backed. DPA available. GDPR rights acknowledged. Policy updated May 4, 2026. Terms via OpenRouter; Privacy Policy at www.wafer.ai/privacy-policy.",
+      "notes": "Archived privacy policy (May 4, 2026) describes the Privacy/ZDR tier; current official docs describe per-request or account-level ZDR. The published privacy policy and DPA URL could not be retrieved live.",
       "relatedUrls": [
         "https://www.wafer.ai/dpa"
+      ],
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://compliance.wafer.ai/en/documents/privacy-policy",
+          "quote": "Traffic covered by Zero Data Retention is excluded from draft-model training.",
+          "retrieved": "2026-05-27"
+        },
+        {
+          "field": "retention",
+          "url": "https://compliance.wafer.ai/en/documents/privacy-policy",
+          "quote": "Prompts and completions are not written to durable storage.",
+          "retrieved": "2026-05-27"
+        },
+        {
+          "field": "zdr",
+          "url": "https://docs.wafer.ai/serverless/zero-data-retention",
+          "quote": "Serverless requests do not require ZDR by default unless your account is configured to require it.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://compliance.wafer.ai/en/documents/privacy-policy",
+          "quote": "Inference served from US data centers.",
+          "retrieved": "2026-05-27"
+        }
       ]
     },
     {
@@ -2636,32 +2909,67 @@
       "surfaceType": "consumer",
       "category": "coding",
       "categoryLabel": "Coding Tools",
-      "rating": "guarded",
+      "rating": "caution",
       "incident": false,
       "training": {
         "label": "Speculative decoding only",
-        "detail": "Standard tiers: may use prompts/completions to train small internal draft models for Speculative Decoding only. NOT used to train served open-source models. ZDR (Privacy tier) disables this."
+        "detail": "Archived policy (May 4, 2026): standard traffic may train small internal draft models for speculative decoding, not served models. Current docs make ZDR request/account-configurable rather than a separate Privacy-tier-only feature; current training policy could not be retrieved.",
+        "default": "on",
+        "optOut": "api-param"
       },
       "retention": {
         "label": "30 days (anonymized)",
-        "detail": "Prompts/completions stored in anonymized form for up to 30 days for abuse detection, then deleted."
+        "detail": "Prompts/completions stored in anonymized form for up to 30 days for abuse detection, then deleted.",
+        "kind": "fixed",
+        "days": 30
       },
       "zdr": {
-        "label": "Available (upgrade to Privacy)",
-        "detail": "ZDR available by upgrading to Wafer Pass Privacy ($25/week).",
-        "status": "partial"
+        "label": "Available — self-serve",
+        "detail": "Current Serverless docs say ZDR can be required per request with the Wafer-ZDR header or configured account-wide; unsupported models reject ZDR-required requests.",
+        "status": "partial",
+        "access": "self-serve"
       },
       "location": {
         "label": "US",
         "flag": "🇺🇸",
-        "detail": "US data centers."
+        "detail": "Archived policy says inference is served from US data centers; the current policy page could not be retrieved to re-confirm location.",
+        "regions": [
+          "US"
+        ]
       },
       "sourceUrl": "https://www.wafer.ai/terms",
       "privacyUrl": "https://compliance.wafer.ai/en/documents/privacy-policy",
       "sourceDate": "2026-05-27",
-      "notes": "Speculative decoding training is disclosed and limited to internal inference optimization. Transparent approach. Terms via OpenRouter; Privacy Policy at www.wafer.ai/privacy-policy.",
+      "notes": "Archived privacy policy (May 4, 2026) describes standard request logs and speculative-decoding draft-model training. Current docs describe ZDR controls, but the privacy-policy and DPA pages could not be retrieved live.",
       "relatedUrls": [
         "https://www.wafer.ai/dpa"
+      ],
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://compliance.wafer.ai/en/documents/privacy-policy",
+          "quote": "We train small internal \"draft\" models used only for speculative decoding to accelerate inference.",
+          "retrieved": "2026-05-27"
+        },
+        {
+          "field": "retention",
+          "url": "https://compliance.wafer.ai/en/documents/privacy-policy",
+          "quote": "Request logs may be stored in anonymized form for up to 30 days for abuse detection, then deleted.",
+          "retrieved": "2026-05-27"
+        },
+        {
+          "field": "zdr",
+          "url": "https://docs.wafer.ai/serverless/zero-data-retention",
+          "quote": "Serverless requests do not require ZDR by default unless your account is configured to require it.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://compliance.wafer.ai/en/documents/privacy-policy",
+          "quote": "Inference served from US data centers.",
+          "retrieved": "2026-05-27"
+        }
       ]
     },
     {
@@ -2675,26 +2983,57 @@
       "incident": false,
       "training": {
         "label": "Off — explicit",
-        "detail": "'We do not use your API inputs or outputs to train, fine-tune, or improve any machine learning models. Your inference data is yours.'"
+        "detail": "'We do not use your API inputs or outputs to train, fine-tune, or improve any machine learning models. Your inference data is yours.'",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
         "label": "24-hour cache max",
-        "detail": "Prompts cached short-term (max 24 hours for multi-turn sessions). Analytics: 90 days. Billing records: account lifetime + legal."
+        "detail": "Prompts/completions are processed transiently; session context may remain in volatile memory up to 24 hours. The live policy also says anonymized semantic representations may be retained for cache performance; analytics data: 90 days; billing/usage records: account lifetime plus legal requirements.",
+        "kind": "transient"
       },
       "zdr": {
-        "label": "Not offered",
-        "detail": "No ZDR option documented. 24-hour cache is standard.",
-        "status": "none"
+        "label": "Not documented",
+        "detail": "The live privacy policy and terms do not describe a ZDR control. No dedicated security page was available to confirm whether one is offered.",
+        "status": "none",
+        "access": "silent"
       },
       "location": {
         "label": "Unknown",
         "flag": "❓",
-        "detail": "Data center location not disclosed. On-prem deployment via Neuralwatt Deploy available for enterprises."
+        "detail": "The live policy permits transfers outside a user’s jurisdiction but names no processing regions. Neuralwatt Deploy offers customer-controlled infrastructure for separate deployments.",
+        "regions": []
       },
       "sourceUrl": "https://portal.neuralwatt.com/privacy",
       "privacyUrl": "https://portal.neuralwatt.com/privacy",
-      "sourceDate": "2026-05-27",
-      "notes": "Unique energy-based billing (kWh). No compliance certifications documented. Good policy intent with documentation gaps."
+      "sourceDate": "2026-09-30",
+      "notes": "Unique energy-based billing (kWh). No compliance certifications documented. Good policy intent with documentation gaps.",
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://portal.neuralwatt.com/privacy",
+          "quote": "We do not use your API inputs or outputs to train, fine-tune, or improve any machine learning models.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://portal.neuralwatt.com/privacy",
+          "quote": "Conversation context may be held in volatile memory for up to 24 hours to support multi-turn interactions and is automatically purged after the session expires.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://portal.neuralwatt.com/privacy",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://portal.neuralwatt.com/privacy",
+          "quote": "Your information may be transferred to and maintained on computers located outside your state, province, country, or other governmental jurisdiction where the data protection laws may differ from those in your jurisdiction.",
+          "retrieved": "2026-09-30"
+        }
+      ]
     },
     {
       "id": "commandcode",
@@ -2706,27 +3045,69 @@
       "rating": "guarded",
       "incident": false,
       "training": {
-        "label": "Off — local-first",
-        "detail": "'Command Code never trains on it. Never stores it.' Code stays on user's device. Taste learning generates structured local rules, not cloud training data."
+        "label": "No in-house training; upstream varies",
+        "detail": "Command Code says it does not train its own models, but says upstream providers are told not to train only “where available.” ZDR routes only to ZDR-capable, no-training upstreams or fails.",
+        "default": "tier-dependent",
+        "optOut": "api-param"
       },
       "retention": {
-        "label": "Code local; telemetry 30 days",
-        "detail": "Code never stored server-side. Taste profiles and conversation history: local only. Telemetry: 30-day auto-delete."
+        "label": "30 days; ZDR optional",
+        "detail": "AI prompts, attached files, code snippets, outputs, and related request data are retained up to 30 days by default. CMD_ZDR=1 or x-cmd-zdr: 1 instead routes only to ZDR-capable upstreams; requests fail rather than fall back.",
+        "kind": "fixed",
+        "days": 30
       },
       "zdr": {
-        "label": "Structural (local-first)",
-        "detail": "ZDR is architectural — code never leaves the device. LLM API calls (Anthropic, OpenAI etc.) still go to those providers; CommandCode adds no additional storage layer.",
-        "status": "full"
+        "label": "Available — self-serve",
+        "detail": "Enable ZDR with CMD_ZDR=1 in the CLI or x-cmd-zdr: 1 on the Provider API; all plans support it. Requests route only to ZDR-capable upstreams or fail.",
+        "status": "full",
+        "access": "self-serve"
       },
       "location": {
-        "label": "Code local; cloud unknown",
-        "flag": "💻",
-        "detail": "User code stays on device. Account/telemetry cloud location not disclosed. Enterprise self-hosted option available."
+        "label": "Cloud region not specified",
+        "flag": "❓",
+        "detail": "The policy says personal information may be transferred outside the user’s jurisdiction but gives no processing regions. Prompt content is sent to selected or service-routed upstream providers and may be retained up to 30 days unless ZDR is enabled.",
+        "regions": []
       },
       "sourceUrl": "https://commandcode.ai/docs/resources/security",
       "privacyUrl": "https://commandcode.ai/privacy",
-      "sourceDate": "2026-05-27",
-      "notes": "Local-first is structurally differentiated — privacy is architectural, not just policy. No compliance certifications documented."
+      "sourceDate": "2026-09-30",
+      "notes": "Local project files may stay on-device, but inputs sent to AI features are transmitted to upstream model providers and retained up to 30 days by default; ZDR is self-serve. Command Code reports SOC 2-aligned controls and says formal certification is still in progress.",
+      "compliance": {
+        "soc2": "none"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://commandcode.ai/privacy",
+          "quote": "We do not use your prompts or your source code to train our own AI models, and we instruct providers, where available, not to use your content to train their models.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://commandcode.ai/privacy",
+          "quote": "AI request content, including prompts, attached files, code snippets, model outputs, and related request data, is retained for up to thirty (30) days unless you enable zero data retention or a different retention period is required by your plan or written agreement.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://commandcode.ai/privacy",
+          "quote": "With zero data retention enabled, your prompts, inputs, and outputs are never stored.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://commandcode.ai/privacy",
+          "quote": "Your information, including Personal Data, may be transferred to and maintained on computers located outside of your state, province, country, or other governmental jurisdiction where the data protection laws may differ from those of your jurisdiction.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://commandcode.ai/security",
+          "quote": "We follow SOC 2-aligned security practices and procedures, implementing the same rigorous standards for data protection, confidentiality, and operational integrity as we work towards formal certification.",
+          "retrieved": "2026-09-30"
+        }
+      ]
     },
     {
       "id": "groq",

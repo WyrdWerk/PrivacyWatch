@@ -599,3 +599,48 @@ test('304 responses cost no body hashing', async () => {
     baseline.restore();
   }
 });
+
+async function runReport({ commentStatus = 201 } = {}) {
+  const baseline = makeEnv({ maxHashed: 20 });
+  await watcher.scheduled({}, baseline.env, {});
+  const stored = baseline.getState();
+  baseline.restore();
+  const changed = makeEnv({ maxHashed: 20, stored, mutatedUrl: manifest.urls[2].url });
+  Object.assign(changed.env, { GH_REPORT_TOKEN: 't', ISSUE_REPO: 'o/r', ISSUE_NUMBER: '2' });
+  const calls = [];
+  const inner = globalThis.fetch;
+  globalThis.fetch = async (input, init = {}) => {
+    const url = typeof input === 'string' ? input : input.url;
+    if (url.startsWith('https://api.github.com/')) {
+      calls.push({ url, method: init.method, body: init.body ? JSON.parse(init.body) : null });
+      const status = init.method === 'POST' ? commentStatus : 200;
+      return new Response('{}', { status });
+    }
+    return inner(input, init);
+  };
+  try {
+    const result = await watcher.scheduled({}, changed.env, {});
+    return { result, calls, state: changed.getState() };
+  } finally {
+    changed.restore();
+  }
+}
+
+test('reporting posts the comment, then reopens the report issue', async () => {
+  const { result, calls, state } = await runReport();
+  assert.equal(result.reportStatus, 'reported');
+  assert.deepEqual(calls.map((c) => `${c.method} ${c.url}`), [
+    'POST https://api.github.com/repos/o/r/issues/2/comments',
+    'PATCH https://api.github.com/repos/o/r/issues/2',
+  ]);
+  assert.deepEqual(calls[1].body, { state: 'open' });
+  assert.equal(result.issueReopen, 'ok');
+  assert.ok(state.events.every((e) => e.reported));
+});
+
+test('a failed comment does not reopen the issue', async () => {
+  const { result, calls, state } = await runReport({ commentStatus: 500 });
+  assert.equal(result.reportStatus, 'error:500');
+  assert.equal(calls.length, 1, 'no PATCH after a failed comment');
+  assert.ok(state.events.some((e) => !e.reported));
+});

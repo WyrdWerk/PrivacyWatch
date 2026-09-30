@@ -541,19 +541,22 @@ async function runCheck(env) {
   // GitHub acknowledges; eventId dedupe keeps comments identifiable on retries.
   const pending = state.events.filter((e) => !e.reported);
   let reportStatus = 'skipped';
+  let issueReopen = 'skipped';
   if (!dryRun && pending.length > 0 && env.GH_REPORT_TOKEN && env.ISSUE_REPO && env.ISSUE_NUMBER) {
-    if (subrequests >= SOFT_SUBREQUEST_LIMIT - 1) {
+    if (subrequests >= SOFT_SUBREQUEST_LIMIT - 2) {
       reportStatus = 'deferred-budget';
     } else {
       const body = pending.map(renderEvent).join('\n\n---\n\n');
-      const ghRes = await fetch(`https://api.github.com/repos/${env.ISSUE_REPO}/issues/${env.ISSUE_NUMBER}/comments`, {
+      const issueUrl = `https://api.github.com/repos/${env.ISSUE_REPO}/issues/${env.ISSUE_NUMBER}`;
+      const ghHeaders = {
+        Authorization: `Bearer ${env.GH_REPORT_TOKEN}`,
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        'User-Agent': 'privacywatch-watcher',
+      };
+      const ghRes = await fetch(`${issueUrl}/comments`, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${env.GH_REPORT_TOKEN}`,
-          Accept: 'application/vnd.github+json',
-          'X-GitHub-Api-Version': '2022-11-28',
-          'User-Agent': 'privacywatch-watcher',
-        },
+        headers: ghHeaders,
         body: JSON.stringify({ body: `**Watcher report — ${now} — ${pending.length} change(s)**\n\n${body}` }),
       });
       count();
@@ -563,6 +566,16 @@ async function runCheck(env) {
           e.reported = true;
           e.reportedAt = now;
         }
+        // The report issue doubles as an inbox: maintainers close it once a
+        // research cycle has processed every comment, and a new report reopens
+        // it. Best-effort — the comment is already durable if this fails.
+        try {
+          const reopen = await fetch(issueUrl, { method: 'PATCH', headers: ghHeaders, body: JSON.stringify({ state: 'open' }) });
+          issueReopen = reopen.ok ? 'ok' : `error:${reopen.status}`;
+        } catch (err) {
+          issueReopen = `error:${String(err.message ?? err).slice(0, 80)}`;
+        }
+        count();
       }
     }
   } else if (pending.length > 0 && !env.GH_REPORT_TOKEN) {
@@ -597,6 +610,7 @@ async function runCheck(env) {
     indexErrors: Object.values(state.entries).filter((e) => e.indexError).length,
     pendingEvents: state.events.filter((e) => !e.reported).length,
     reportStatus,
+    issueReopen,
     subrequests,
   };
 }

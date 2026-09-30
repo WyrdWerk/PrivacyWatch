@@ -14,6 +14,8 @@ Format: `[YYYY-MM-DD] Provider — what changed — source`
 
 Watcher backlog: every change reported in issue #2 up to comment 5903207749 (2026-09-30T03:01Z) is covered by the v1.7.0–v1.11.0 re-verification.
 
+**Watcher: issue #2 is now an inbox.** After posting a report comment, the watcher reopens issue #2 (best-effort PATCH with the existing Issues:write token). Maintainers close #2 once a research cycle has processed every comment; a closed issue means nothing is pending. Research PRs reference the last processed comment ("Processes #2 up to comment <id>").
+
 ---
 
 ## v1.11.0 — 2026-09-30

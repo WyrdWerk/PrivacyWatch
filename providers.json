@@ -1,7 +1,7 @@
 {
   "meta": {
     "lastUpdated": "2026-09-30",
-    "version": "1.13.0",
+    "version": "1.14.0",
     "description": "PrivacyWatch — LLM data privacy, retention, and model training tracker",
     "maintainer": "WyrdWerk (github.com/WyrdWerk/PrivacyWatch)",
     "license": "CC-BY-4.0",

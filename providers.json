@@ -1,7 +1,7 @@
 {
   "meta": {
     "lastUpdated": "2026-09-30",
-    "version": "1.11.0",
+    "version": "1.12.0",
     "description": "PrivacyWatch — LLM data privacy, retention, and model training tracker",
     "maintainer": "WyrdWerk (github.com/WyrdWerk/PrivacyWatch)"
   },
@@ -8397,27 +8397,76 @@
       "incident": false,
       "training": {
         "label": "Off at Aion — upstream processes prompts",
-        "detail": "ToS §6.1: license to process User Content \"solely as necessary to provide the Services, including forwarding prompts and instructions to upstream AI providers.\" Privacy policy: \"We do not sell your data\" and \"no human at Aion Labs reads this content.\" No clause authorizing Aion to train its own models on prompts."
+        "detail": "ToS §6.1: license to process User Content \"solely as necessary to provide the Services, including forwarding prompts and instructions to upstream AI providers.\" Privacy policy: \"We do not sell your data\" and \"no human at Aion Labs reads this content.\" No clause authorizing Aion to train its own models on prompts.",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
-        "label": "As necessary to provide the Services",
-        "detail": "PP: User Content collected \"only as necessary to provide the Services\"; Personal Data retained \"only for as long as necessary to fulfill the purposes outlined in this Privacy Policy.\" Account deletion starts deletion of data without a justifiable business reason to retain."
+        "label": "Until account deletion",
+        "detail": "PP: User Content is collected and stored \"only as necessary to provide the Services\"; Personal Data retained \"only for as long as necessary to fulfill the purposes outlined in this Privacy Policy\" unless law requires longer. \"When you delete your account, we will begin to delete data that does not have a justifiable business reason to retain (such as billing records required for legal compliance).\"",
+        "kind": "until-deleted"
       },
       "zdr": {
         "label": "Not documented",
         "detail": "No zero-retention tier. Prompts are transmitted to third-party model providers under those providers' policies.",
-        "status": "none"
+        "status": "none",
+        "access": "none"
       },
       "location": {
         "label": "Undisclosed",
-        "flag": "🌐",
-        "detail": "No processing regions named; EU right-to-be-forgotten acknowledged."
+        "flag": "❓",
+        "detail": "No processing regions named. PP: information \"may be transferred to, stored, and processed in countries that may have different data protection laws than your country of residence\", with standard contractual clauses as safeguards. Operator: Deep Forge sp. z o.o. (Poland); prompts are forwarded to upstream providers under their own policies.",
+        "regions": []
       },
       "sourceUrl": "https://www.aionlabs.ai/terms/",
       "privacyUrl": "https://www.aionlabs.ai/privacy/",
       "relatedUrls": [],
-      "sourceDate": "2026-09-15",
-      "notes": "Re-verified 2026-09-15. Aion is a router: it claims a service-only license and forwards prompts upstream. Rated Guarded (not Clean) because ZDR is unpublished and upstream providers may train. Not Unverified — the service-only license is affirmative."
+      "sourceDate": "2026-09-30",
+      "notes": "Aion is a router: it claims a service-only license and forwards prompts upstream. Rated Guarded (not Clean) because ZDR is unpublished and upstream providers may train. Not Unverified — the service-only license is affirmative. Re-verified 2026-09-30: live ToS/PP unchanged from 2026-09-15 read; no DPA, SOC 2 or HIPAA mention on either page.",
+      "compliance": {
+        "dpa": "silent",
+        "soc2": "silent",
+        "hipaaBaa": "silent"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://www.aionlabs.ai/terms/",
+          "quote": "a worldwide, non-exclusive, royalty-free license to process and use such content solely as necessary to provide the Services, including forwarding prompts and instructions to upstream AI providers",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://www.aionlabs.ai/privacy/",
+          "quote": "We do not sell your data to anyone, and we do not review the content of your prompts or generated outputs. No human at Aion Labs reads this content.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://www.aionlabs.ai/privacy/",
+          "quote": "We retain your Personal Data only for as long as necessary to fulfill the purposes outlined in this Privacy Policy, unless a longer retention period is required by law. When you delete your account, we will begin to delete data that does not have a justifiable business reason to retain",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://www.aionlabs.ai/terms/",
+          "quote": "Your inputs and interactions will be processed by upstream AI providers and third-party hosting infrastructure as described in our Privacy Policy",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://www.aionlabs.ai/privacy/",
+          "quote": "Your information may be transferred to, stored, and processed in countries that may have different data protection laws than your country of residence.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://www.aionlabs.ai/privacy/",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        }
+      ]
     },
     {
       "id": "mara",
@@ -8430,27 +8479,78 @@
       "incident": false,
       "training": {
         "label": "Off — explicit",
-        "detail": "AI Policies: \"MARA may not train models on Customer Content from the Services\"; \"we do not share any User AI Data with third parties for the purposes of training, fine-tuning or related activities.\""
+        "detail": "AI Policies (Cloud ToS §2.2): \"MARA may not train models on Customer Content from the Services\"; §1.3: \"MARA does not develop or provide any proprietary generative artificial intelligence models\". Cloud Privacy Policy: \"we do not share any User AI Data with third parties for the purposes of training, fine-tuning or related activities.\"",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
         "label": "Not retained",
-        "detail": "\"Inputs provided by users and any generated outputs are not retained\"; \"We delete any operational logs associated with our inference Services when they are no longer necessary to provide\" the service."
+        "detail": "\"Inputs provided by users and any generated outputs are not retained\"; \"We delete any operational logs associated with our inference Services when they are no longer necessary to provide\" the service.",
+        "kind": "none"
       },
       "zdr": {
         "label": "Yes — by design",
         "detail": "Inference inputs/outputs are not retained and MARA states \"We do not collect or view the contents of User AI Data\"; query logs (Service Usage Data) are used for operations/improvement but exclude Customer Content.",
-        "status": "full"
+        "status": "full",
+        "access": "default"
       },
       "location": {
         "label": "US + other countries",
         "flag": "🇺🇸",
-        "detail": "\"your data may be stored and processed in the United States and other countries\"; hosted solution governed by New York law."
+        "detail": "Cloud Privacy Policy: \"your data may be stored and processed in the United States and other countries outside the United States, which may have data protection laws that differ from the laws in your country\"; Cloud ToS governed by New York law.",
+        "regions": [
+          "US"
+        ]
       },
       "sourceUrl": "https://www.mara.com/mara-legals/ai-policies#cloud-toc",
       "privacyUrl": "https://www.mara.com/mara-legals/privacy-policy",
       "relatedUrls": [],
-      "sourceDate": "2026-09-13",
-      "notes": "Personal-information retention: 12 months from last engagement unless law requires longer. No confirmed breach of the AI service found; SEC filings discuss security-breach risk factors generically."
+      "sourceDate": "2026-09-30",
+      "notes": "Personal-information retention: 12 months from last engagement unless law requires longer. No confirmed breach of the AI service found; SEC filings discuss security-breach risk factors generically. Re-verified 2026-09-30: live AI Policies (Cloud ToS + Cloud Privacy Policy) unchanged; no DPA, SOC 2 or HIPAA mention.",
+      "compliance": {
+        "dpa": "silent",
+        "soc2": "silent",
+        "hipaaBaa": "silent"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://www.mara.com/mara-legals/ai-policies",
+          "quote": "MARA may not train models on Customer Content from the Services.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://www.mara.com/mara-legals/ai-policies",
+          "quote": "we do not share any User AI Data with third parties for the purposes of training, fine-tuning or related activities.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://www.mara.com/mara-legals/ai-policies",
+          "quote": "Inputs provided by users and any generated outputs are not retained. The length of time for which we retain information depends on the purposes for which we collected and use it and your choices, after which time we may delete, de-identify or aggregate it.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://www.mara.com/mara-legals/ai-policies",
+          "quote": "We do not collect or view the contents of User AI Data",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://www.mara.com/mara-legals/ai-policies",
+          "quote": "your data may be stored and processed in the United States and other countries outside the United States, which may have data protection laws that differ from the laws in your country",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://www.mara.com/mara-legals/ai-policies",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        }
+      ]
     },
     {
       "id": "nex-agi",
@@ -8463,27 +8563,78 @@
       "incident": false,
       "training": {
         "label": "On — documented",
-        "detail": "PP: \"To identify areas for improvement, develop new features, and enhance the overall user experience. This includes training and refining our underlying technology, such as Nex-AGI models and algorithms.\" Applied to User Content, communication info, device/usage info, and log data."
+        "detail": "PP: User Content — \"the prompts, audios, images, videos, files and other content that you input and generate\" — \"helps us optimize our Nex-AGI models\". Purposes: \"This includes training and refining our underlying technology, such as Nex-AGI models and algorithms.\" The EEA legal-bases table applies this purpose to User Content, communication, device/usage info and log data.",
+        "default": "on",
+        "optOut": "none"
       },
       "retention": {
-        "label": "Open-ended",
-        "detail": "\"We store your information as long as necessary to provide the services, fulfill the purposes outlined in this policy and other legitimate business purposes (such as service improvement, resolving disputes, safety or security)... account, input, and payment information are retained while your account is active.\" No auto-deletion period."
+        "label": "Account lifetime; open-ended purposes",
+        "detail": "PP: \"We store your information as long as necessary to provide the services, fulfill the purposes outlined in this policy and other legitimate business purposes (such as service improvement, resolving disputes, safety or security), and comply with legal obligations.\" \"account, input, and payment information are retained while your account is active.\" No auto-deletion period after account closure.",
+        "kind": "until-deleted"
       },
       "zdr": {
         "label": "Not available",
         "detail": "No no-training or zero-retention tier; training is an enumerated purpose over User Content.",
-        "status": "none"
+        "status": "none",
+        "access": "none"
       },
       "location": {
-        "label": "China",
+        "label": "China — Shanghai servers",
         "flag": "🇨🇳",
-        "detail": "Operated by Shanghai Qiji Zhifeng in Shanghai, China; backups are stored \"in different physical locations\"; personal information \"may be transferred to and stored on servers\" abroad (region unnamed)."
+        "detail": "PP: \"We store the information we collect in secure servers located in Shanghai, China\"; EEA/UK supplement repeats \"our servers are situated in Shanghai, China.\" Cross-border transfer only \"when cross-border transfers are necessary\", with safeguards; backups replicated \"in different physical locations\".",
+        "regions": [
+          "CN"
+        ]
       },
       "sourceUrl": "https://api.nex-agi.cn/privacy-policy",
       "privacyUrl": "https://api.nex-agi.cn/privacy-policy",
       "relatedUrls": [],
-      "sourceDate": "2026-09-13",
-      "notes": "Only opt-outs found: marketing-unsubscribe links and account deletion via api-service@qijizhifeng.com; no training opt-out documented. ToS URL is itself the privacy policy."
+      "sourceDate": "2026-09-30",
+      "notes": "Only opt-outs found: marketing-unsubscribe links and account deletion via api-service@qijizhifeng.com; no training opt-out documented. ToS URL is itself the privacy policy. Re-verified 2026-09-30: live PP (last updated July 2025) now names storage explicitly — servers in Shanghai, China.",
+      "compliance": {
+        "dpa": "silent",
+        "soc2": "silent",
+        "hipaaBaa": "silent"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://api.nex-agi.cn/privacy-policy",
+          "quote": "The prompts, audios, images, videos, files and other content that you input and generate while using our products and services. This information helps us optimize our Nex-AGI models and understand your needs and preferences",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://api.nex-agi.cn/privacy-policy",
+          "quote": "This includes training and refining our underlying technology, such as Nex-AGI models and algorithms.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://api.nex-agi.cn/privacy-policy",
+          "quote": "We store your information as long as necessary to provide the services, fulfill the purposes outlined in this policy and other legitimate business purposes (such as service improvement, resolving disputes, safety or security), and comply with legal obligations.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://api.nex-agi.cn/privacy-policy",
+          "quote": "account, input, and payment information are retained while your account is active.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://api.nex-agi.cn/privacy-policy",
+          "quote": "We store the information we collect in secure servers located in Shanghai, China.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://api.nex-agi.cn/privacy-policy",
+          "quote": "",
+          "retrieved": "2026-09-30"
+        }
+      ]
     },
     {
       "id": "modelrun-modular",
@@ -8495,28 +8646,85 @@
       "rating": "caution",
       "incident": false,
       "training": {
-        "label": "Perpetual license over UGC / Derivative Data",
-        "detail": "ToS §4.2: service-only license to use User Generated Content as needed to provide the Platform, plus “a non-exclusive, perpetual, irrevocable, royalty-free, worldwide license to reproduce, distribute, modify, and otherwise use and display your User Generated Content incorporated within the Derivative Data.” “Prompts and uploaded reference images submitted to the Image Generation Service are considered User Generated Content and are subject to the same terms, including the license grant to Modular for moderation and service improvement.” Training is not named; the perpetual Derivative Data + service-improvement grant is."
+        "label": "On — improvement grant over prompts/UGC",
+        "detail": "ToS (last modified Jul 27, 2026) §3.2 grants a \"non-exclusive, perpetual, irrevocable, royalty-free, worldwide license\" to User Generated Content \"incorporated within the Derivative Data\"; §3.5: \"Modular may compile Derivative Data based on User Generated Content input into, and transmitted via, the Modular Platform\" and may use it \"for any lawful purpose\". Prompts submitted to the Image Generation Service are UGC for \"moderation and service improvement\". Model training is not named.",
+        "default": "on",
+        "optOut": "silent"
       },
       "retention": {
-        "label": "Silent",
-        "detail": "No retention period for User Generated Content published; \"Derivative Data\" (aggregated/anonymized metrics, feedback, ratings on Code) is owned by Modular and usable \"for any lawful purpose\"."
+        "label": "Account lifetime (personal data); UGC silent",
+        "detail": "PP: \"We retain Personal Data about you for as long as you have an open account with us or as otherwise necessary to provide you with our Services or to perform our business or commercial purposes.\" No retention period is published for User Generated Content (prompts/Code) itself; Derivative Data is owned by Modular and usable \"for any lawful purpose\".",
+        "kind": "until-deleted"
       },
       "zdr": {
         "label": "Not documented",
         "detail": "No ZDR tier. Derivative Data (aggregated/anonymized metrics, feedback, ratings on Code) is owned by Modular “for any lawful purpose.”",
-        "status": "none"
+        "status": "none",
+        "access": "none"
       },
       "location": {
         "label": "US",
         "flag": "🇺🇸",
-        "detail": "Modular Inc, 199 1st Street, Los Altos, CA; processing regions not itemized."
+        "detail": "PP: \"The Services are hosted and operated in the United States\" through Modular and its service providers; SCCs for EU/UK/Swiss transfers. Trust-center subprocessors all list \"Data location: United States\". Modular Inc, 199 1st Street, Los Altos, CA.",
+        "regions": [
+          "US"
+        ]
       },
       "sourceUrl": "https://www.modular.com/legal/terms",
       "privacyUrl": "https://www.modular.com/legal/privacy",
       "relatedUrls": [],
-      "sourceDate": "2026-09-15",
-      "notes": "Re-verified 2026-09-15 on ToS §4.2. Unverified was wrong: the perpetual/irrevocable Derivative Data license and prompt-as-UGC improvement grant are explicit. Rated Caution (not High Risk) because the clause says service improvement / Derivative Data, not foundation-model training."
+      "sourceDate": "2026-09-30",
+      "notes": "Re-verified 2026-09-30 on ToS (§§3.2/3.5/4.5, last modified 2026-07-27) and Privacy Policy. Unverified was wrong: the perpetual/irrevocable Derivative Data license and prompt-as-UGC improvement grant are explicit. New since 2026-09-15: §3.5 states Derivative Data may be compiled from UGC input into the Platform; trust center publishes a 2025 SOC 2 Type 2 report; ToS §4.5 prohibits submitting HIPAA PHI. Rated Caution (not High Risk) because the clauses cover service improvement / Derivative Data, not foundation-model training.",
+      "compliance": {
+        "dpa": "silent",
+        "soc2": "type2",
+        "hipaaBaa": "none"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://www.modular.com/legal/terms",
+          "quote": "Modular may compile Derivative Data based on User Generated Content input into, and transmitted via, the Modular Platform",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://www.modular.com/legal/terms",
+          "quote": "Prompts and uploaded reference images submitted to the Image Generation Service are considered User Generated Content and are subject to the same terms, including the license grant to Modular for moderation and service improvement.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://www.modular.com/legal/privacy",
+          "quote": "We retain Personal Data about you for as long as you have an open account with us or as otherwise necessary to provide you with our Services or to perform our business or commercial purposes",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://www.modular.com/legal/terms",
+          "quote": "Modular may use and disclose Derivative Data for any lawful purpose",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://www.modular.com/legal/privacy",
+          "quote": "The Services are hosted and operated in the United States",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://trust.modular.com/",
+          "quote": "Modular's SOC2 Type 2 report for 2025",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://www.modular.com/legal/terms",
+          "quote": "you will not submit to the Modular Platform: (a) protected health information regulated by the Health Insurance Portability and Accountability Act",
+          "retrieved": "2026-09-30"
+        }
+      ]
     },
     {
       "id": "morph",
@@ -8529,27 +8737,97 @@
       "incident": false,
       "training": {
         "label": "Off by default — support/debug exception",
-        "detail": "ToS: \"No training by default — your code is not used to train our models, except when you request support or we're debugging issues.\" Free tier: during support Morph may \"train our models to prevent similar issues, and improve service quality\"."
+        "detail": "ToS §3.1/§5.1 (v3.0, Jul 6 2025): \"No training by default - your code is not used to train our models, except when you request support or we're debugging issues\". Free tier: during support Morph may \"train our models to prevent similar issues, and improve service quality for all users\"; paid tier adds confidentiality protections; enterprise removes the exception.",
+        "default": "off",
+        "optOut": "not-needed"
       },
       "retention": {
         "label": "90d free / 30d paid / ZDR enterprise",
-        "detail": "Free: \"We retain your code and content for up to 90 days\" then deleted/anonymized; paid: \"30-day data retention with secure deletion\"; enterprise: \"Code and content processed exclusively in memory and never written to persistent storage.\""
+        "detail": "Free: \"We retain your code and content for up to 90 days\" then deleted/anonymized; paid: \"30-day data retention with secure deletion\"; enterprise: \"Code and content processed exclusively in memory and never written to persistent storage.\"",
+        "kind": "fixed",
+        "days": 90
       },
       "zdr": {
         "label": "Yes — enterprise tier",
         "detail": "Enterprise ZDR: \"Zero Training: We do not use your submissions to train or improve our models. Period.\"; immediate memory purge, no content logging, no human access without explicit grant.",
-        "status": "full"
+        "status": "full",
+        "access": "enterprise"
       },
       "location": {
         "label": "US primary",
         "flag": "🇺🇸",
-        "detail": "PP: \"Our primary data processing occurs in the United States, with additional processing in select countries where our service providers operate\"; SCCs for EEA/UK/Swiss transfers; self-hosted keeps data in your environment."
+        "detail": "PP: \"Our primary data processing occurs in the United States, with additional processing in select countries where our service providers operate\"; SCCs for EEA/UK/Swiss transfers; regional data centers available for paid/enterprise tiers; self-hosted keeps data in your environment.",
+        "regions": [
+          "US"
+        ]
       },
       "sourceUrl": "https://www.morphllm.com/privacy/tos",
       "privacyUrl": "https://www.morphllm.com/privacy",
       "relatedUrls": [],
-      "sourceDate": "2026-09-13",
-      "notes": "Managed Instance option is \"hosted within your private cloud environment\". Rated guarded because free/paid tiers include a support/debugging training exception; enterprise tier removes it."
+      "sourceDate": "2026-09-30",
+      "notes": "Managed Instance option is \"hosted within your private cloud environment\". Rated guarded because free/paid tiers include a support/debugging training exception; enterprise tier removes it. Re-verified 2026-09-30: ToS unchanged (v3.0); PP §7.1 states \"SOC 2 Type II, ISO 27001 compliance maintained\" and §9.2 offers custom DPAs for enterprise customers. HIPAA is not addressed on either page.",
+      "compliance": {
+        "dpa": "enterprise",
+        "soc2": "type2",
+        "hipaaBaa": "silent"
+      },
+      "incidents": [],
+      "evidence": [
+        {
+          "field": "training",
+          "url": "https://www.morphllm.com/privacy/tos",
+          "quote": "No training by default - your code is not used to train our models, except when you request support or we're debugging issues",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "training",
+          "url": "https://www.morphllm.com/privacy/tos",
+          "quote": "we may use your data to investigate problems, train our models to prevent similar issues, and improve service quality for all users",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://www.morphllm.com/privacy/tos",
+          "quote": "We retain your code and content for up to 90 days to enable support, debugging, and access to your history",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "retention",
+          "url": "https://www.morphllm.com/privacy/tos",
+          "quote": "30-day data retention with secure deletion",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://www.morphllm.com/privacy/tos",
+          "quote": "Zero Retention: Code and content processed exclusively in memory and never written to persistent storage",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "zdr",
+          "url": "https://www.morphllm.com/privacy/tos",
+          "quote": "Zero Training: We do not use your submissions to train or improve our models. Period.",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "location",
+          "url": "https://www.morphllm.com/privacy",
+          "quote": "Our primary data processing occurs in the United States, with additional processing in select countries where our service providers operate",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://www.morphllm.com/privacy",
+          "quote": "Compliance Certifications: SOC 2 Type II, ISO 27001 compliance maintained",
+          "retrieved": "2026-09-30"
+        },
+        {
+          "field": "compliance",
+          "url": "https://www.morphllm.com/privacy",
+          "quote": "Custom DPAs available for enterprise customers with specific transfer restrictions",
+          "retrieved": "2026-09-30"
+        }
+      ]
     }
   ]
 }

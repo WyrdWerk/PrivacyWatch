@@ -3,6 +3,19 @@
 All policy changes, new providers, and corrections are logged here.
 Format: `[YYYY-MM-DD] Provider — what changed — source`
 
+## v1.12.0 — 2026-09-30
+
+**Final 5 inference rows re-verified** (Aion Labs, MARA, Nex AGI, ModelRun, Morph) with structured fields and verbatim evidence. **All 96 rows now carry structured fields and evidence.** No rating changes.
+
+- Nex AGI — privacy policy now names storage in Shanghai, China.
+- ModelRun (Modular) — ToS (2026-07-27) §3.5 extends Derivative Data to User Generated Content sent through the platform; SOC 2 Type 2 published; HIPAA PHI prohibited.
+- Morph — 90-day retention on free, 30-day on paid, ZDR on enterprise; SOC 2 Type II; enterprise DPAs.
+- Aion Labs — location undisclosed (flag ❓); retention until account deletion.
+
+Watcher backlog: every change reported in issue #2 up to comment 5903207749 (2026-09-30T03:01Z) is covered by the v1.7.0–v1.11.0 re-verification.
+
+---
+
 ## v1.11.0 — 2026-09-30
 
 **Long-tail inference providers re-verified (52 rows)** with structured fields and verbatim evidence (coverage 91/96). Research ran in 12 Amp threads (low, medium, and a GLM-5.3 Flash retry); maintainer re-checked every rating change and all "training silent" conclusions against live pages.
@@ -26,7 +39,7 @@ Held after review (research suggested a change, evidence didn't support it):
 
 Notable corrections: US or "global" flags replaced with the regions each policy actually names (❓ where none are named) across ~30 rows; new or fixed source URLs for AI21, SambaNova, GMICloud, Relace, Runway, Sourceful, Chutes and Darkbloom; Deepgram adds EU/AU/IN endpoints; Tencent TokenHub ZDR in SG/DE/US; NextBit publishes an EU (Spain) endpoint with zero retention; Phala's DPA names US/India/France; Perceptron's Terms and Privacy Policy conflict on training.
 
-Not yet covered: Aion Labs, MARA, Nex AGI, ModelRun and Morph (research still running).
+Not yet covered: Aion Labs, MARA, Nex AGI, ModelRun and Morph (added in v1.12.0).
 
 ---
 

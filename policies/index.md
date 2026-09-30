@@ -29,7 +29,7 @@ All files scraped and saved on **2026-05-27**.
 | **SiliconFlow** | API | Inference | [https://docs.siliconflow.com/en/legals/privacy-pol...](https://docs.siliconflow.com/en/legals/privacy-policy) | [siliconflow--2026-05-27.md](./siliconflow--2026-05-27.md) |
 | **Together AI** | API | Inference | [https://www.together.ai/privacy...](https://www.together.ai/privacy) | [together-ai--2026-05-27.md](./together-ai--2026-05-27.md) |
 | **CommandCode** | Terminal Agent | Coding Tools | [https://commandcode.ai/docs/resources/security...](https://commandcode.ai/docs/resources/security) | [commandcode--2026-05-27.md](./commandcode--2026-05-27.md) |
-| **Crof AI** | API | Coding Tools | [https://crof.ai/privacy...](https://crof.ai/privacy) | [crof-ai--2026-05-27.md](./crof-ai--2026-05-27.md) |
+| **Crof AI** (defunct — removed from dataset in v1.9.0) | API | Coding Tools | [https://crof.ai/privacy...](https://crof.ai/privacy) | [crof-ai--2026-05-27.md](./crof-ai--2026-05-27.md) |
 | **Cursor** | Privacy Mode ON / Privacy Mode OFF (default) | Coding Tools | [https://cursor.com/data-use...](https://cursor.com/data-use) | [cursor--2026-05-27.md](./cursor--2026-05-27.md) |
 | **HyperAgent** | Platform | Coding Tools | [https://hyperagent.com/privacy...](https://hyperagent.com/privacy) | [hyperagent--2026-05-27.md](./hyperagent--2026-05-27.md) |
 | **Neuralwatt** | API | Coding Tools | [https://portal.neuralwatt.com/privacy...](https://portal.neuralwatt.com/privacy) | [neuralwatt--2026-05-27.md](./neuralwatt--2026-05-27.md) |

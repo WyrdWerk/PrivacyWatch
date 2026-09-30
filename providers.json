@@ -2595,38 +2595,6 @@
       ]
     },
     {
-      "id": "crof-ai",
-      "name": "Crof AI",
-      "surface": "API",
-      "surfaceType": "api",
-      "category": "coding",
-      "categoryLabel": "Coding Tools",
-      "rating": "clean",
-      "incident": false,
-      "training": {
-        "label": "Never collected",
-        "detail": "'We do NOT use your data for training AI models.' Prompts/completions never stored — real-time processing only."
-      },
-      "retention": {
-        "label": "Never stored",
-        "detail": "Real-time processing only, never persisted. Account data removed within 30 days of deletion. Usage metrics: 7 years (billing only)."
-      },
-      "zdr": {
-        "label": "De facto (no collection)",
-        "detail": "ZDR by design — data never collected. Strongest guarantee without requiring a formal ZDR agreement.",
-        "status": "full"
-      },
-      "location": {
-        "label": "US",
-        "flag": "🇺🇸",
-        "detail": "Data processed in the United States."
-      },
-      "sourceUrl": "https://crof.ai/privacy",
-      "privacyUrl": "https://crof.ai/privacy",
-      "sourceDate": "2026-05-27",
-      "notes": "Clearest, most explicit privacy policy in this entire research. CCPA compliant."
-    },
-    {
       "id": "wafer-ai-privacy",
       "name": "Wafer AI",
       "surface": "Privacy Tier ($25/wk)",
